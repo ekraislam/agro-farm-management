@@ -54,6 +54,9 @@ interface ReportsViewProps {
   biogasLogs?: BiogasDailyLog[];
   biogasInspections?: BiogasInspectionItem[];
   reminders?: ReminderTask[];
+  ownerName?: string;
+  farmName?: string;
+  farmAddress?: string;
 }
 
 type ReportTab = 'financial' | 'milk' | 'health' | 'employees' | 'biogas';
@@ -68,6 +71,9 @@ export const ReportsView = ({
   biogasLogs = [],
   biogasInspections = [],
   reminders = [],
+  ownerName = 'মুমিনুল ইসলাম',
+  farmName = 'মুমিন এগ্রো (Mumin Agro)',
+  farmAddress = 'খামার প্রাঙ্গণ',
 }: ReportsViewProps) => {
   const { isDemoMode, isConfigured, user } = useAuth();
   const isLiveCloud = Boolean(isConfigured && user && !isDemoMode);
@@ -292,10 +298,10 @@ export const ReportsView = ({
           <div>
             <div className="flex items-center justify-center sm:justify-start gap-2">
               <span className="w-3.5 h-3.5 rounded-full bg-[#16402C]" />
-              <h3 className="text-2xl font-bold text-[#16402C]">মুমিন এগ্রো (Mumin Agro)</h3>
+              <h3 className="text-2xl font-bold text-[#16402C]">{farmName}</h3>
             </div>
             <p className="text-sm font-semibold text-gray-700 mt-1">স্মার্ট ডেইরি ও বায়োগ্যাস খামার ব্যবস্থাপনা</p>
-            <p className="text-xs text-gray-500 mt-0.5">মালিক: মুমিনুল ইসলাম • অবস্থান: খামার প্রাঙ্গণ</p>
+            <p className="text-xs text-gray-500 mt-0.5">মালিক: {ownerName} • অবস্থান: {farmAddress}</p>
           </div>
           <div className="sm:text-right">
             <span className="inline-block px-3.5 py-1.5 bg-[#FAF7F0] text-[#16402C] text-xs font-bold rounded-xl border border-[#E8DFC9]">

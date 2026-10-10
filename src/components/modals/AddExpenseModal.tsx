@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { X, Receipt, AlertCircle, ArrowDownRight, ArrowUpRight, Check } from 'lucide-react';
-import type { FinancialRecord, TransactionType, ExpenseCategory, IncomeCategory } from '../../types/farm';
+import type { FinancialRecord, TransactionType, ExpenseCategory, IncomeCategory, Employee } from '../../types/farm';
 import { generateId } from '../../utils/id';
 import { 
   EXPENSE_CATEGORIES, 
@@ -15,6 +15,8 @@ interface AddExpenseModalProps {
   onUpdateTransaction?: (record: FinancialRecord) => Promise<{ success: boolean; error?: string } | void> | void;
   initialType?: TransactionType;
   initialRecord?: FinancialRecord | null;
+  employees?: Employee[];
+  ownerName?: string;
 }
 
 const AddExpenseModalDialog = ({
@@ -23,8 +25,11 @@ const AddExpenseModalDialog = ({
   onUpdateTransaction,
   initialType = 'expense',
   initialRecord = null,
+  employees = [],
+  ownerName = 'মুমিনুল ইসলাম',
 }: Omit<AddExpenseModalProps, 'isOpen'>) => {
   const isEditing = Boolean(initialRecord);
+  const activeEmployees = employees.filter((e) => !e.isArchived && e.status === 'active');
 
   const [type, setType] = useState<TransactionType>(initialRecord?.type || initialType);
   const [title, setTitle] = useState(initialRecord?.title || '');
@@ -32,7 +37,7 @@ const AddExpenseModalDialog = ({
   const [category, setCategory] = useState<string>(initialRecord?.category || (initialType === 'income' ? 'milk_sale' : 'feed'));
   const [date, setDate] = useState(initialRecord?.date || '১০ অক্টোবর ২০২৬');
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'bkash' | 'bank'>(initialRecord?.paymentMethod || 'cash');
-  const [recordedBy, setRecordedBy] = useState(initialRecord?.recordedBy || 'মুমিনুল ইসলাম (মালিক)');
+  const [recordedBy, setRecordedBy] = useState(initialRecord?.recordedBy || `${ownerName} (মালিক)`);
   const [notes, setNotes] = useState(initialRecord?.notes || '');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -289,11 +294,14 @@ const AddExpenseModalDialog = ({
             <select
               value={recordedBy}
               onChange={(e) => setRecordedBy(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm bg-white"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm bg-white font-medium"
             >
-              <option value="মুমিনুল ইসলাম (মালিক)">মুমিনুল ইসলাম (মালিক)</option>
-              <option value="মো: রহিম উদ্দিন">মো: রহিম উদ্দিন (প্রধান গোয়ালা)</option>
-              <option value="করিম হাসান">করিম হাসান (সহকারী)</option>
+              <option value={`${ownerName} (মালিক)`}>{ownerName} (মালিক)</option>
+              {activeEmployees.map((emp) => (
+                <option key={emp.id} value={`${emp.name} (${emp.role})`}>
+                  {emp.name} ({emp.role})
+                </option>
+              ))}
             </select>
           </div>
 

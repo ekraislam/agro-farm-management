@@ -46,6 +46,8 @@ interface DashboardViewProps {
   onOpenAddCow: () => void;
   onOpenAddTask: () => void;
   onToggleTask: (taskId: string) => void;
+  ownerName?: string;
+  farmName?: string;
 }
 
 export const DashboardView = ({
@@ -62,6 +64,8 @@ export const DashboardView = ({
   onOpenAddCow,
   onOpenAddTask,
   onToggleTask,
+  ownerName = 'মুমিনুল ইসলাম',
+  farmName = 'মুমিন এগ্রো',
 }: DashboardViewProps) => {
   // Dynamically compute activities from actual farm records
   const dynamicActivities = [];
@@ -115,11 +119,11 @@ export const DashboardView = ({
         {/* 1. Mobile Greeting & Date Header */}
         <div className="bg-linear-to-r from-[#16402C] to-[#25603E] text-white p-4.5 rounded-3xl shadow-sm">
           <div className="flex items-center justify-between text-[11px] text-[#E5B842] font-semibold mb-1">
-            <span>🌾 মুমিন এগ্রো</span>
+            <span>🌾 {farmName}</span>
             <span>আজ: ১০ অক্টোবর ২০২৬</span>
           </div>
           <h2 className="text-xl font-bold tracking-tight">
-            আসসালামু আলাইকুম, মুমিনুল ইসলাম
+            আসসালামু আলাইকুম, {ownerName}
           </h2>
           <p className="text-xs text-white/80 mt-1">
             {summary.todayMilkLiters > 0 
@@ -396,12 +400,12 @@ export const DashboardView = ({
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-xs font-medium text-[#E5B842] border border-white/15 mb-2">
-              <span>🌾 মুমিন এগ্রো ড্যাশবোর্ড</span>
+              <span>🌾 {farmName} ড্যাশবোর্ড</span>
               <span>•</span>
               <span>১০ অক্টোবর ২০২৬</span>
             </div>
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-              আসসালামু আলাইকুম, মুমিনুল ইসলাম
+              আসসালামু আলাইকুম, {ownerName}
             </h2>
             <p className="text-sm md:text-base text-white/80 mt-1 max-w-xl">
               {summary.todayMilkLiters > 0 ? (

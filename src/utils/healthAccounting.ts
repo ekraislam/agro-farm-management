@@ -116,7 +116,7 @@ export const consolidateFarmReminders = ({
       cowId: hr.cowId,
       relatedHealthRecordId: hr.id,
       assignedEmployeeId: defaultEmployee?.id,
-      assignedTo: defaultEmployee?.name || 'মো: রহিম উদ্দিন',
+      assignedTo: defaultEmployee?.name || 'খামার কর্মী',
     });
 
     linkedHealthRecordIds.add(hr.id);
@@ -157,7 +157,7 @@ export const consolidateFarmReminders = ({
       category: 'biogas',
       completed: false,
       assignedEmployeeId: insp.inspectorEmployeeId,
-      assignedTo: insp.inspectorName || inspEmployee?.name || 'করিম হাসান',
+      assignedTo: insp.inspectorName || inspEmployee?.name || 'বায়োগ্যাস ইনচার্জ',
     });
   }
 

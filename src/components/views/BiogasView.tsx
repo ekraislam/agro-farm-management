@@ -375,7 +375,7 @@ export const BiogasView = ({
                       {log.slurryProducedBags} বস্তা
                     </td>
                     <td className="py-3.5 px-4 text-gray-600 text-xs whitespace-nowrap">
-                      {log.recordedBy || 'করিম হাসান'}
+                      {log.recordedBy || 'বায়োগ্যাস ইনচার্জ'}
                     </td>
                     <td className="py-3.5 px-4 text-gray-500 text-xs">
                       {log.notes || '-'}

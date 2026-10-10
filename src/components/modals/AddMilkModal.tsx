@@ -1,6 +1,6 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { X, Droplets, Check, AlertCircle, Info, DollarSign } from 'lucide-react';
-import type { Cow, MilkRecord } from '../../types/farm';
+import type { Cow, MilkRecord, Employee } from '../../types/farm';
 import { generateId } from '../../utils/id';
 
 interface AddMilkModalProps {
@@ -12,6 +12,9 @@ interface AddMilkModalProps {
   ) => Promise<{ success: boolean; error?: string } | void> | void;
   cows: Cow[];
   initialCowId?: string;
+  employees?: Employee[];
+  ownerName?: string;
+  defaultMilkRate?: number;
 }
 
 export const AddMilkModal = ({
@@ -20,16 +23,23 @@ export const AddMilkModal = ({
   onAddRecord,
   cows,
   initialCowId,
+  employees = [],
+  ownerName = 'মুমিনুল ইসলাম',
+  defaultMilkRate = 80,
 }: AddMilkModalProps) => {
+  const activeEmployees = employees.filter((e) => !e.isArchived && e.status === 'active');
+  const defaultRecorder = `${ownerName} (মালিক)`;
+
   const [date, setDate] = useState('১০ অক্টোবর ২০২৬');
   const [selectedCowId, setSelectedCowId] = useState('all');
-  const [morningLiters, setMorningLiters] = useState('42.0');
-  const [eveningLiters, setEveningLiters] = useState('33.0');
+  const [morningLiters, setMorningLiters] = useState('');
+  const [eveningLiters, setEveningLiters] = useState('');
   const [isSold, setIsSold] = useState(true);
-  const [soldLitersCustom, setSoldLitersCustom] = useState('');
-  const [pricePerLiter, setPricePerLiter] = useState('80');
+  const [soldLiters, setSoldLiters] = useState('');
+  const [isCustomSold, setIsCustomSold] = useState(false);
+  const [pricePerLiter, setPricePerLiter] = useState(String(defaultMilkRate || 80));
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'bkash' | 'bank'>('cash');
-  const [recordedBy, setRecordedBy] = useState('মো: রহিম উদ্দিন');
+  const [recordedBy, setRecordedBy] = useState(defaultRecorder);
   const [notes, setNotes] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -45,26 +55,41 @@ export const AddMilkModal = ({
         setMorningLiters(String(half));
         setEveningLiters(String(Math.round((targetCow.dailyAvgMilkLiters - half) * 10) / 10));
       } else {
-        setMorningLiters('8.0');
-        setEveningLiters('6.0');
+        setMorningLiters('');
+        setEveningLiters('');
       }
     } else {
       setSelectedCowId('all');
-      setMorningLiters('42.0');
-      setEveningLiters('33.0');
+      setMorningLiters('');
+      setEveningLiters('');
     }
+
+    setSoldLiters('');
+    setIsCustomSold(false);
+    setPricePerLiter(String(defaultMilkRate || 80));
+    setRecordedBy(`${ownerName} (মালিক)`);
     setError('');
-  }, [isOpen, initialCowId, cows]);
+  }, [isOpen, initialCowId, cows, ownerName, defaultMilkRate]);
 
-  if (!isOpen) return null;
-
+  // Derived liter calculations
   const morningNum = parseFloat(morningLiters) || 0;
   const eveningNum = parseFloat(eveningLiters) || 0;
   const totalLiters = Math.round((morningNum + eveningNum) * 10) / 10;
 
-  // If soldLitersCustom is set by user, use that; otherwise default to all collected liters
+  // Auto-sync sold liters with total collected milk unless user explicitly edited it
+  useEffect(() => {
+    if (!isCustomSold) {
+      setSoldLiters(totalLiters > 0 ? String(totalLiters) : '');
+    }
+  }, [totalLiters, isCustomSold]);
+
+  if (!isOpen) return null;
+
+  // Effective sold liters handles blank cleanly
   const effectiveSoldLiters = isSold
-    ? (soldLitersCustom !== '' ? parseFloat(soldLitersCustom) || 0 : totalLiters)
+    ? (soldLiters.trim() !== ''
+        ? parseFloat(soldLiters) || 0
+        : (!isCustomSold && totalLiters > 0 ? totalLiters : 0))
     : 0;
 
   const priceNum = isSold ? (parseFloat(pricePerLiter) || 0) : 0;
@@ -73,21 +98,23 @@ export const AddMilkModal = ({
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (totalLiters <= 0) {
-      setError('অনুগ্রহ করে সংগৃহীত সঠিক দুধের পরিমাণ (লিটার) লিখুন।');
+      setError('অনুগ্রহ করে সকাল বা বিকালের দোয়ানো দুধের পরিমাণ (লিটার) লিখুন।');
       return;
     }
 
     if (isSold) {
       if (effectiveSoldLiters <= 0) {
-        setError('বিক্রিত দুধের পরিমাণ শূন্যের বেশি হতে হবে।');
+        setError('বিক্রি করা দুধের পরিমাণ শূন্যের বেশি হতে হবে।');
         return;
       }
       if (effectiveSoldLiters > totalLiters) {
-        setError(`বিক্রিত দুধের পরিমাণ (${effectiveSoldLiters} লিটার) মোট সংগৃহীত দুধ (${totalLiters} লিটার) অপেক্ষা বেশি হতে পারে না।`);
+        setError(
+          `বিক্রি করা দুধের পরিমাণ (${effectiveSoldLiters} লিটার) মোট সংগৃহীত দুধ (${totalLiters} লিটার) অপেক্ষা বেশি হতে পারে না।`
+        );
         return;
       }
       if (priceNum <= 0) {
-        setError('দুধ বিক্রির জন্য প্রতি লিটার বিক্রয় দর অবশ্যই শূন্যের বেশি হতে হবে।');
+        setError('দুধ বিক্রির জন্য প্রতি লিটার বিক্রয় দর (টাকা) অবশ্যই শূন্যের বেশি হতে হবে।');
         return;
       }
     }
@@ -143,7 +170,7 @@ export const AddMilkModal = ({
           </div>
           <button
             onClick={onClose}
-            className="text-white/80 hover:text-white p-2 rounded-xl hover:bg-white/10 transition-colors"
+            className="text-white/80 hover:text-white p-2 rounded-xl hover:bg-white/10 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -179,11 +206,14 @@ export const AddMilkModal = ({
               <select
                 value={recordedBy}
                 onChange={(e) => setRecordedBy(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] focus:ring-1 focus:ring-[#16402C] outline-hidden text-sm bg-white"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] focus:ring-1 focus:ring-[#16402C] outline-hidden text-sm bg-white font-medium"
               >
-                <option value="মো: রহিম উদ্দিন">মো: রহিম উদ্দিন (প্রধান গোয়ালা)</option>
-                <option value="করিম হাসান">করিম হাসান (সহকারী)</option>
-                <option value="মুমিনুল ইসলাম (মালিক)">মুমিনুল ইসলাম (মালিক)</option>
+                <option value={`${ownerName} (মালিক)`}>{ownerName} (মালিক)</option>
+                {activeEmployees.map((emp) => (
+                  <option key={emp.id} value={`${emp.name} (${emp.role})`}>
+                    {emp.name} ({emp.role})
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -210,50 +240,55 @@ export const AddMilkModal = ({
           </div>
 
           {/* Liters: Morning & Evening */}
-          <div className="grid grid-cols-2 gap-3 p-3.5 bg-[#FAF7F0] rounded-2xl border border-[#EAE2D0]">
-            <div>
-              <label className="block text-xs font-bold text-[#16402C] mb-1">
-                সকালের দুধ (লিটার) *
-              </label>
-              <input
-                type="number"
-                step="0.1"
-                min="0"
-                value={morningLiters}
-                onChange={(e) => {
-                  setMorningLiters(e.target.value);
-                  setError('');
-                }}
-                className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-[#16402C] focus:ring-1 focus:ring-[#16402C] text-base font-semibold text-gray-900 bg-white"
-                placeholder="0.0"
-                required
-              />
+          <div className="p-4 bg-[#FAF7F0] rounded-2xl border border-[#EAE2D0] space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-bold text-[#16402C] mb-1">
+                  সকালের দুধ (লিটার)
+                </label>
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  inputMode="decimal"
+                  value={morningLiters}
+                  onChange={(e) => {
+                    setMorningLiters(e.target.value);
+                    setError('');
+                  }}
+                  className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-[#16402C] focus:ring-1 focus:ring-[#16402C] text-base font-semibold text-gray-900 bg-white"
+                  placeholder="০.০"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-[#936709] mb-1">
+                  বিকালের দুধ (লিটার)
+                </label>
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  inputMode="decimal"
+                  value={eveningLiters}
+                  onChange={(e) => {
+                    setEveningLiters(e.target.value);
+                    setError('');
+                  }}
+                  className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-[#16402C] focus:ring-1 focus:ring-[#16402C] text-base font-semibold text-gray-900 bg-white"
+                  placeholder="০.০"
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-xs font-bold text-[#936709] mb-1">
-                বিকালের দুধ (লিটার) *
-              </label>
-              <input
-                type="number"
-                step="0.1"
-                min="0"
-                value={eveningLiters}
-                onChange={(e) => {
-                  setEveningLiters(e.target.value);
-                  setError('');
-                }}
-                className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-[#16402C] focus:ring-1 focus:ring-[#16402C] text-base font-semibold text-gray-900 bg-white"
-                placeholder="0.0"
-                required
-              />
-            </div>
-            <div className="col-span-2 pt-2 border-t border-[#EAE2D0] flex justify-between items-center text-xs font-bold text-[#16402C]">
+
+            <div className="pt-2 border-t border-[#EAE2D0] flex justify-between items-center text-xs font-bold text-[#16402C]">
               <span>মোট দোয়ানো দুধ:</span>
-              <span className="text-sm font-extrabold">{totalLiters} লিটার</span>
+              <span className="text-base font-extrabold text-[#16402C]">
+                {totalLiters > 0 ? `${totalLiters} লিটার` : '০ লিটার'}
+              </span>
             </div>
           </div>
 
-          {/* Milk Accounting Correction: Commercial Sale Toggle */}
+          {/* Milk Accounting: Commercial Sale Toggle */}
           <div className="p-3.5 bg-white rounded-2xl border-2 border-[#16402C]/20 shadow-xs space-y-3">
             <div className="flex items-center justify-between">
               <div>
@@ -288,18 +323,58 @@ export const AddMilkModal = ({
                       type="number"
                       step="0.1"
                       min="0.1"
-                      max={totalLiters}
-                      value={soldLitersCustom !== '' ? soldLitersCustom : totalLiters}
+                      inputMode="decimal"
+                      value={soldLiters}
                       onChange={(e) => {
-                        setSoldLitersCustom(e.target.value);
+                        setSoldLiters(e.target.value);
+                        setIsCustomSold(true);
                         setError('');
                       }}
-                      className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-[#16402C] text-sm bg-white"
-                      placeholder={String(totalLiters)}
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-[#16402C] text-sm bg-white font-bold"
+                      placeholder={totalLiters > 0 ? String(totalLiters) : '০.০'}
                     />
-                    <span className="text-[10px] text-gray-400 mt-0.5 block">
-                      সর্বোচ্চ {totalLiters} লিটার (বাকিটা বাছুর ও পরিবারের জন্য)
-                    </span>
+
+                    {/* Village friendly quick adjustment buttons */}
+                    <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSoldLiters(totalLiters > 0 ? String(totalLiters) : '');
+                          setIsCustomSold(false);
+                          setError('');
+                        }}
+                        className="text-[10px] px-2 py-0.5 rounded-md bg-[#FAF7F0] border border-[#EAE2D0] hover:bg-[#EAF5EE] text-[#16402C] font-bold cursor-pointer transition-colors"
+                        title="সম্পূর্ণ সংগৃহীত দুধ বিক্রির হিসাব সেট করুন"
+                      >
+                        সবটুকু ({totalLiters} লিটার)
+                      </button>
+                      {totalLiters > 2 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const half = Math.round((totalLiters / 2) * 10) / 10;
+                            setSoldLiters(String(half));
+                            setIsCustomSold(true);
+                            setError('');
+                          }}
+                          className="text-[10px] px-2 py-0.5 rounded-md bg-[#FAF7F0] border border-[#EAE2D0] hover:bg-[#EAF5EE] text-gray-700 font-semibold cursor-pointer transition-colors"
+                        >
+                          অর্ধেক ({Math.round((totalLiters / 2) * 10) / 10} লিটার)
+                        </button>
+                      )}
+                      {soldLiters !== '' && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSoldLiters('');
+                            setIsCustomSold(true);
+                          }}
+                          className="text-[10px] px-1.5 py-0.5 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium cursor-pointer transition-colors"
+                        >
+                          খালি করুন
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   <div>
@@ -311,11 +386,19 @@ export const AddMilkModal = ({
                       <input
                         type="number"
                         min="1"
+                        inputMode="numeric"
                         value={pricePerLiter}
-                        onChange={(e) => setPricePerLiter(e.target.value)}
-                        className="w-full pl-8 pr-3 py-2 rounded-xl border border-gray-300 focus:border-[#16402C] text-sm bg-white"
+                        onChange={(e) => {
+                          setPricePerLiter(e.target.value);
+                          setError('');
+                        }}
+                        placeholder={String(defaultMilkRate || 80)}
+                        className="w-full pl-8 pr-3 py-2 rounded-xl border border-gray-300 focus:border-[#16402C] text-sm bg-white font-bold"
                       />
                     </div>
+                    <span className="text-[10px] text-gray-400 mt-1 block">
+                      খামার রেট: ৳{defaultMilkRate || 80} / লিটার
+                    </span>
                   </div>
                 </div>
 
@@ -330,7 +413,7 @@ export const AddMilkModal = ({
                         key={method}
                         type="button"
                         onClick={() => setPaymentMethod(method)}
-                        className={`py-2 px-3 rounded-xl text-xs font-bold border transition-colors ${
+                        className={`py-2 px-3 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
                           paymentMethod === method
                             ? 'bg-[#16402C] text-white border-[#16402C]'
                             : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
@@ -387,14 +470,14 @@ export const AddMilkModal = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 font-medium text-sm transition-colors"
+              className="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 font-medium text-sm transition-colors cursor-pointer"
             >
               বাতিল
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-2.5 rounded-xl bg-[#16402C] hover:bg-[#123323] text-white font-semibold text-sm shadow-sm transition-colors flex items-center gap-2 disabled:opacity-60"
+              className="px-6 py-2.5 rounded-xl bg-[#16402C] hover:bg-[#123323] text-white font-semibold text-sm shadow-sm transition-colors flex items-center gap-2 disabled:opacity-60 cursor-pointer"
             >
               {isSubmitting ? (
                 <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

@@ -26,6 +26,8 @@ interface HeaderProps {
   onOpenInstall?: () => void;
   onOpenAuth?: () => void;
   onOpenSetup?: () => void;
+  ownerName?: string;
+  farmName?: string;
 }
 
 export const Header = ({
@@ -37,6 +39,8 @@ export const Header = ({
   pendingTasksCount,
   onOpenMobileMenu,
   onOpenInstall,
+  ownerName = 'মুমিনুল ইসলাম',
+  farmName = 'মুমিন এগ্রো',
 }: HeaderProps) => {
   const { user, isConfigured, isDemoMode } = useAuth();
   const [showQuickMenu, setShowQuickMenu] = useState(false);
@@ -67,7 +71,7 @@ export const Header = ({
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-lg md:text-xl font-bold text-[#16402C] tracking-tight leading-none font-sans">
-                  মুমিন এগ্রো
+                  {farmName}
                 </h1>
                 {isConfigured && user && !isDemoMode ? (
                   <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-semibold bg-[#2A7A50]/15 text-[#16402C] border border-[#2A7A50]/30 rounded-full">
@@ -126,7 +130,7 @@ export const Header = ({
           >
             <UserCheck className="w-4 h-4 text-[#2A7A50]" />
             <span className="text-xs font-bold truncate">
-              {isConfigured && user && !isDemoMode ? 'মুমিন এগ্রো (ক্লাউড)' : 'মুমিনুল ইসলাম (মালিক)'}
+              {isConfigured && user && !isDemoMode ? `${farmName} (ক্লাউড)` : `${ownerName} (মালিক)`}
             </span>
           </button>
 

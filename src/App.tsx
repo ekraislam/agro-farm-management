@@ -10,7 +10,8 @@ import type {
   ReminderTask, 
   HealthRecord,
   AttendanceRecord,
-  FarmSummary 
+  FarmSummary,
+  FarmProfile
 } from './types/farm';
 import { 
   INITIAL_COWS, 
@@ -81,6 +82,7 @@ function FarmDashboard() {
   const [demoHealthRecords, setDemoHealthRecords] = useState<HealthRecord[]>(() => localFarmStorage.getHealthRecords());
   const [demoAttendance, setDemoAttendance] = useState<AttendanceRecord[]>(() => localFarmStorage.getAttendance());
   const [demoInspections, setDemoInspections] = useState<BiogasInspectionItem[]>(() => localFarmStorage.getInspections());
+  const [farmProfile, setFarmProfile] = useState<FarmProfile>(() => localFarmStorage.getFarmProfile());
 
   // Phase 2, 4 & 5 Cloud Data (populated from Supabase when authenticated)
   const [cloudCows, setCloudCows] = useState<Cow[]>([]);
@@ -135,7 +137,7 @@ function FarmDashboard() {
     setCloudError(null);
 
     try {
-      const [cowsRes, milkRes, finRes, empRes, taskRes, bioRes, healthRes, attRes, inspRes] = await Promise.all([
+      const [cowsRes, milkRes, finRes, empRes, taskRes, bioRes, healthRes, attRes, inspRes, profileRes] = await Promise.all([
         farmRepository.getCows(userId),
         farmRepository.getMilkRecords(userId),
         farmRepository.getFinancialTransactions(userId),
@@ -145,6 +147,7 @@ function FarmDashboard() {
         farmRepository.getHealthRecords(userId),
         farmRepository.getAttendance(userId),
         farmRepository.getBiogasInspections(userId),
+        farmRepository.getFarmProfile(userId),
       ]);
 
       if (cowsRes.success && cowsRes.data) setCloudCows(cowsRes.data);
@@ -156,8 +159,9 @@ function FarmDashboard() {
       if (healthRes.success && healthRes.data) setCloudHealthRecords(healthRes.data);
       if (attRes.success && attRes.data) setCloudAttendance(attRes.data);
       if (inspRes.success && inspRes.data) setCloudInspections(inspRes.data);
+      if (profileRes.success && profileRes.data) setFarmProfile(profileRes.data);
 
-      const firstError = [cowsRes, milkRes, finRes, empRes, taskRes, bioRes, healthRes, attRes, inspRes].find((r) => !r.success)?.error;
+      const firstError = [cowsRes, milkRes, finRes, empRes, taskRes, bioRes, healthRes, attRes, inspRes, profileRes].find((r) => !r.success)?.error;
       if (firstError) {
         setCloudError(firstError);
       }
@@ -214,6 +218,10 @@ function FarmDashboard() {
     localFarmStorage.saveInspections(demoInspections);
   }, [demoInspections]);
 
+  useEffect(() => {
+    localFarmStorage.saveFarmProfile(farmProfile);
+  }, [farmProfile]);
+
   // Active dataset based on whether live cloud or demo mode is active
   const cows = isLiveCloud ? cloudCows : demoCows;
   const milkRecords = isLiveCloud ? cloudMilkRecords : demoMilkRecords;
@@ -224,6 +232,10 @@ function FarmDashboard() {
   const healthRecords = isLiveCloud ? cloudHealthRecords : demoHealthRecords;
   const attendanceRecords = isLiveCloud ? cloudAttendance : demoAttendance;
   const biogasInspections = isLiveCloud ? cloudInspections : demoInspections;
+
+  const activeEmployeesCount = useMemo(() => {
+    return employees.filter((e) => !e.isArchived && e.status === 'active').length;
+  }, [employees]);
 
   // Dynamic summary computation (preserving active non-archived cows)
   const activeCows = cows.filter((c) => !c.isArchived);
@@ -540,7 +552,7 @@ function FarmDashboard() {
         completed: false,
         cowId: record.cowId,
         relatedHealthRecordId: record.id,
-        assignedTo: 'মো: রহিম উদ্দিন',
+        assignedTo: employees[0]?.name || `${farmProfile.ownerName} (মালিক)`,
       };
       setDemoReminders([reminderTask, ...demoReminders]);
     }
@@ -945,6 +957,19 @@ function FarmDashboard() {
     }
   };
 
+  const handleUpdateFarmProfile = async (updated: FarmProfile) => {
+    setFarmProfile(updated);
+    localFarmStorage.saveFarmProfile(updated);
+    if (isLiveCloud && user) {
+      try {
+        await farmRepository.updateFarmProfile(user.id, updated);
+      } catch (e) {
+        console.error('Failed to sync farm profile with cloud:', e);
+      }
+    }
+    showToast('খামার সেটিংস ও মালিকানা তথ্য সফলভাবে সংরক্ষিত হয়েছে!');
+  };
+
   return (
     <div className="min-h-screen bg-[#FBF9F4] text-[#1A281F] flex flex-col antialiased">
       {/* Toast Feedback */}
@@ -995,6 +1020,9 @@ function FarmDashboard() {
             }}
             pendingTasksCount={pendingTasksCount}
             onOpenInstall={triggerInstall}
+            ownerName={farmProfile.ownerName}
+            activeEmployeesCount={activeEmployeesCount}
+            farmName={farmProfile.farmName}
           />
         </div>
 
@@ -1022,6 +1050,8 @@ function FarmDashboard() {
             onOpenInstall={triggerInstall}
             onOpenAuth={() => setIsAuthModalOpen(true)}
             onOpenSetup={() => setIsSetupModalOpen(true)}
+            ownerName={farmProfile.ownerName}
+            farmName={farmProfile.farmName}
           />
 
           {/* Page Content Body */}
@@ -1054,6 +1084,8 @@ function FarmDashboard() {
                   setIsAddTaskOpen(true);
                 }}
                 onToggleTask={handleToggleTask}
+                ownerName={farmProfile.ownerName}
+                farmName={farmProfile.farmName}
               />
             )}
 
@@ -1162,6 +1194,9 @@ function FarmDashboard() {
                 biogasLogs={biogasLogs}
                 biogasInspections={biogasInspections}
                 reminders={consolidatedReminders}
+                ownerName={farmProfile.ownerName}
+                farmName={farmProfile.farmName}
+                farmAddress={farmProfile.address}
               />
             )}
 
@@ -1200,6 +1235,8 @@ function FarmDashboard() {
 
             {currentTab === 'settings' && (
               <SettingsView
+                farmProfile={farmProfile}
+                onUpdateFarmProfile={handleUpdateFarmProfile}
                 onResetDemoData={handleResetDemoData}
                 onLoadSampleData={handleLoadSampleData}
                 onShowToast={(msg) => showToast(msg)}
@@ -1238,6 +1275,9 @@ function FarmDashboard() {
         onAddRecord={handleAddMilkRecord}
         cows={cows}
         initialCowId={selectedCowForRecord?.id}
+        employees={employees}
+        ownerName={farmProfile.ownerName}
+        defaultMilkRate={farmProfile.defaultMilkRate}
       />
 
       <AddExpenseModal
@@ -1249,6 +1289,8 @@ function FarmDashboard() {
         onAddTransaction={handleAddTransaction}
         onUpdateTransaction={handleUpdateTransaction}
         initialRecord={editingTransaction}
+        employees={employees}
+        ownerName={farmProfile.ownerName}
       />
 
       <AddCowModal
@@ -1282,6 +1324,7 @@ function FarmDashboard() {
         onAddTask={handleAddTask}
         employees={employees}
         initialEmployeeId={selectedEmployeeForTask}
+        ownerName={farmProfile.ownerName}
       />
 
       <AddEmployeeModal
@@ -1338,6 +1381,8 @@ function FarmDashboard() {
         onClose={() => setIsModalOpen(false)}
         deferredPrompt={deferredPrompt}
         isInstalled={isInstalled}
+        ownerName={farmProfile.ownerName}
+        farmName={farmProfile.farmName}
       />
 
       {/* Mobile Menu Drawer */}
@@ -1370,6 +1415,9 @@ function FarmDashboard() {
                   setIsMobileMenuOpen(false);
                   triggerInstall();
                 }}
+                ownerName={farmProfile.ownerName}
+                activeEmployeesCount={activeEmployeesCount}
+                farmName={farmProfile.farmName}
               />
             </div>
           </div>

@@ -22,6 +22,9 @@ interface SidebarProps {
   onNavigate: (tab: NavigationTab) => void;
   pendingTasksCount: number;
   onOpenInstall?: () => void;
+  ownerName?: string;
+  activeEmployeesCount?: number;
+  farmName?: string;
 }
 
 export const Sidebar = ({
@@ -29,6 +32,9 @@ export const Sidebar = ({
   onNavigate,
   pendingTasksCount,
   onOpenInstall,
+  ownerName = 'মুমিনুল ইসলাম',
+  activeEmployeesCount = 0,
+  farmName = 'মুমিন এগ্রো',
 }: SidebarProps) => {
   const { user, isConfigured, isDemoMode } = useAuth();
   const navItems: {
@@ -109,7 +115,7 @@ export const Sidebar = ({
           <div className="flex items-center gap-3">
             <CowLogo size={42} rounded="rounded-2xl" />
             <div>
-              <h2 className="text-lg font-bold text-[#16402C] leading-none">মুমিন এগ্রো</h2>
+              <h2 className="text-lg font-bold text-[#16402C] leading-none">{farmName}</h2>
               <p className="text-xs text-gray-500 font-medium mt-1">খামার ব্যবস্থাপনা</p>
             </div>
           </div>
@@ -180,7 +186,9 @@ export const Sidebar = ({
                 </>
               ) : (
                 <>
-                  <p className="text-xs font-bold text-gray-800 truncate">মুমিনুল ইসলাম (মালিক)</p>
+                  <p className="text-xs font-bold text-gray-800 truncate" title={`${ownerName} (মালিক)`}>
+                    {ownerName} (মালিক)
+                  </p>
                   <p className="text-[10px] text-[#2A7A50] font-medium flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#2A7A50]" />
                     খামার সক্রিয়
@@ -190,7 +198,11 @@ export const Sidebar = ({
             </div>
           </div>
           <div className="mt-2 pt-2 border-t border-gray-100 flex items-center justify-between text-[11px] text-[#2A7A50] font-semibold">
-            <span>২ জন কর্মী দায়িত্বে আছেন</span>
+            <span>
+              {activeEmployeesCount > 0
+                ? `${activeEmployeesCount} জন কর্মী দায়িত্বে আছেন`
+                : 'খামার নিজস্ব দায়িত্বে পরিচালিত'}
+            </span>
             <span className="w-2 h-2 rounded-full bg-[#2A7A50] animate-pulse" />
           </div>
         </div>

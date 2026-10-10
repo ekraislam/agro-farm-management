@@ -18,13 +18,17 @@ interface InstallAppModalProps {
   onClose: () => void;
   deferredPrompt: BeforeInstallPromptEvent | null;
   isInstalled: boolean;
+  ownerName?: string;
+  farmName?: string;
 }
 
 export const InstallAppModal = ({
   isOpen,
   onClose,
   deferredPrompt,
-  isInstalled
+  isInstalled,
+  ownerName = 'মুমিনুল ইসলাম',
+  farmName = 'মুমিন এগ্রো',
 }: InstallAppModalProps) => {
   const [activeTab, setActiveTab] = useState<'android' | 'ios' | 'desktop'>('android');
   const [isPrompting, setIsPrompting] = useState(false);
@@ -56,7 +60,7 @@ export const InstallAppModal = ({
             <CowLogo size={48} rounded="rounded-2xl" className="ring-2 ring-[#E5B842]/40" />
             <div>
               <h3 className="font-bold text-lg md:text-xl text-white flex items-center gap-2">
-                <span>মুমিন এগ্রো অ্যাপ ইনস্টল করুন</span>
+                <span>{farmName} অ্যাপ ইনস্টল করুন</span>
               </h3>
               <p className="text-xs text-[#E5B842] font-medium mt-0.5">
                 স্মার্ট ডেইরি ও বায়োগ্যাস খামার অ্যাপ
@@ -271,7 +275,7 @@ export const InstallAppModal = ({
         {/* Footer */}
         <div className="p-4 bg-white border-t border-[#EAE2D0] flex justify-between items-center">
           <p className="text-xs text-gray-500">
-            মালিক: মুমিনুল ইসলাম
+            মালিক: {ownerName}
           </p>
           <button
             onClick={onClose}

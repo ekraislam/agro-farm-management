@@ -9,6 +9,7 @@ interface AddTaskModalProps {
   onAddTask: (task: ReminderTask) => Promise<{ success: boolean; error?: string } | void> | void;
   employees?: Employee[];
   initialEmployeeId?: string;
+  ownerName?: string;
 }
 
 const QUICK_TASK_TEMPLATES = [
@@ -25,17 +26,23 @@ export const AddTaskModal = ({
   onAddTask,
   employees = [],
   initialEmployeeId,
+  ownerName = 'মুমিনুল ইসলাম',
 }: AddTaskModalProps) => {
+  const activeEmployees = employees.filter((e) => !e.isArchived && e.status === 'active');
+  const farmOwner = `${ownerName} (মালিক)`;
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('১২ অক্টোবর ২০২৬');
   const [priority, setPriority] = useState<'high' | 'medium' | 'low'>('high');
   const [category, setCategory] = useState<'vaccine' | 'feed' | 'vet' | 'worker' | 'biogas' | 'other'>('worker');
-  const [assignedEmployeeId, setAssignedEmployeeId] = useState(initialEmployeeId || '');
+  const [assignedEmployeeId, setAssignedEmployeeId] = useState(
+    initialEmployeeId || (activeEmployees.length > 0 ? activeEmployees[0].id : 'owner')
+  );
   const [assignedTo, setAssignedTo] = useState(
-    initialEmployeeId && employees.length > 0 
-      ? (employees.find(e => e.id === initialEmployeeId)?.name || 'মো: রহিম উদ্দিন') 
-      : 'মো: রহিম উদ্দিন'
+    initialEmployeeId
+      ? (activeEmployees.find((e) => e.id === initialEmployeeId)?.name || farmOwner)
+      : (activeEmployees.length > 0 ? activeEmployees[0].name : farmOwner)
   );
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -49,11 +56,11 @@ export const AddTaskModal = ({
 
   const handleWorkerChange = (empId: string) => {
     setAssignedEmployeeId(empId);
-    const emp = employees.find((e) => e.id === empId);
+    const emp = activeEmployees.find((e) => e.id === empId);
     if (emp) {
       setAssignedTo(emp.name);
     } else if (empId === 'owner') {
-      setAssignedTo('মুমিনুল ইসলাম (মালিক)');
+      setAssignedTo(farmOwner);
     } else {
       setAssignedTo(empId);
     }
@@ -228,19 +235,12 @@ export const AddTaskModal = ({
                 onChange={(e) => handleWorkerChange(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm bg-white font-medium"
               >
-                {employees.length > 0 ? (
-                  employees.map((emp) => (
-                    <option key={emp.id} value={emp.id}>
-                      {emp.name} ({emp.role})
-                    </option>
-                  ))
-                ) : (
-                  <>
-                    <option value="মো: রহিম উদ্দিন">মো: রহিম উদ্দিন (প্রধান গোয়ালা)</option>
-                    <option value="করিম হাসান">করিম হাসান (বায়োগ্যাস ইনচার্জ)</option>
-                  </>
-                )}
-                <option value="owner">মুমিনুল ইসলাম (মালিক)</option>
+                <option value="owner">{farmOwner}</option>
+                {activeEmployees.map((emp) => (
+                  <option key={emp.id} value={emp.id}>
+                    {emp.name} ({emp.role})
+                  </option>
+                ))}
               </select>
             </div>
           </div>
