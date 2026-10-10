@@ -170,6 +170,7 @@ export interface CategorizedReminders {
   dueSoon: ReminderTask[];
   upcoming: ReminderTask[];
   completed: ReminderTask[];
+  allUpcoming: ReminderTask[];
 }
 
 /**
@@ -192,6 +193,7 @@ export const categorizeRemindersByUrgency = (
   const dueSoon: ReminderTask[] = [];
   const upcoming: ReminderTask[] = [];
   const completed: ReminderTask[] = [];
+  const allUpcoming: ReminderTask[] = [];
 
   for (const t of tasks) {
     if (t.completed) {
@@ -207,8 +209,10 @@ export const categorizeRemindersByUrgency = (
       dueToday.push(t);
     } else if (dueIso <= soonLimitIso) {
       dueSoon.push(t);
+      allUpcoming.push(t);
     } else {
       upcoming.push(t);
+      allUpcoming.push(t);
     }
   }
 
@@ -220,6 +224,7 @@ export const categorizeRemindersByUrgency = (
   dueToday.sort(sorter);
   dueSoon.sort(sorter);
   upcoming.sort(sorter);
+  allUpcoming.sort(sorter);
   completed.sort((a, b) =>
     toIsoDateString(b.completedAt || b.dueDate).localeCompare(toIsoDateString(a.completedAt || a.dueDate))
   );
@@ -230,6 +235,7 @@ export const categorizeRemindersByUrgency = (
     dueSoon,
     upcoming,
     completed,
+    allUpcoming,
   };
 };
 

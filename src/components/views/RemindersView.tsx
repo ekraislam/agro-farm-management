@@ -29,7 +29,7 @@ import {
   categorizeRemindersByUrgency, 
   consolidateFarmReminders 
 } from '../../utils/healthAccounting';
-import { formatBanglaDate, toIsoDateString } from '../../utils/accounting';
+import { formatBanglaDate } from '../../utils/accounting';
 
 interface RemindersViewProps {
   reminders: ReminderTask[];
@@ -72,15 +72,7 @@ export const RemindersView = ({
   }, [reminders, healthRecords, biogasInspections, cows, employees]);
 
   const categories = useMemo(() => categorizeRemindersByUrgency(consolidatedTasks), [consolidatedTasks]);
-  const { overdue, dueToday, dueSoon, upcoming, completed } = categories;
-
-  // All upcoming future tasks scheduled from tomorrow onwards (e.g. 15th Oct, 18th Oct, etc.)
-  const allFutureTasks = useMemo(() => {
-    const todayIso = toIsoDateString(new Date());
-    return consolidatedTasks
-      .filter((t) => !t.completed && toIsoDateString(t.dueDate) > todayIso)
-      .sort((a, b) => toIsoDateString(a.dueDate).localeCompare(toIsoDateString(b.dueDate)));
-  }, [consolidatedTasks]);
+  const { overdue, dueToday, dueSoon, completed, allUpcoming } = categories;
 
   const filteredTasks = useMemo(() => {
     let list: ReminderTask[];
@@ -95,7 +87,7 @@ export const RemindersView = ({
         list = dueSoon;
         break;
       case 'upcoming':
-        list = allFutureTasks;
+        list = allUpcoming;
         break;
       case 'completed':
         list = completed;
@@ -148,7 +140,7 @@ export const RemindersView = ({
     overdue, 
     dueToday, 
     dueSoon, 
-    upcoming, 
+    allUpcoming, 
     completed, 
     selectedWorkerFilter, 
     selectedPriorityFilter, 
@@ -262,7 +254,7 @@ export const RemindersView = ({
             <span className="text-xs font-bold text-blue-800">ভবিষ্যতের কাজ</span>
             <CalendarClock className="w-4 h-4 text-blue-600" />
           </div>
-          <span className="text-2xl font-black text-blue-800 mt-1 block">{allFutureTasks.length}</span>
+          <span className="text-2xl font-black text-blue-800 mt-1 block">{allUpcoming.length}</span>
           <span className="text-[10px] text-blue-700 mt-0.5 block">১৫ তারিখ সহ পরবর্তী শিডিউল</span>
         </div>
 
@@ -292,7 +284,7 @@ export const RemindersView = ({
             { id: 'overdue', label: `মেয়াদোত্তীর্ণ (${overdue.length})` },
             { id: 'dueToday', label: `আজকের কাজ (${dueToday.length})` },
             { id: 'dueSoon', label: `আগামী ৭ দিন (${dueSoon.length})` },
-            { id: 'upcoming', label: `ভবিষ্যতের কাজ (${allFutureTasks.length})` },
+            { id: 'upcoming', label: `ভবিষ্যতের কাজ (${allUpcoming.length})` },
             { id: 'completed', label: `সম্পন্ন কাজ (${completed.length})` },
           ].map((tab) => (
             <button
