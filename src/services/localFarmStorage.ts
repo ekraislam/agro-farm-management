@@ -124,7 +124,7 @@ export const localFarmStorage = {
   getFarmProfile(): FarmProfile {
     return safeGet<FarmProfile>(STORAGE_KEYS.PROFILE, {
       farmName: 'মুমিন এগ্রো',
-      ownerName: 'মো: মুমিনুল হক (আব্বু)',
+      ownerName: 'মো: মুমিনুল হক',
       phone: '০১৭XXXXXXXX',
       address: 'খামার প্রাঙ্গণ',
       defaultMilkRate: 80,

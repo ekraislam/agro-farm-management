@@ -114,7 +114,7 @@ export const DashboardView = ({
               <span>১০ অক্টোবর ২০২৬</span>
             </div>
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-              আসসালামু আলাইকুম, আব্বু
+              আসসালামু আলাইকুম, মো: মুমিনুল হক
             </h2>
             <p className="text-sm md:text-base text-white/80 mt-1 max-w-xl">
               {summary.todayMilkLiters > 0 ? (

@@ -73,7 +73,7 @@ export const FarmPinModal = ({
               <h2 className="text-lg md:text-xl font-bold">
                 মুমিন এগ্রো — খামার আনলক
               </h2>
-              <p className="text-xs text-white/80 mt-0.5">আব্বুর ব্যবহারের সহজ ক্লাউড সংযোগ</p>
+              <p className="text-xs text-white/80 mt-0.5">খামার মালিকের সহজ ক্লাউড সংযোগ</p>
             </div>
           </div>
           <button

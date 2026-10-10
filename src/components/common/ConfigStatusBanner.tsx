@@ -37,7 +37,7 @@ export const ConfigStatusBanner = ({}: ConfigStatusBannerProps) => {
         <div>
           <span className="font-bold">🌾 খামার ডেটাবেজ সক্রিয়:</span>{' '}
           <span className="text-gray-700">
-            আব্বুর খামারের সকল হিসাব এই ডিভাইসের মেমোরিতে নিরাপদে সংরক্ষিত হচ্ছে (পাসওয়ার্ড ছাড়া সরাসরি ব্যবহারযোগ্য)।
+            খামারের সকল হিসাব এই ডিভাইসে নিরাপদে স্বয়ংক্রিয়ভাবে সংরক্ষিত হচ্ছে।
           </span>
         </div>
       </div>

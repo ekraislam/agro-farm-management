@@ -35,7 +35,7 @@ export const SettingsView = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [farmName, setFarmName] = useState('মুমিন এগ্রো (Mumin Agro)');
-  const [ownerName, setOwnerName] = useState('মো: মুমিনুল হক (আব্বু)');
+  const [ownerName, setOwnerName] = useState('মো: মুমিনুল হক');
   const [phone, setPhone] = useState('০১৭XXXXXXXX');
   const [defaultRate, setDefaultRate] = useState('80');
   const [dairyCapacity, setDairyCapacity] = useState('10');
@@ -120,7 +120,7 @@ export const SettingsView = ({
                 ডেটাবেজ ও ডেটা স্টোরেজ স্থিতি
               </h3>
               <p className="text-xs text-gray-500">
-                আব্বুর খামারের সকল তথ্যের স্বয়ংক্রিয় সংরক্ষণ ব্যবস্থা
+                খামারের সকল তথ্যের স্বয়ংক্রিয় সংরক্ষণ ব্যবস্থা
               </p>
             </div>
           </div>
@@ -159,7 +159,7 @@ export const SettingsView = ({
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-[#2A7A50]" />
               <span className="text-sm font-bold text-gray-900 truncate">
-                {user && !isDemoMode ? user.email : 'আব্বুর খামার (পাসওয়ার্ড ছাড়া সহজ মোড)'}
+                {user && !isDemoMode ? user.email : 'খামার পরিচালক (সহজ মোড)'}
               </span>
             </div>
             <p className="text-[11px] text-gray-500">
@@ -324,7 +324,7 @@ export const SettingsView = ({
                 খামার ব্যাকআপ ও ডেটা সংরক্ষণ (Backup & Restore)
               </h4>
               <p className="text-xs text-gray-500">
-                আব্বুর খামারের সমস্ত হিসাবের ফাইল ডাউনলোড করে পেনড্রাইভ বা ফোনে সুরক্ষিত রাখুন
+                খামারের সমস্ত হিসাবের ফাইল ডাউনলোড করে পেনড্রাইভ বা ফোনে সুরক্ষিত রাখুন
               </p>
             </div>
           </div>
