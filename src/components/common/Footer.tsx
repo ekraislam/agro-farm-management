@@ -1,4 +1,4 @@
-import { Code2, Heart, ShieldCheck } from 'lucide-react';
+import { Code2, Heart } from 'lucide-react';
 import { CowLogo } from './CowLogo';
 
 interface FooterProps {
@@ -8,7 +8,7 @@ interface FooterProps {
 export const Footer = ({ farmName = 'মুমিন এগ্রো' }: FooterProps) => {
   return (
     <footer className="mt-8 border-t border-[#E8DFC9] bg-white/80 backdrop-blur-xs text-gray-600 pb-20 md:pb-6 pt-5 px-4 md:px-8">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
         {/* Left: Branding & Copyright */}
         <div className="flex items-center gap-3 min-w-0">
           <div className="shrink-0 w-8 h-8 flex items-center justify-center">
@@ -29,16 +29,8 @@ export const Footer = ({ farmName = 'মুমিন এগ্রো' }: FooterP
           </div>
         </div>
 
-        {/* Center: License */}
-        <div className="flex items-center gap-1.5 text-xs text-gray-600 bg-[#FAF7F0] px-3 py-1 rounded-xl border border-[#EAE2D0] shrink-0">
-          <ShieldCheck className="w-3.5 h-3.5 text-[#2A7A50] shrink-0" />
-          <span>
-            লাইসেন্স: <strong className="font-bold text-[#16402C]">MIT License</strong> (এমআইটি লাইসেন্স)
-          </span>
-        </div>
-
         {/* Right: Developer Attribution (Ohi in English, rest in Bengali) */}
-        <div className="flex items-center gap-1.5 text-xs font-medium text-gray-700 bg-white px-3 py-1 rounded-xl border border-[#EAE2D0] shadow-2xs shrink-0">
+        <div className="flex items-center gap-1.5 text-xs font-medium text-gray-700 bg-white px-3.5 py-1.5 rounded-xl border border-[#EAE2D0] shadow-2xs shrink-0">
           <Code2 className="w-3.5 h-3.5 text-[#16402C]" />
           <span>ডিজাইন ও ডেভেলপ করেছেন</span>
           <span className="font-bold text-[#16402C] bg-[#E5B842]/20 px-2 py-0.5 rounded-md text-xs border border-[#E5B842]/40 tracking-wide">
