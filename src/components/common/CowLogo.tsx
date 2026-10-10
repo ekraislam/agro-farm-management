@@ -21,7 +21,7 @@ export const CowLogo = ({
       {!hasError ? (
         <img 
           src="/logo.png" 
-          alt="মুমিন এগ্রো লোগো" 
+          alt="খামার লোগো" 
           className="w-full h-full object-cover select-none"
           onError={() => setHasError(true)}
         />

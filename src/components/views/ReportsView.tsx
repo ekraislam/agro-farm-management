@@ -124,19 +124,19 @@ export const ReportsView = ({
   const handleExportCsv = () => {
     switch (activeTab) {
       case 'financial':
-        exportFinancialCsv(financialReport.summary.filteredRecords, dateRange.labelBn);
+        exportFinancialCsv(financialReport.summary.filteredRecords, dateRange.labelBn, farmName);
         break;
       case 'milk':
-        exportMilkCsv(milkReport.dailyBreakdown, dateRange.labelBn);
+        exportMilkCsv(milkReport.dailyBreakdown, dateRange.labelBn, farmName);
         break;
       case 'health':
-        exportHealthCsv(displayedHealthEvents, dateRange.labelBn);
+        exportHealthCsv(displayedHealthEvents, dateRange.labelBn, farmName);
         break;
       case 'employees':
-        exportEmployeeCsv(employeeReport.employeeSummaries, dateRange.labelBn);
+        exportEmployeeCsv(employeeReport.employeeSummaries, dateRange.labelBn, farmName);
         break;
       case 'biogas':
-        exportBiogasCsv(biogasReport.logsList, dateRange.labelBn);
+        exportBiogasCsv(biogasReport.logsList, dateRange.labelBn, farmName);
         break;
     }
   };
@@ -166,7 +166,7 @@ export const ReportsView = ({
               )}
             </div>
             <p className="text-xs md:text-sm text-gray-500 mt-0.5">
-              মুমিন এগ্রো (Mumin Agro) — জমা-খরচ, দুধ দোয়ানো ও বিক্রি, গরুর স্বাস্থ্য, কর্মী হাজিরা এবং বায়োগ্যাসের সঠিক হিসাব
+              {farmName} — জমা-খরচ, দুধ দোয়ানো ও বিক্রি, গরুর স্বাস্থ্য, কর্মী হাজিরা এবং বায়োগ্যাসের সঠিক হিসাব
             </p>
           </div>
         </div>
@@ -1237,8 +1237,8 @@ export const ReportsView = ({
             • কোনো ধরনের অনুমান বা ডুপ্লিকেট গণনা ছাড়া এই রিপোর্টটি প্রস্তুত করা হয়েছে।
           </p>
           <div className="pt-4 flex justify-between items-center text-[11px] text-gray-500">
-            <span>প্রস্তুতকারক: মুমিন এগ্রো ব্যবস্থাপনা সফটওয়্যার</span>
-            <span>স্বাক্ষর: _________________________ (খামার পরিচালক)</span>
+            <span>প্রস্তুতকারক: {farmName} ব্যবস্থাপনা সফটওয়্যার</span>
+            <span>স্বাক্ষর: _________________________ ({ownerName || 'খামার পরিচালক'})</span>
           </div>
         </div>
       </div>

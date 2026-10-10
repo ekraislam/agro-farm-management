@@ -39,6 +39,8 @@ interface AdvisorViewProps {
   biogasInspections?: BiogasInspectionItem[];
   reminders?: ReminderTask[];
   onNavigate: (tab: NavigationTab) => void;
+  farmName?: string;
+  ownerName?: string;
 }
 
 const DEFAULT_SUGGESTIONS = [
@@ -51,17 +53,17 @@ const DEFAULT_SUGGESTIONS = [
   'খামারের রেকর্ড দেখে খরচ কমানোর কী সুযোগ আছে?',
 ];
 
-const INITIAL_WELCOME_MESSAGE: AiChatMessage = {
+const createWelcomeMessage = (farmName: string, ownerName?: string): AiChatMessage => ({
   id: 'msg-welcome-0',
   sender: 'assistant',
-  text: 'আসসালামু আলাইকুম! আমি মুমিন এগ্রোর স্মার্ট পরামর্শক। আপনার খামারের জমা-খরচ, দুধ দোয়ানোর হিসাব, গরুর টিকা এবং কর্মীদের কাজের হিসাব বুঝিয়ে দিতে পারি। যেকোনো প্রশ্ন নিচে লিখুন অথবা ওপরের তালিকায় চাপ দিন।',
-  timestamp: '২০২৬-১০-১০T০৬:০০:০০Z',
+  text: `আসসালামু আলাইকুম${ownerName ? `, ${ownerName}` : ''}! আমি ${farmName}-র স্মার্ট পরামর্শক। আপনার খামারের জমা-খরচ, দুধ দোয়ানোর হিসাব, গরুর টিকা এবং কর্মীদের কাজের হিসাব বুঝিয়ে দিতে পারি। যেকোনো প্রশ্ন নিচে লিখুন অথবা ওপরের তালিকায় চাপ দিন।`,
+  timestamp: new Date().toISOString(),
   evidence: {
     period: 'চলতি মাস',
     relevantView: 'dashboard',
     relevantViewLabelBn: 'আজকের খামার সারাংশ',
   },
-};
+});
 
 export const AdvisorView = ({
   financialRecords = [],
@@ -74,11 +76,15 @@ export const AdvisorView = ({
   biogasInspections = [],
   reminders = [],
   onNavigate,
+  farmName = 'খামার',
+  ownerName,
 }: AdvisorViewProps) => {
   const { user, isConfigured, isDemoMode } = useAuth();
   const isLiveCloud = Boolean(isConfigured && user && !isDemoMode);
 
-  const [messages, setMessages] = useState<AiChatMessage[]>([INITIAL_WELCOME_MESSAGE]);
+  const [messages, setMessages] = useState<AiChatMessage[]>(() => [
+    createWelcomeMessage(farmName, ownerName)
+  ]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -176,7 +182,7 @@ export const AdvisorView = ({
   };
 
   const handleResetChat = () => {
-    setMessages([INITIAL_WELCOME_MESSAGE]);
+    setMessages([createWelcomeMessage(farmName, ownerName)]);
     setErrorMessage(null);
     setLastFailedQuery(null);
   };
@@ -215,7 +221,7 @@ export const AdvisorView = ({
               )}
             </div>
             <p className="text-xs md:text-sm text-gray-500 mt-0.5">
-              মুমিন এগ্রো (Mumin Agro) — আপনার খামারের আসল হিসাব অনুযায়ী সঠিক ও নির্ভরযোগ্য পরামর্শ
+              {farmName} — আপনার খামারের আসল হিসাব অনুযায়ী সঠিক ও নির্ভরযোগ্য পরামর্শ
             </p>
           </div>
         </div>
@@ -291,7 +297,7 @@ export const AdvisorView = ({
                   {!isUser && (
                     <div className="flex items-center gap-1.5 mb-2 pb-1.5 border-b border-[#EAE2D0]">
                       <Sparkles className="w-4 h-4 text-[#E5B842]" />
-                      <span className="font-bold text-xs text-[#16402C]">মুমিন এগ্রো স্মার্ট পরামর্শক</span>
+                      <span className="font-bold text-xs text-[#16402C]">{farmName} স্মার্ট পরামর্শক</span>
                       {msg.isDemoPreview && (
                         <span className="ml-auto text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#EAF5EE] text-[#1B4D35] border border-[#C5E3D0]">
                           পরামর্শ
@@ -427,7 +433,7 @@ export const AdvisorView = ({
             </button>
           </form>
           <p className="text-[10px] text-gray-400 mt-1.5 text-center">
-            মুমিন এগ্রো স্মার্ট খামার পরামর্শক — খামারের হিসাব বিশ্লেষণী পরামর্শ। চিকিৎসাজনিত প্রয়োজনে সর্বদা রেজিস্টার্ড পশু চিকিৎসকের শরণাপন্ন হোন।
+            {farmName} স্মার্ট খামার পরামর্শক — খামারের হিসাব বিশ্লেষণী পরামর্শ। চিকিৎসাজনিত প্রয়োজনে সর্বদা রেজিস্টার্ড পশু চিকিৎসকের শরণাপন্ন হোন।
           </p>
         </div>
       </div>

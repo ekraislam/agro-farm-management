@@ -894,10 +894,11 @@ export function downloadCsv(filename: string, csvRows: string[][]): void {
 
 export function exportFinancialCsv(
   records: FinancialRecord[],
-  rangeLabel: string
+  rangeLabel: string,
+  farmName: string = 'খামার'
 ): void {
   const rows: string[][] = [
-    ['মুমিন এগ্রো (Mumin Agro) — আর্থিক লেনদেন প্রতিবেদন'],
+    [`${farmName} — আর্থিক লেনদেন প্রতিবেদন`],
     ['প্রতিবেদনের সময়সীমা:', rangeLabel],
     ['তৈরির তারিখ:', new Date().toLocaleDateString('bn-BD')],
     [],
@@ -916,16 +917,17 @@ export function exportFinancialCsv(
     ]);
   }
 
-  const cleanFilename = `mumin_agro_finance_${rangeLabel.replace(/[^a-zA-Z0-9_\u0980-\u09FF]/g, '_')}.csv`;
+  const cleanFilename = `${farmName.toLowerCase().replace(/[^a-z0-9_\u0980-\u09FF]/g, '_')}_finance_${rangeLabel.replace(/[^a-zA-Z0-9_\u0980-\u09FF]/g, '_')}.csv`;
   downloadCsv(cleanFilename, rows);
 }
 
 export function exportMilkCsv(
   dailyBreakdown: DailyMilkBreakdownItem[],
-  rangeLabel: string
+  rangeLabel: string,
+  farmName: string = 'খামার'
 ): void {
   const rows: string[][] = [
-    ['মুমিন এগ্রো (Mumin Agro) — দুধ উৎপাদন ও বিক্রয় প্রতিবেদন'],
+    [`${farmName} — দুধ উৎপাদন ও বিক্রয় প্রতিবেদন`],
     ['প্রতিবেদনের সময়সীমা:', rangeLabel],
     ['তৈরির তারিখ:', new Date().toLocaleDateString('bn-BD')],
     [],
@@ -945,16 +947,17 @@ export function exportMilkCsv(
     ]);
   }
 
-  const cleanFilename = `mumin_agro_milk_${rangeLabel.replace(/[^a-zA-Z0-9_\u0980-\u09FF]/g, '_')}.csv`;
+  const cleanFilename = `${farmName.toLowerCase().replace(/[^a-z0-9_\u0980-\u09FF]/g, '_')}_milk_${rangeLabel.replace(/[^a-zA-Z0-9_\u0980-\u09FF]/g, '_')}.csv`;
   downloadCsv(cleanFilename, rows);
 }
 
 export function exportHealthCsv(
   events: CowHealthSummaryItem[],
-  rangeLabel: string
+  rangeLabel: string,
+  farmName: string = 'খামার'
 ): void {
   const rows: string[][] = [
-    ['মুমিন এগ্রো (Mumin Agro) — গাভীর স্বাস্থ্য ও চিকিৎসা প্রতিবেদন'],
+    [`${farmName} — গাভীর স্বাস্থ্য ও চিকিৎসা প্রতিবেদন`],
     ['প্রতিবেদনের সময়সীমা:', rangeLabel],
     ['তৈরির তারিখ:', new Date().toLocaleDateString('bn-BD')],
     [],
@@ -975,16 +978,17 @@ export function exportHealthCsv(
     ]);
   }
 
-  const cleanFilename = `mumin_agro_health_${rangeLabel.replace(/[^a-zA-Z0-9_\u0980-\u09FF]/g, '_')}.csv`;
+  const cleanFilename = `${farmName.toLowerCase().replace(/[^a-z0-9_\u0980-\u09FF]/g, '_')}_health_${rangeLabel.replace(/[^a-zA-Z0-9_\u0980-\u09FF]/g, '_')}.csv`;
   downloadCsv(cleanFilename, rows);
 }
 
 export function exportEmployeeCsv(
   employees: EmployeeAttendanceReportItem[],
-  rangeLabel: string
+  rangeLabel: string,
+  farmName: string = 'খামার'
 ): void {
   const rows: string[][] = [
-    ['মুমিন এগ্রো (Mumin Agro) — কর্মী হাজিরা ও বেতন প্রতিবেদন'],
+    [`${farmName} — কর্মী হাজিরা ও বেতন প্রতিবেদন`],
     ['প্রতিবেদনের সময়সীমা:', rangeLabel],
     ['তৈরির তারিখ:', new Date().toLocaleDateString('bn-BD')],
     [],
@@ -1007,16 +1011,17 @@ export function exportEmployeeCsv(
     ]);
   }
 
-  const cleanFilename = `mumin_agro_employee_${rangeLabel.replace(/[^a-zA-Z0-9_\u0980-\u09FF]/g, '_')}.csv`;
+  const cleanFilename = `${farmName.toLowerCase().replace(/[^a-z0-9_\u0980-\u09FF]/g, '_')}_employee_${rangeLabel.replace(/[^a-zA-Z0-9_\u0980-\u09FF]/g, '_')}.csv`;
   downloadCsv(cleanFilename, rows);
 }
 
 export function exportBiogasCsv(
   logs: BiogasDailyLog[],
-  rangeLabel: string
+  rangeLabel: string,
+  farmName: string = 'খামার'
 ): void {
   const rows: string[][] = [
-    ['মুমিন এগ্রো (Mumin Agro) — বায়োগ্যাস প্ল্যান্ট দৈনিক লগ প্রতিবেদন'],
+    [`${farmName} — বায়োগ্যাস প্ল্যান্ট দৈনিক লগ প্রতিবেদন`],
     ['প্রতিবেদনের সময়সীমা:', rangeLabel],
     ['তৈরির তারিখ:', new Date().toLocaleDateString('bn-BD')],
     [],
@@ -1035,6 +1040,6 @@ export function exportBiogasCsv(
     ]);
   }
 
-  const cleanFilename = `mumin_agro_biogas_${rangeLabel.replace(/[^a-zA-Z0-9_\u0980-\u09FF]/g, '_')}.csv`;
+  const cleanFilename = `${farmName.toLowerCase().replace(/[^a-z0-9_\u0980-\u09FF]/g, '_')}_biogas_${rangeLabel.replace(/[^a-zA-Z0-9_\u0980-\u09FF]/g, '_')}.csv`;
   downloadCsv(cleanFilename, rows);
 }

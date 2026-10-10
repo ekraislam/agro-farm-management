@@ -230,6 +230,29 @@ function FarmDashboard() {
     return employees.filter((e) => !e.isArchived && e.status === 'active').length;
   }, [employees]);
 
+  // Dynamic farm and owner display resolution:
+  // If the owner explicitly entered a custom ownerName (not default "মুমিনুল ইসলাম"), use it.
+  // If farmName was changed away from default "মুমিন এগ্রো" (e.g. to "ohi এগ্রো"),
+  // but ownerName was untouched and left as default "মুমিনুল ইসলাম",
+  // use the customized farmName so "মুমিনুল ইসলাম" does not remain stuck.
+  const displayOwnerName = useMemo(() => {
+    const rawOwner = farmProfile.ownerName?.trim();
+    const rawFarm = farmProfile.farmName?.trim();
+    if (rawOwner && rawOwner !== 'মুমিনুল ইসলাম') {
+      return rawOwner;
+    }
+    if (rawFarm && rawFarm !== 'মুমিন এগ্রো') {
+      return rawFarm;
+    }
+    return rawOwner || rawFarm || 'মুমিনুল ইসলাম';
+  }, [farmProfile.ownerName, farmProfile.farmName]);
+
+  // Keep browser document title dynamically in sync with the farm's name
+  useEffect(() => {
+    const titleName = farmProfile.farmName?.trim() || 'খামার';
+    document.title = `${titleName} — স্মার্ট খামার ব্যবস্থাপনা`;
+  }, [farmProfile.farmName]);
+
   // Dynamic summary computation (preserving active non-archived cows)
   const activeCows = cows.filter((c) => !c.isArchived);
   const milkingCows = activeCows.filter((c) => c.status === 'milking').length;
@@ -545,7 +568,7 @@ function FarmDashboard() {
         completed: false,
         cowId: record.cowId,
         relatedHealthRecordId: record.id,
-        assignedTo: employees[0]?.name || `${farmProfile.ownerName} (মালিক)`,
+        assignedTo: employees[0]?.name || `${displayOwnerName} (মালিক)`,
       };
       setDemoReminders([reminderTask, ...demoReminders]);
     }
@@ -995,7 +1018,7 @@ function FarmDashboard() {
             }}
             pendingTasksCount={pendingTasksCount}
             onOpenInstall={triggerInstall}
-            ownerName={farmProfile.ownerName}
+            ownerName={displayOwnerName}
             activeEmployeesCount={activeEmployeesCount}
             farmName={farmProfile.farmName}
           />
@@ -1025,7 +1048,7 @@ function FarmDashboard() {
             onOpenInstall={triggerInstall}
             onOpenAuth={() => setIsAuthModalOpen(true)}
             onOpenSetup={() => setIsSetupModalOpen(true)}
-            ownerName={farmProfile.ownerName}
+            ownerName={displayOwnerName}
             farmName={farmProfile.farmName}
           />
 
@@ -1059,7 +1082,7 @@ function FarmDashboard() {
                   setIsAddTaskOpen(true);
                 }}
                 onToggleTask={handleToggleTask}
-                ownerName={farmProfile.ownerName}
+                ownerName={displayOwnerName}
                 farmName={farmProfile.farmName}
               />
             )}
@@ -1169,7 +1192,7 @@ function FarmDashboard() {
                 biogasLogs={biogasLogs}
                 biogasInspections={biogasInspections}
                 reminders={consolidatedReminders}
-                ownerName={farmProfile.ownerName}
+                ownerName={displayOwnerName}
                 farmName={farmProfile.farmName}
                 farmAddress={farmProfile.address}
               />
@@ -1205,6 +1228,8 @@ function FarmDashboard() {
                   setCurrentTab(tab);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
+                farmName={farmProfile.farmName}
+                ownerName={displayOwnerName}
               />
             )}
 
@@ -1250,7 +1275,7 @@ function FarmDashboard() {
         cows={cows}
         initialCowId={selectedCowForRecord?.id}
         employees={employees}
-        ownerName={farmProfile.ownerName}
+        ownerName={displayOwnerName}
         defaultMilkRate={farmProfile.defaultMilkRate}
       />
 
@@ -1264,7 +1289,7 @@ function FarmDashboard() {
         onUpdateTransaction={handleUpdateTransaction}
         initialRecord={editingTransaction}
         employees={employees}
-        ownerName={farmProfile.ownerName}
+        ownerName={displayOwnerName}
       />
 
       <AddCowModal
@@ -1298,7 +1323,7 @@ function FarmDashboard() {
         onAddTask={handleAddTask}
         employees={employees}
         initialEmployeeId={selectedEmployeeForTask}
-        ownerName={farmProfile.ownerName}
+        ownerName={displayOwnerName}
       />
 
       <AddEmployeeModal
@@ -1355,7 +1380,7 @@ function FarmDashboard() {
         onClose={() => setIsModalOpen(false)}
         deferredPrompt={deferredPrompt}
         isInstalled={isInstalled}
-        ownerName={farmProfile.ownerName}
+        ownerName={displayOwnerName}
         farmName={farmProfile.farmName}
       />
 
@@ -1389,7 +1414,7 @@ function FarmDashboard() {
                   setIsMobileMenuOpen(false);
                   triggerInstall();
                 }}
-                ownerName={farmProfile.ownerName}
+                ownerName={displayOwnerName}
                 activeEmployeesCount={activeEmployeesCount}
                 farmName={farmProfile.farmName}
               />

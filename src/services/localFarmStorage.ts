@@ -133,7 +133,7 @@ export const localFarmStorage = {
   },
 
   getFarmProfile(): FarmProfile {
-    return safeGet<FarmProfile>(STORAGE_KEYS.PROFILE, {
+    const defaultProfile: FarmProfile = {
       farmName: 'মুমিন এগ্রো',
       ownerName: 'মুমিনুল ইসলাম',
       phone: '০১৭XXXXXXXX',
@@ -141,9 +141,19 @@ export const localFarmStorage = {
       defaultMilkRate: 80,
       dairyCapacity: 10,
       notificationsEnabled: true,
-    });
+    };
+    const saved = safeGet<FarmProfile>(STORAGE_KEYS.PROFILE, defaultProfile);
+    // If farmName has been customized away from 'মুমিন এগ্রো', but ownerName was still the default 'মুমিনুল ইসলাম',
+    // align ownerName to the custom farm name so the hardcoded demo name never lingers!
+    if (saved.farmName && saved.farmName.trim() !== 'মুমিন এগ্রো' && (!saved.ownerName || saved.ownerName.trim() === 'মুমিনুল ইসলাম')) {
+      saved.ownerName = saved.farmName;
+    }
+    return saved;
   },
   saveFarmProfile(profile: FarmProfile): void {
+    if (profile.farmName && profile.farmName.trim() !== 'মুমিন এগ্রো' && (!profile.ownerName || profile.ownerName.trim() === 'মুমিনুল ইসলাম')) {
+      profile.ownerName = profile.farmName;
+    }
     safeSet(STORAGE_KEYS.PROFILE, profile);
   },
 
@@ -172,9 +182,10 @@ export const localFarmStorage = {
   },
 
   exportBackup(): string {
+    const profile = this.getFarmProfile();
     const data = {
       exportDate: new Date().toISOString(),
-      farmName: 'মুমিন এগ্রো',
+      farmName: profile.farmName || 'খামার',
       cows: this.getCows(),
       milkRecords: this.getMilkRecords(),
       financialRecords: this.getFinancialRecords(),

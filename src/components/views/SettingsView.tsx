@@ -48,8 +48,13 @@ export const SettingsView = ({
 
   useEffect(() => {
     if (farmProfile) {
-      setFarmName(farmProfile.farmName || 'মুমিন এগ্রো');
-      setOwnerName(farmProfile.ownerName || 'মুমিনুল ইসলাম');
+      const resolvedFarm = farmProfile.farmName || 'মুমিন এগ্রো';
+      let resolvedOwner = farmProfile.ownerName || 'মুমিনুল ইসলাম';
+      if (resolvedFarm !== 'মুমিন এগ্রো' && resolvedOwner === 'মুমিনুল ইসলাম') {
+        resolvedOwner = resolvedFarm;
+      }
+      setFarmName(resolvedFarm);
+      setOwnerName(resolvedOwner);
       setPhone(farmProfile.phone || '');
       setAddress(farmProfile.address || 'খামার প্রাঙ্গণ');
       setDefaultRate(String(farmProfile.defaultMilkRate || 80));
@@ -58,13 +63,30 @@ export const SettingsView = ({
     }
   }, [farmProfile]);
 
+  const handleFarmNameChange = (val: string) => {
+    setFarmName(val);
+    if (ownerName === farmName || ownerName === 'মুমিনুল ইসলাম' || !ownerName.trim()) {
+      setOwnerName(val);
+    }
+  };
+
   const handleSave = async (e: FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
+    const trimmedFarm = farmName.trim() || 'মুমিন এগ্রো';
+    let trimmedOwner = ownerName.trim();
+
+    // If user customized farm name but owner name was left as the hardcoded default "মুমিনুল ইসলাম",
+    // adapt owner name so the old hardcoded name doesn't linger.
+    if (trimmedFarm !== 'মুমিন এগ্রো' && (trimmedOwner === 'মুমিনুল ইসলাম' || !trimmedOwner)) {
+      trimmedOwner = trimmedFarm;
+      setOwnerName(trimmedFarm);
+    }
+
     const updated: FarmProfile = {
       ...farmProfile,
-      farmName: farmName.trim() || 'মুমিন এগ্রো',
-      ownerName: ownerName.trim() || 'মুমিনুল ইসলাম',
+      farmName: trimmedFarm,
+      ownerName: trimmedOwner || trimmedFarm || 'মুমিনুল ইসলাম',
       phone: phone.trim(),
       address: address.trim() || 'খামার প্রাঙ্গণ',
       defaultMilkRate: parseFloat(defaultRate) || 80,
@@ -184,7 +206,7 @@ export const SettingsView = ({
               <input
                 type="text"
                 value={farmName}
-                onChange={(e) => setFarmName(e.target.value)}
+                onChange={(e) => handleFarmNameChange(e.target.value)}
                 placeholder="যেমন: মুমিন এগ্রো"
                 className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] focus:ring-1 focus:ring-[#16402C] outline-hidden text-sm bg-white font-semibold"
                 required

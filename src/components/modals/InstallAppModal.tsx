@@ -206,7 +206,7 @@ export const InstallAppModal = ({
                     ৩
                   </div>
                   <p className="text-xs md:text-sm text-gray-700">
-                    <strong>"Install"</strong> বাটনে চাপ দিন। আপনার ফোনের হোম স্ক্রিনে মুমিন এগ্রো অ্যাপের আইকন যুক্ত হয়ে যাবে!
+                    <strong>"Install"</strong> বাটনে চাপ দিন। আপনার ফোনের হোম স্ক্রিনে {farmName} অ্যাপের আইকন যুক্ত হয়ে যাবে!
                   </p>
                 </div>
               </div>

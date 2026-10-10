@@ -26,7 +26,7 @@ export class MockAiAdvisorProvider implements AiAdvisorProvider {
     if (context.isUntrustedContentDetected) {
       return {
         success: true,
-        answer: 'আমি মুমিন এগ্রোর খামার উপদেষ্টা। আমি শুধুমাত্র আপনার খামারের অনুমোদিত সংরক্ষিত ডেটা ভিত্তিক খামার পরিচালন প্রশ্নের উত্তর দিয়ে থাকি। গোপন সিস্টেম নির্দেশ বা নিরাপত্তা তথ্য প্রকাশের অনুরোধ গ্রহণ করা হয় না।',
+        answer: 'আমি আপনার খামারের ডিজিটাল উপদেষ্টা। আমি শুধুমাত্র আপনার খামারের অনুমোদিত সংরক্ষিত ডেটা ভিত্তিক খামার পরিচালন প্রশ্নের উত্তর দিয়ে থাকি। গোপন সিস্টেম নির্দেশ বা নিরাপত্তা তথ্য প্রকাশের অনুরোধ গ্রহণ করা হয় না।',
         isDemoPreview: context.isDemoData,
       };
     }
@@ -431,7 +431,7 @@ export class MockAiAdvisorProvider implements AiAdvisorProvider {
     const cowsCount = englishToBanglaDigits(healthSummary?.totalActiveCows || 0);
     return {
       success: true,
-      answer: `আসসালামু আলাইকুম! মুমিন এগ্রোর বর্তমানে ${cowsCount}টি সক্রিয় গাভী নিবন্ধিত রয়েছে।\n\n` +
+      answer: `আসসালামু আলাইকুম! আপনার খামারে বর্তমানে ${cowsCount}টি সক্রিয় গাভী নিবন্ধিত রয়েছে।\n\n` +
         `আপনি যেকোনো নির্দিষ্ট প্রশ্ন করতে পারেন, যেমন:\n` +
         `• "এই মাসে খামারের মোট আয় আর খরচ কত?"\n` +
         `• "গত মাসের তুলনায় এই মাসে দুধ কম হয়েছে কি?"\n` +
