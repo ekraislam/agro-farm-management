@@ -3,8 +3,6 @@ import {
   Settings, 
   RotateCcw, 
   Save, 
-  Database, 
-  ShieldCheck, 
   LogOut, 
   KeyRound, 
   CheckCircle2,
@@ -31,11 +29,11 @@ export const SettingsView = ({
   onOpenAuth,
   onImportBackup,
 }: SettingsViewProps) => {
-  const { user, isConfigured, isDemoMode, setDemoMode, signOut } = useAuth();
+  const { user, isConfigured, isDemoMode, signOut } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [farmName, setFarmName] = useState('মুমিন এগ্রো (Mumin Agro)');
-  const [ownerName, setOwnerName] = useState('মো: মুমিনুল হক');
+  const [ownerName, setOwnerName] = useState('মো: মোমিনুল ইসলাম');
   const [phone, setPhone] = useState('০১৭XXXXXXXX');
   const [defaultRate, setDefaultRate] = useState('80');
   const [dairyCapacity, setDairyCapacity] = useState('10');
@@ -93,112 +91,44 @@ export const SettingsView = ({
 
   return (
     <div className="space-y-6 pb-20 md:pb-12 max-w-4xl">
-      {/* Top Banner */}
-      <div className="bg-white rounded-3xl p-5 md:p-6 border border-[#EAE2D0] shadow-xs flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-[#16402C]/10 text-[#16402C]">
-            <Settings className="w-6 h-6" />
-          </div>
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-[#16402C]">খামার সেটিংস ও তথ্য</h2>
-            <p className="text-xs md:text-sm text-gray-500 mt-0.5">
-              খামারের সাধারণ তথ্য, দুধের ডিফল্ট বিক্রয় দর ও ডেটাবেজ ব্যাকআপ
-            </p>
-          </div>
+      {/* Sleek Modern Settings Header & Mode Indicator */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#EAE2D0]">
+        <div>
+          <h2 className="text-xl md:text-2xl font-bold text-[#16402C] flex items-center gap-2">
+            <div className="p-2 rounded-xl bg-[#16402C]/10 text-[#16402C]">
+              <Settings className="w-5 h-5" />
+            </div>
+            <span>খামার সেটিংস ও তথ্য</span>
+          </h2>
+          <p className="text-xs md:text-sm text-gray-500 mt-1">
+            মালিকানা বিবরণ, দুধের ডিফল্ট দর ও ব্যাকআপ সংরক্ষণ
+          </p>
         </div>
-      </div>
 
-      {/* Database Mode Card */}
-      <div className="bg-white rounded-3xl border border-[#EAE2D0] p-5 md:p-6 shadow-xs space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-[#F2ECE1]">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-[#2A7A50]/10 text-[#2A7A50]">
-              <Database className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="font-bold text-base md:text-lg text-[#16402C]">
-                ডেটাবেজ ও ডেটা স্টোরেজ স্থিতি
-              </h3>
-              <p className="text-xs text-gray-500">
-                খামারের সকল তথ্যের স্বয়ংক্রিয় সংরক্ষণ ব্যবস্থা
-              </p>
-            </div>
-          </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EAF5EE] text-[#1B4D35] text-xs font-bold border border-[#C5E3D0]">
+            <CheckCircle2 className="w-3.5 h-3.5 text-[#2A7A50]" />
+            {isConfigured && user && !isDemoMode ? 'ক্লাউড ডেটাবেজ সক্রিয়' : 'অফলাইন মেমোরি সক্রিয়'}
+          </span>
 
           {isConfigured && user && !isDemoMode ? (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF5EE] text-[#1B4D35] text-xs font-bold border border-[#C5E3D0]">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#2A7A50]" />
-              ক্লাউড সক্রিয়
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EAF5EE] text-[#1B4D35] text-xs font-bold border border-[#C5E3D0]">
-              <HardDrive className="w-3.5 h-3.5 text-[#2A7A50]" />
-              অফলাইন লোকাল স্টোরেজ সক্রিয়
-            </span>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-4 rounded-2xl bg-[#FAF7F0] border border-[#EAE2D0] space-y-1.5">
-            <span className="text-xs font-semibold text-gray-500 block">বর্তমান স্টোরেজ মোড</span>
-            <div className="flex items-center gap-2">
-              <HardDrive className="w-4 h-4 text-[#2A7A50]" />
-              <span className="text-sm font-bold text-gray-900">
-                {isConfigured && user && !isDemoMode ? 'Supabase ক্লাউড ডেটাবেজ' : 'ডিভাইস লোকাল মেমোরি (অফলাইন)'}
-              </span>
-            </div>
-            <p className="text-[11px] text-gray-500">
-              {isConfigured && user && !isDemoMode
-                ? 'অনলাইন ক্লাউডে সরাসরি ব্যাকআপ ও সিঙ্ক হচ্ছে।'
-                : 'প্রতিটি নতুন দুধের রেকর্ড, খরচ ও গরু স্বয়ংক্রিয়ভাবে ব্রাউজারে স্থায়ীভাবে সেভ থাকে। রিফ্রেশ করলেও হারাবে না।'}
-            </p>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-[#FAF7F0] border border-[#EAE2D0] space-y-1.5">
-            <span className="text-xs font-semibold text-gray-500 block">ব্যবহারকারীর ধরন</span>
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-[#2A7A50]" />
-              <span className="text-sm font-bold text-gray-900 truncate">
-                {user && !isDemoMode ? user.email : 'খামার পরিচালক (সহজ মোড)'}
-              </span>
-            </div>
-            <p className="text-[11px] text-gray-500">
-              {user && !isDemoMode
-                ? 'Row Level Security (RLS) সক্রিয়।'
-                : 'কোনো লগইন বা পাসওয়ার্ড দেওয়ার প্রয়োজন নেই — সরাসরি ব্যবহার করা যাবে।'}
-            </p>
-          </div>
-        </div>
-
-        <div className="pt-2 flex flex-wrap items-center gap-3">
-          {isConfigured && user && !isDemoMode ? (
-            <>
-              <button
-                type="button"
-                onClick={() => setDemoMode(true)}
-                className="px-4 py-2.5 rounded-xl bg-white hover:bg-gray-50 text-[#8C6200] font-bold text-xs border border-[#F7E2A9] flex items-center gap-2 transition-colors shadow-2xs"
-              >
-                <span>অফলাইন লোকাল মোডে যান</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => void signOut()}
-                className="px-4 py-2.5 rounded-xl bg-[#FEE2E2] hover:bg-[#FECACA] text-[#991B1B] font-bold text-xs border border-[#FCA5A5] flex items-center gap-2 transition-colors shadow-2xs"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>লগআউট করুন</span>
-              </button>
-            </>
+            <button
+              type="button"
+              onClick={() => void signOut()}
+              className="px-3 py-1.5 rounded-xl bg-[#FEE2E2] hover:bg-[#FECACA] text-[#991B1B] font-bold text-xs border border-[#FCA5A5] flex items-center gap-1 transition-colors cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>লগআউট</span>
+            </button>
           ) : (
             onOpenAuth && (
               <button
                 type="button"
                 onClick={onOpenAuth}
-                className="px-4 py-2 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-bold text-xs border border-[#E2DAC7] flex items-center gap-2 transition-colors shadow-2xs cursor-pointer"
+                className="px-3 py-1.5 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-bold text-xs border border-[#E2DAC7] flex items-center gap-1 transition-colors cursor-pointer shadow-2xs"
               >
-                <KeyRound className="w-3.5 h-3.5 text-gray-500" />
-                <span>ঐচ্ছিক: ক্লাউড অ্যাকাউন্ট লিঙ্ক</span>
+                <KeyRound className="w-3 h-3 text-gray-500" />
+                <span>ক্লাউড লিঙ্ক</span>
               </button>
             )
           )}

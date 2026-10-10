@@ -183,7 +183,7 @@ export const AddMilkModal = ({
               >
                 <option value="মো: রহিম উদ্দিন">মো: রহিম উদ্দিন (প্রধান গোয়ালা)</option>
                 <option value="করিম হাসান">করিম হাসান (সহকারী)</option>
-                <option value="মো: মুমিনুল হক (মালিক)">মো: মুমিনুল হক (মালিক)</option>
+                <option value="মো: মোমিনুল ইসলাম (মালিক)">মো: মোমিনুল ইসলাম (মালিক)</option>
               </select>
             </div>
           </div>

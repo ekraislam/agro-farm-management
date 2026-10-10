@@ -30,7 +30,7 @@ export const AuthModal = ({
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [ownerName, setOwnerName] = useState('মো: মুমিনুল হক');
+  const [ownerName, setOwnerName] = useState('মো: মোমিনুল ইসলাম');
   const [farmName, setFarmName] = useState('মুমিন এগ্রো');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -211,7 +211,7 @@ export const AuthModal = ({
                     type="text"
                     value={ownerName}
                     onChange={(e) => setOwnerName(e.target.value)}
-                    placeholder="যেমন: মো: মুমিনুল হক"
+                    placeholder="যেমন: মো: মোমিনুল ইসলাম"
                     className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-gray-300 text-sm focus:border-[#16402C] outline-hidden"
                     required
                   />

@@ -114,7 +114,7 @@ export const Header = ({
           >
             <UserCheck className="w-4 h-4 text-[#2A7A50]" />
             <span className="hidden sm:inline text-xs font-bold truncate">
-              {isConfigured && user && !isDemoMode ? 'মুমিন এগ্রো (ক্লাউড)' : 'মো: মুমিনুল হক (মালিক)'}
+              {isConfigured && user && !isDemoMode ? 'মুমিন এগ্রো (ক্লাউড)' : 'মো: মোমিনুল ইসলাম (মালিক)'}
             </span>
           </button>
 

@@ -179,7 +179,7 @@ export const Sidebar = ({
                 </>
               ) : (
                 <>
-                  <p className="text-xs font-bold text-gray-800 truncate">মো: মুমিনুল হক (মালিক)</p>
+                  <p className="text-xs font-bold text-gray-800 truncate">মো: মোমিনুল ইসলাম (মালিক)</p>
                   <p className="text-[10px] text-[#2A7A50] font-medium flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#2A7A50]" />
                     খামার ডেটাবেজ সক্রিয়

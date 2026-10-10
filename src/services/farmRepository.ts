@@ -67,7 +67,7 @@ export const farmRepository = {
           data: {
             userId,
             farmName: 'মুমিন এগ্রো',
-            ownerName: 'মো: মুমিনুল হক',
+            ownerName: 'মো: মোমিনুল ইসলাম',
             phone: '০১৭XXXXXXXX',
             address: 'খামার প্রাঙ্গণ',
             defaultMilkRate: 80,
@@ -105,7 +105,7 @@ export const farmRepository = {
       const payload = {
         user_id: userId,
         farm_name: profile.farmName ?? 'মুমিন এগ্রো',
-        owner_name: profile.ownerName ?? 'মো: মুমিনুল হক',
+        owner_name: profile.ownerName ?? 'মো: মোমিনুল ইসলাম',
         phone: profile.phone ?? null,
         address: profile.address ?? null,
         default_milk_rate: profile.defaultMilkRate ?? 80,
