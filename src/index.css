@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-bengali: 'Hind Siliguri', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: var(--font-bengali);
+    background-color: #FBF9F4;
+    color: #1A281F;
+    overflow-x: hidden;
+  }
+
+  /* Custom scrollbar for clean UI */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #F4EFE2;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #C4B9A3;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #1B4D35;
+  }
+}
+
+/* Touch friendly minimums for mobile accessibility */
+.touch-target {
+  min-height: 48px;
+  min-width: 48px;
+}
+
+/* Print-specific layout rules for A4 report generation */
+@media print {
+  body {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+    font-size: 12pt;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide navigation, actions, and non-printable chrome */
+  nav,
+  header,
+  aside,
+  footer,
+  .no-print,
+  button,
+  .print-hidden {
+    display: none !important;
+  }
+
+  /* Full width printable container */
+  .printable-report {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Prevent awkward page break inside tables and cards */
+  .avoid-page-break,
+  table,
+  tr,
+  .metric-card {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Ensure headers repeat if table spans multiple pages */
+  thead {
+    display: table-header-group;
+  }
+}
+
