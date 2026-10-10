@@ -258,7 +258,8 @@ export const AddHealthRecordModal = ({
                 <input
                   type="number"
                   min="0"
-                  step="10"
+                  step="any"
+                  inputMode="decimal"
                   value={cost}
                   onChange={(e) => {
                     setCost(e.target.value);

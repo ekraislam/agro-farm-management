@@ -354,8 +354,9 @@ export const AddCowModal = ({
                 </label>
                 <input
                   type="number"
-                  step="0.1"
+                  step="any"
                   min="0.1"
+                  inputMode="decimal"
                   value={ageYears}
                   onChange={(e) => setAgeYears(e.target.value)}
                   placeholder="যেমন: ৩.৫"
@@ -385,8 +386,9 @@ export const AddCowModal = ({
             </label>
             <input
               type="number"
-              step="0.5"
+              step="any"
               min="0"
+              inputMode="decimal"
               disabled={status !== 'milking'}
               value={status === 'milking' ? dailyAvgMilk : '০'}
               onChange={(e) => setDailyAvgMilk(e.target.value)}
@@ -423,6 +425,8 @@ export const AddCowModal = ({
               <input
                 type="number"
                 min="0"
+                step="any"
+                inputMode="decimal"
                 value={purchasePrice}
                 onChange={(e) => setPurchasePrice(e.target.value)}
                 placeholder="যেমন: ১,২০,০০০"

@@ -234,7 +234,8 @@ export const AddEmployeeModal = ({
                 <input
                   type="number"
                   min="0"
-                  step="500"
+                  step="any"
+                  inputMode="decimal"
                   value={salaryMonthly}
                   onChange={(e) => {
                     setSalaryMonthly(e.target.value);

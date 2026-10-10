@@ -249,7 +249,7 @@ export const AddMilkModal = ({
                 </label>
                 <input
                   type="number"
-                  step="0.1"
+                  step="any"
                   min="0"
                   inputMode="decimal"
                   value={morningLiters}
@@ -267,7 +267,7 @@ export const AddMilkModal = ({
                 </label>
                 <input
                   type="number"
-                  step="0.1"
+                  step="any"
                   min="0"
                   inputMode="decimal"
                   value={eveningLiters}
@@ -322,7 +322,7 @@ export const AddMilkModal = ({
                     </label>
                     <input
                       type="number"
-                      step="0.1"
+                      step="any"
                       min="0.1"
                       inputMode="decimal"
                       value={soldLiters}
@@ -387,7 +387,8 @@ export const AddMilkModal = ({
                       <input
                         type="number"
                         min="1"
-                        inputMode="numeric"
+                        step="any"
+                        inputMode="decimal"
                         value={pricePerLiter}
                         onChange={(e) => {
                           setPricePerLiter(e.target.value);

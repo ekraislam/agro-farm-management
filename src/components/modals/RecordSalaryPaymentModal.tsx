@@ -229,7 +229,8 @@ export const RecordSalaryPaymentModal = ({
               <input
                 type="number"
                 min="1"
-                step="100"
+                step="any"
+                inputMode="decimal"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-[#EAE2D0] outline-hidden focus:border-[#16402C] bg-[#FAF7F0]/40 font-bold text-[#16402C] text-base"

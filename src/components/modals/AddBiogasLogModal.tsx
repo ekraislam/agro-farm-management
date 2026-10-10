@@ -158,7 +158,8 @@ export const AddBiogasLogModal = ({
               <input
                 type="number"
                 min="0"
-                step="1"
+                step="any"
+                inputMode="decimal"
                 value={dungKg}
                 onChange={(e) => handleDungChange(e.target.value)}
                 placeholder="১১০"
@@ -180,7 +181,8 @@ export const AddBiogasLogModal = ({
               <input
                 type="number"
                 min="0"
-                step="1"
+                step="any"
+                inputMode="decimal"
                 value={waterLiters}
                 onChange={(e) => setWaterLiters(e.target.value)}
                 placeholder="১১০"
@@ -209,7 +211,8 @@ export const AddBiogasLogModal = ({
                 type="number"
                 min="0"
                 max="24"
-                step="0.5"
+                step="any"
+                inputMode="decimal"
                 value={burnHours}
                 onChange={(e) => setBurnHours(e.target.value)}
                 placeholder="৫.৫"
@@ -231,7 +234,8 @@ export const AddBiogasLogModal = ({
               <input
                 type="number"
                 min="0"
-                step="1"
+                step="any"
+                inputMode="decimal"
                 value={slurryBags}
                 onChange={(e) => setSlurryBags(e.target.value)}
                 placeholder="২"
