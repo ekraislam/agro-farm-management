@@ -258,4 +258,5 @@ export interface FarmProfile {
   defaultMilkRate: number;
   dairyCapacity: number;
   notificationsEnabled: boolean;
+  securityPin?: string;
 }

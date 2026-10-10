@@ -9,11 +9,13 @@ import {
   Trash2,
   Upload,
   User,
-  ShieldCheck
+  ShieldCheck,
+  Lock
 } from 'lucide-react';
 import { useAuth } from '../../context/useAuth';
 import type { FarmProfile } from '../../types/farm';
 import { localFarmStorage } from '../../services/localFarmStorage';
+import { SecurityPinModal } from '../modals/SecurityPinModal';
 
 interface SettingsViewProps {
   farmProfile: FarmProfile;
@@ -44,7 +46,9 @@ export const SettingsView = ({
   const [defaultRate, setDefaultRate] = useState(String(farmProfile?.defaultMilkRate || 80));
   const [dairyCapacity, setDairyCapacity] = useState(String(farmProfile?.dairyCapacity || 10));
   const [notifications, setNotifications] = useState(farmProfile?.notificationsEnabled ?? true);
+  const [securityPin, setSecurityPin] = useState(farmProfile?.securityPin || '1234');
   const [isSaving, setIsSaving] = useState(false);
+  const [isPinModalOpen, setIsPinModalOpen] = useState(false);
 
   useEffect(() => {
     if (farmProfile) {
@@ -60,6 +64,7 @@ export const SettingsView = ({
       setDefaultRate(String(farmProfile.defaultMilkRate || 80));
       setDairyCapacity(String(farmProfile.dairyCapacity || 10));
       setNotifications(farmProfile.notificationsEnabled ?? true);
+      setSecurityPin(farmProfile.securityPin || '1234');
     }
   }, [farmProfile]);
 
@@ -92,6 +97,7 @@ export const SettingsView = ({
       defaultMilkRate: parseFloat(defaultRate) || 80,
       dairyCapacity: parseInt(dairyCapacity, 10) || 10,
       notificationsEnabled: notifications,
+      securityPin: securityPin.trim() || '1234',
     };
 
     try {
@@ -104,11 +110,23 @@ export const SettingsView = ({
   };
 
   const handleConfirmReset = () => {
-    const confirmed = window.confirm(
-      'আপনি কি নিশ্চিত যে খামারের সকল হিসাব ও রেকর্ড মুছে একদম খালি করতে চান?\n\n(পরামর্শ: মুছে ফেলার আগে একটি ব্যাকআপ ফাইল ডাউনলোড করে রাখা নিরাপদ)'
-    );
-    if (confirmed) {
-      onResetDemoData();
+    setIsPinModalOpen(true);
+  };
+
+  const handleDownloadEmergencyBackup = () => {
+    try {
+      const backupJson = localFarmStorage.exportBackup();
+      const blob = new Blob([backupJson], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `farm_emergency_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch {
+      console.error('Emergency backup generation failed');
     }
   };
 
@@ -289,6 +307,26 @@ export const SettingsView = ({
                 নতুন দুধের হিসাব লেখার সময় এই দরটি স্বয়ংক্রিয়ভাবে বসবে
               </span>
             </div>
+
+            <div>
+              <label className="block text-xs font-bold text-gray-700 mb-1 flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5 text-[#2A7A50]" />
+                <span>খামারের ৪ ডিজিটের নিরাপত্তা পিন কোড *</span>
+              </label>
+              <input
+                type="password"
+                maxLength={4}
+                inputMode="numeric"
+                value={securityPin}
+                onChange={(e) => setSecurityPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                placeholder="১২৩৪"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] focus:ring-1 focus:ring-[#16402C] outline-hidden text-sm bg-white font-mono tracking-widest font-bold"
+                required
+              />
+              <span className="text-[11px] text-gray-400 mt-1 block">
+                খামারের সকল ডেটা খালি করতে এই পিন কোডটি প্রয়োজন হবে (ডিফল্ট: ১২৩৪)
+              </span>
+            </div>
           </div>
 
           <div className="pt-2 flex items-center justify-between p-3.5 bg-[#FAF7F0] rounded-2xl border border-[#EAE2D0]">
@@ -386,19 +424,22 @@ export const SettingsView = ({
           </div>
         </div>
 
-        {/* Safe Farm Reset (Without Any Demo Fiction) */}
-        <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        {/* Safe Farm Reset (PIN Protected with Auto-Backup) */}
+        <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-red-50/50 p-4 rounded-2xl border border-red-100">
           <div className="space-y-0.5">
-            <span className="font-bold text-xs text-gray-700 block">নতুন করে খামার শুরু করতে চান?</span>
+            <span className="font-bold text-xs text-gray-800 flex items-center gap-1.5">
+              <Lock className="w-3.5 h-3.5 text-red-600 shrink-0" />
+              <span>নতুন করে খামার শুরু করতে চান? (পিন কোড দ্বারা সুরক্ষিত)</span>
+            </span>
             <span className="text-[11px] text-gray-500 block">
-              খামারের বর্তমান সকল রেকর্ড মুছে নতুনভাবে শূন্য খামার প্রস্তুত করতে পারেন।
+              ভুল ক্লিক প্রতিরোধে ৪ ডিজিটের গোপন পিন কোড ছাড়া কোনো ডেটা মোছা অসম্ভব।
             </span>
           </div>
 
           <button
             type="button"
             onClick={handleConfirmReset}
-            className="px-3.5 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-[#991B1B] font-bold text-xs border border-red-200 flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+            className="px-3.5 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-[#991B1B] font-bold text-xs border border-red-200 flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 shadow-2xs"
           >
             <Trash2 className="w-3.5 h-3.5 text-red-600" />
             <span>খামারের সকল ডেটা খালি করুন</span>
@@ -447,6 +488,19 @@ export const SettingsView = ({
           </p>
         </div>
       </div>
+
+      {/* Security PIN Verification Modal */}
+      <SecurityPinModal
+        isOpen={isPinModalOpen}
+        onClose={() => setIsPinModalOpen(false)}
+        expectedPin={farmProfile.securityPin || '1234'}
+        onDownloadEmergencyBackup={handleDownloadEmergencyBackup}
+        onConfirm={() => {
+          onResetDemoData();
+          onShowToast('খামারের সকল ডেটা খালি করা হয়েছে। সুরক্ষার জন্য একটি জরুরি ব্যাকআপ ফাইল ডাউনলোড করা হয়েছে।');
+        }}
+        farmName={farmName}
+      />
     </div>
   );
 };

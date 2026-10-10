@@ -8,11 +8,13 @@ import {
   Bell, 
   Menu,
   UserCheck,
-  Download
+  Download,
+  Clock
 } from 'lucide-react';
 import type { NavigationTab } from '../../types/farm';
 import { useAuth } from '../../context/useAuth';
 import { CowLogo } from './CowLogo';
+import { useLiveBanglaClock } from '../../utils/banglaDateTime';
 
 interface HeaderProps {
   currentTab: NavigationTab;
@@ -45,9 +47,7 @@ export const Header = ({
   const { user, isConfigured, isDemoMode } = useAuth();
   const [showQuickMenu, setShowQuickMenu] = useState(false);
 
-  // Bangla date format
-  const banglaDate = 'শনিবার, ১০ অক্টোবর ২০২৬';
-  const banglaSubDate = '২৫ আশ্বিন ১৪৩৩ বঙ্গাব্দ';
+  const liveClock = useLiveBanglaClock();
 
   return (
     <header className="sticky top-0 z-30 bg-[#FAF7F0]/95 backdrop-blur-md border-b border-[#EAE2D0] px-4 md:px-8 py-3 transition-all">
@@ -92,10 +92,25 @@ export const Header = ({
           </div>
         </div>
 
-        {/* Center / Date badge (visible on md+) */}
-        <div className="hidden lg:flex flex-col items-center justify-center px-4 py-1 rounded-xl bg-white/70 border border-[#EBE3D0]">
-          <span className="text-xs font-bold text-[#16402C]">{banglaDate}</span>
-          <span className="text-[10px] text-gray-500">{banglaSubDate}</span>
+        {/* Center / Real-time Live Date & Clock badge (visible on md+) */}
+        <div className="hidden md:flex items-center gap-3 px-3.5 py-1.5 rounded-2xl bg-white/85 border border-[#EBE3D0] shadow-2xs backdrop-blur-xs select-none">
+          <div className="p-1.5 rounded-xl bg-emerald-50 text-[#16402C] border border-emerald-100 flex items-center justify-center shrink-0">
+            <Clock className="w-4 h-4 text-[#2A7A50]" />
+          </div>
+          <div className="flex flex-col text-left">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-[#16402C] tracking-tight">
+                {liveClock.fullGregorianDateBn}
+              </span>
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-[#16402C]/10 text-[#16402C] font-mono text-[11px] font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                {liveClock.timeWithPeriodBn}
+              </span>
+            </div>
+            <span className="text-[10px] text-gray-500 font-medium">
+              {liveClock.banglaCalendarDateBn}
+            </span>
+          </div>
         </div>
 
         {/* Right Actions */}

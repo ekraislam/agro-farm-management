@@ -31,6 +31,7 @@ import type {
 import { formatCurrency } from '../../utils/accounting';
 import { StatCard } from '../common/StatCard';
 import { MilkTrendChart, IncomeExpenseChart } from '../common/Charts';
+import { useLiveBanglaClock } from '../../utils/banglaDateTime';
 
 interface DashboardViewProps {
   summary: FarmSummary;
@@ -68,6 +69,8 @@ export const DashboardView = ({
   ownerName = 'মুমিনুল ইসলাম',
   farmName = 'মুমিন এগ্রো',
 }: DashboardViewProps) => {
+  const liveClock = useLiveBanglaClock();
+
   // Dynamically compute activities from actual farm records
   const dynamicActivities = [];
   if (milkRecords.length > 0) {
@@ -121,7 +124,10 @@ export const DashboardView = ({
         <div className="bg-linear-to-r from-[#16402C] to-[#25603E] text-white p-4.5 rounded-3xl shadow-sm">
           <div className="flex items-center justify-between text-[11px] text-[#E5B842] font-semibold mb-1">
             <span>🌾 {farmName}</span>
-            <span>আজ: ১০ অক্টোবর ২০২৬</span>
+            <span className="flex items-center gap-1.5 font-mono">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              {liveClock.dayNameBn}, {liveClock.gregorianDateBn} • {liveClock.timeWithPeriodBn}
+            </span>
           </div>
           <h2 className="text-xl font-bold tracking-tight">
             আসসালামু আলাইকুম, {ownerName}
@@ -403,7 +409,14 @@ export const DashboardView = ({
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-xs font-medium text-[#E5B842] border border-white/15 mb-2">
               <span>🌾 {farmName} ড্যাশবোর্ড</span>
               <span>•</span>
-              <span>১০ অক্টোবর ২০২৬</span>
+              <span className="font-medium">{liveClock.fullGregorianDateBn}</span>
+              <span>•</span>
+              <span className="text-white/80">{liveClock.banglaCalendarDateBn}</span>
+              <span>•</span>
+              <span className="inline-flex items-center gap-1 font-mono font-bold text-white bg-black/20 px-2 py-0.5 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                {liveClock.timeWithPeriodBn}
+              </span>
             </div>
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
               আসসালামু আলাইকুম, {ownerName}

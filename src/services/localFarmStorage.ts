@@ -141,6 +141,7 @@ export const localFarmStorage = {
       defaultMilkRate: 80,
       dairyCapacity: 10,
       notificationsEnabled: true,
+      securityPin: '1234',
     };
     const saved = safeGet<FarmProfile>(STORAGE_KEYS.PROFILE, defaultProfile);
     // If farmName has been customized away from 'মুমিন এগ্রো', but ownerName was still the default 'মুমিনুল ইসলাম',
