@@ -10,12 +10,16 @@ import {
   Upload,
   User,
   ShieldCheck,
-  Lock
+  Lock,
+  Eye,
+  EyeOff,
+  KeyRound
 } from 'lucide-react';
 import { useAuth } from '../../context/useAuth';
 import type { FarmProfile } from '../../types/farm';
 import { localFarmStorage } from '../../services/localFarmStorage';
 import { SecurityPinModal } from '../modals/SecurityPinModal';
+import { ChangePinModal } from '../modals/ChangePinModal';
 
 interface SettingsViewProps {
   farmProfile: FarmProfile;
@@ -49,6 +53,8 @@ export const SettingsView = ({
   const [securityPin, setSecurityPin] = useState(farmProfile?.securityPin || '1234');
   const [isSaving, setIsSaving] = useState(false);
   const [isPinModalOpen, setIsPinModalOpen] = useState(false);
+  const [isChangePinOpen, setIsChangePinOpen] = useState(false);
+  const [showProfilePin, setShowProfilePin] = useState(false);
 
   useEffect(() => {
     if (farmProfile) {
@@ -111,6 +117,16 @@ export const SettingsView = ({
 
   const handleConfirmReset = () => {
     setIsPinModalOpen(true);
+  };
+
+  const handleSaveNewPin = async (newPinStr: string) => {
+    setSecurityPin(newPinStr);
+    const updated: FarmProfile = {
+      ...farmProfile,
+      securityPin: newPinStr,
+    };
+    await onUpdateFarmProfile(updated);
+    onShowToast(`নিরাপত্তা পিন সফলভাবে পরিবর্তন করা হয়েছে! (নতুন পিন: ${newPinStr})`);
   };
 
   const handleDownloadEmergencyBackup = () => {
@@ -309,20 +325,40 @@ export const SettingsView = ({
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-gray-700 mb-1 flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5 text-[#2A7A50]" />
-                <span>খামারের ৪ ডিজিটের নিরাপত্তা পিন কোড *</span>
-              </label>
-              <input
-                type="password"
-                maxLength={4}
-                inputMode="numeric"
-                value={securityPin}
-                onChange={(e) => setSecurityPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                placeholder="১২৩৪"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] focus:ring-1 focus:ring-[#16402C] outline-hidden text-sm bg-white font-mono tracking-widest font-bold"
-                required
-              />
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5 text-[#2A7A50]" />
+                  <span>খামারের ৪ ডিজিটের নিরাপত্তা পিন কোড *</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setIsChangePinOpen(true)}
+                  className="text-[11px] font-bold text-emerald-800 hover:text-emerald-950 underline flex items-center gap-1 cursor-pointer"
+                >
+                  <KeyRound className="w-3 h-3" />
+                  <span>পিন পরিবর্তন করুন</span>
+                </button>
+              </div>
+              <div className="relative">
+                <input
+                  type={showProfilePin ? 'text' : 'password'}
+                  maxLength={4}
+                  inputMode="numeric"
+                  value={securityPin}
+                  onChange={(e) => setSecurityPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                  placeholder="১২৩৪"
+                  className="w-full pl-3.5 pr-10 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] focus:ring-1 focus:ring-[#16402C] outline-hidden text-sm bg-white font-mono tracking-widest font-bold"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowProfilePin(!showProfilePin)}
+                  className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-800 cursor-pointer"
+                  title={showProfilePin ? 'পিন লুকান' : 'পিন দেখুন'}
+                >
+                  {showProfilePin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
               <span className="text-[11px] text-gray-400 mt-1 block">
                 খামারের সকল ডেটা খালি করতে এই পিন কোডটি প্রয়োজন হবে (ডিফল্ট: ১২৩৪)
               </span>
@@ -436,14 +472,24 @@ export const SettingsView = ({
             </span>
           </div>
 
-          <button
-            type="button"
-            onClick={handleConfirmReset}
-            className="px-3.5 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-[#991B1B] font-bold text-xs border border-red-200 flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 shadow-2xs"
-          >
-            <Trash2 className="w-3.5 h-3.5 text-red-600" />
-            <span>খামারের সকল ডেটা খালি করুন</span>
-          </button>
+          <div className="flex items-center gap-2 shrink-0 flex-wrap">
+            <button
+              type="button"
+              onClick={() => setIsChangePinOpen(true)}
+              className="px-3 py-2 rounded-xl bg-white hover:bg-gray-100 text-gray-800 font-bold text-xs border border-gray-300 flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+            >
+              <KeyRound className="w-3.5 h-3.5 text-[#16402C]" />
+              <span>পিন কোড পরিবর্তন</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleConfirmReset}
+              className="px-3.5 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-[#991B1B] font-bold text-xs border border-red-200 flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+            >
+              <Trash2 className="w-3.5 h-3.5 text-red-600" />
+              <span>খামারের সকল ডেটা খালি করুন</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -500,6 +546,14 @@ export const SettingsView = ({
           onShowToast('খামারের সকল ডেটা খালি করা হয়েছে। সুরক্ষার জন্য একটি জরুরি ব্যাকআপ ফাইল ডাউনলোড করা হয়েছে।');
         }}
         farmName={farmName}
+      />
+
+      {/* Change PIN Modal */}
+      <ChangePinModal
+        isOpen={isChangePinOpen}
+        onClose={() => setIsChangePinOpen(false)}
+        currentPin={farmProfile.securityPin || '1234'}
+        onSavePin={handleSaveNewPin}
       />
     </div>
   );
