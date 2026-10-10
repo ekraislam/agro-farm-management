@@ -1,6 +1,11 @@
 import React, { useEffect, useState, type ReactNode } from 'react';
 import type { User, Session } from '@supabase/supabase-js';
-import { supabase, isSupabaseConfigured, getSupabaseConfigStatus } from '../lib/supabase';
+import {
+  supabase,
+  isSupabaseConfigured,
+  getSupabaseConfigStatus,
+  defaultFarmEmail,
+} from '../lib/supabase';
 import { authService, type AuthResponse } from '../services/authService';
 import { AuthContext } from './authContextDef';
 
@@ -18,7 +23,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       return;
     }
 
-    // Check active session on mount
+    // Check active persistent session on mount
     supabase.auth
       .getSession()
       .then(({ data: { session } }) => {
@@ -50,6 +55,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
   }, []);
 
+  const handleUnlockFarm = async (
+    password: string
+  ): Promise<AuthResponse<{ user: User; session: Session }>> => {
+    setLoading(true);
+    const res = await authService.signIn(defaultFarmEmail, password.trim());
+    setLoading(false);
+    if (res.success && res.data) {
+      setUser(res.data.user);
+      setSession(res.data.session);
+      setIsDemoMode(false);
+    }
+    return res;
+  };
+
   const handleSignIn = async (
     email: string,
     password: string
@@ -74,7 +93,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setLoading(true);
     const res = await authService.signUp(email, password, ownerName, farmName);
     setLoading(false);
-    if (res.success && res.data?.user) {
+    if (res.success && res.data?.session && res.data?.user) {
       setUser(res.data.user);
       setSession(res.data.session);
       setIsDemoMode(false);
@@ -100,7 +119,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         isConfigured: isSupabaseConfigured,
         isDemoMode,
         configStatus,
+        farmEmail: defaultFarmEmail,
         setDemoMode: setIsDemoMode,
+        unlockFarm: handleUnlockFarm,
         signIn: handleSignIn,
         signUp: handleSignUp,
         signOut: handleSignOut,

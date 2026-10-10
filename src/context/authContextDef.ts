@@ -10,7 +10,9 @@ export interface AuthContextType {
   isConfigured: boolean;
   isDemoMode: boolean;
   configStatus: SupabaseConfigStatus;
+  farmEmail: string;
   setDemoMode: (isDemo: boolean) => void;
+  unlockFarm: (password: string) => Promise<AuthResponse<{ user: User; session: Session }>>;
   signIn: (email: string, password: string) => Promise<AuthResponse<{ user: User; session: Session }>>;
   signUp: (email: string, password: string, ownerName: string, farmName: string) => Promise<AuthResponse<{ user: User | null; session: Session | null }>>;
   signOut: () => Promise<void>;

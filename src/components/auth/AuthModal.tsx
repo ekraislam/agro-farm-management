@@ -75,7 +75,7 @@ export const AuthModal = ({
         if (res.data?.session) {
           onClose();
         } else {
-          setSuccessMessage('আপনার একাউন্ট সফলভাবে তৈরি হয়েছে! যদি ইমেইল নিশ্চিতকরণ প্রয়োজন হয়, তবে আপনার ইনবক্স চেক করুন।');
+          setSuccessMessage('আপনার খামার একাউন্ট সফলভাবে তৈরি হয়েছে! অনুগ্রহ করে আপনার ইমেইল ইনবক্স বা স্প্যাম ফোল্ডারে পাঠানো নিশ্চিতকরণ (verification) লিংকে ক্লিক করুন। নিশ্চিত করার পর নিচের বাটনে ক্লিক করে লগইন করুন।');
         }
       } else {
         setError(res.error || 'নিবন্ধন ব্যর্থ হয়েছে।');
@@ -160,8 +160,24 @@ export const AuthModal = ({
 
           {/* Success Message */}
           {successMessage && (
-            <div className="p-3.5 bg-green-50 border border-green-200 rounded-2xl text-[#1B4D35] text-xs">
-              {successMessage}
+            <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-[#1B4D35] text-xs space-y-2.5">
+              <div className="flex items-start gap-2">
+                <Sparkles className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <span className="font-semibold leading-relaxed">{successMessage}</span>
+              </div>
+              {mode === 'signup' && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMode('signin');
+                    setError('');
+                  }}
+                  className="w-full py-2 px-3 bg-[#16402C] hover:bg-[#123323] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-colors shadow-2xs"
+                >
+                  <LogIn className="w-3.5 h-3.5 text-[#E5B842]" />
+                  ইমেইল নিশ্চিত করেছি, এখন লগইন করুন
+                </button>
+              )}
             </div>
           )}
 

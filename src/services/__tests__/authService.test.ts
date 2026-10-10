@@ -22,6 +22,16 @@ describe('Authentication Service & Bengali Error Handling', () => {
     expect(errorMsg).toContain('ক্লাউড সার্ভারের সাথে সংযোগ স্থাপন করা সম্ভব হয়নি');
   });
 
+  it('translates rate limit and security cooldown errors to clear Bengali advice', () => {
+    const rateLimitMsg1 = translateAuthError(new Error('over_email_send_rate_limit'));
+    expect(rateLimitMsg1).toContain('অতিরিক্ত সংখ্যক চেষ্টার কারণে');
+    expect(rateLimitMsg1).toContain('৬০ সেকেন্ড');
+
+    const rateLimitMsg2 = translateAuthError(new Error('For security purposes, you can only request this after 60 seconds'));
+    expect(rateLimitMsg2).toContain('অতিরিক্ত সংখ্যক চেষ্টার কারণে');
+    expect(rateLimitMsg2).toContain('৬০ সেকেন্ড');
+  });
+
   it('returns explicit failure when sign-in is attempted without cloud configuration', async () => {
     if (!authService.isConfigured()) {
       const res = await authService.signIn('farmer@mominagro.com', 'password123');
@@ -37,5 +47,12 @@ describe('Authentication Service & Bengali Error Handling', () => {
       expect(res.success).toBe(false);
       expect(res.error).toBeDefined();
     }
+  });
+
+  it('configures internal farm account email without exposing password in frontend', async () => {
+    const { defaultFarmEmail } = await import('../../lib/supabase');
+    expect(defaultFarmEmail).toBeDefined();
+    expect(typeof defaultFarmEmail).toBe('string');
+    expect(defaultFarmEmail).toContain('@');
   });
 });

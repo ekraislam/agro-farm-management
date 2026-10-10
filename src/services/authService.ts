@@ -12,13 +12,18 @@ export interface AuthResponse<T = unknown> {
  */
 export const translateAuthError = (error: AuthError | Error | null | unknown): string => {
   if (!error) return 'একটি অজানা ত্রুটি ঘটেছে।';
-  const message = error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+  const rawMsg = error instanceof Error
+    ? error.message
+    : typeof error === 'object' && error && 'message' in error
+      ? String((error as { message: unknown }).message)
+      : String(error);
+  const message = rawMsg.toLowerCase();
 
   if (message.includes('invalid login credentials') || message.includes('invalid credentials')) {
     return 'ভুল ইমেইল অথবা পাসওয়ার্ড প্রদান করা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।';
   }
   if (message.includes('email not confirmed')) {
-    return 'আপনার ইমেইল ঠিকানা এখনো ভেরিফাই করা হয়নি। দয়া করে আপনার ইনবক্স চেক করুন।';
+    return 'আপনার ইমেইল ঠিকানা এখনো ভেরিফাই করা হয়নি। অনুগ্রহ করে আপনার ইমেইল ইনবক্স বা স্প্যাম ফোল্ডারে পাঠানো নিশ্চিতকরণ লিংকে ক্লিক করুন।';
   }
   if (message.includes('user already registered') || message.includes('already exists')) {
     return 'এই ইমেইল দিয়ে ইতিপূর্বে একাউন্ট খোলা হয়েছে। অনুগ্রহ করে লগইন করুন।';
@@ -29,11 +34,17 @@ export const translateAuthError = (error: AuthError | Error | null | unknown): s
   if (message.includes('network') || message.includes('failed to fetch')) {
     return 'ক্লাউড সার্ভারের সাথে সংযোগ স্থাপন করা সম্ভব হয়নি। ইন্টারনেট সংযোগ বা Supabase URL পরীক্ষা করুন।';
   }
-  if (message.includes('rate limit')) {
-    return 'অতিরিক্ত সংখ্যক চেষ্টার কারণে সাময়িকভাবে ব্লক করা হয়েছে। কিছুক্ষণ পর চেষ্টা করুন।';
+  if (
+    message.includes('rate limit') ||
+    message.includes('over_email_send_rate_limit') ||
+    message.includes('security purposes') ||
+    message.includes('too many requests') ||
+    message.includes('request this after')
+  ) {
+    return 'অতিরিক্ত সংখ্যক চেষ্টার কারণে সাময়িকভাবে ব্লক করা হয়েছে। অনুগ্রহ করে কমপক্ষে ৬০ সেকেন্ড অপেক্ষা করে পুনরায় চেষ্টা করুন।';
   }
 
-  return error instanceof Error ? error.message : 'লগইন প্রক্রিয়ায় সমস্যা হয়েছে।';
+  return rawMsg || 'লগইন প্রক্রিয়ায় সমস্যা হয়েছে।';
 };
 
 export const authService = {

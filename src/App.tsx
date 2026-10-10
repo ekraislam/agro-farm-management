@@ -40,7 +40,7 @@ import { AddHealthRecordModal } from './components/modals/AddHealthRecordModal';
 import { AddEmployeeModal } from './components/modals/AddEmployeeModal';
 import { RecordAttendanceModal } from './components/modals/RecordAttendanceModal';
 import { RecordSalaryPaymentModal } from './components/modals/RecordSalaryPaymentModal';
-import { AuthModal } from './components/auth/AuthModal';
+import { FarmPinModal } from './components/auth/FarmPinModal';
 import { SupabaseSetupModal } from './components/modals/SupabaseSetupModal';
 
 import { DashboardView } from './components/views/DashboardView';
@@ -57,6 +57,7 @@ import { SettingsView } from './components/views/SettingsView';
 import { AuthProvider } from './context/AuthContext';
 import { useAuth } from './context/useAuth';
 import { farmRepository } from './services/farmRepository';
+import { localFarmStorage } from './services/localFarmStorage';
 import { generateId } from './utils/id';
 import { calculateDailyFarmMilkProduction } from './utils/milkAccounting';
 import { consolidateFarmReminders } from './utils/healthAccounting';
@@ -67,16 +68,16 @@ function FarmDashboard() {
 
   const [currentTab, setCurrentTab] = useState<NavigationTab>('dashboard');
 
-  // Phase 1, 4 & 5 Demo Data (isolated in memory for Demo Mode)
-  const [demoCows, setDemoCows] = useState<Cow[]>(INITIAL_COWS);
-  const [demoMilkRecords, setDemoMilkRecords] = useState<MilkRecord[]>(INITIAL_MILK_RECORDS);
-  const [demoFinancialRecords, setDemoFinancialRecords] = useState<FinancialRecord[]>(INITIAL_FINANCIAL_RECORDS);
-  const [demoEmployees, setDemoEmployees] = useState<Employee[]>(INITIAL_EMPLOYEES);
-  const [demoBiogasLogs, setDemoBiogasLogs] = useState<BiogasDailyLog[]>(INITIAL_BIOGAS_LOGS);
-  const [demoReminders, setDemoReminders] = useState<ReminderTask[]>(INITIAL_REMINDERS);
-  const [demoHealthRecords, setDemoHealthRecords] = useState<HealthRecord[]>(INITIAL_HEALTH_RECORDS);
-  const [demoAttendance, setDemoAttendance] = useState<AttendanceRecord[]>(INITIAL_ATTENDANCE_RECORDS);
-  const [demoInspections, setDemoInspections] = useState<BiogasInspectionItem[]>(INITIAL_BIOGAS_INSPECTIONS);
+  // Persistent Local Farm Storage (persists automatically across page reloads and browser restarts)
+  const [demoCows, setDemoCows] = useState<Cow[]>(() => localFarmStorage.getCows());
+  const [demoMilkRecords, setDemoMilkRecords] = useState<MilkRecord[]>(() => localFarmStorage.getMilkRecords());
+  const [demoFinancialRecords, setDemoFinancialRecords] = useState<FinancialRecord[]>(() => localFarmStorage.getFinancialRecords());
+  const [demoEmployees, setDemoEmployees] = useState<Employee[]>(() => localFarmStorage.getEmployees());
+  const [demoBiogasLogs, setDemoBiogasLogs] = useState<BiogasDailyLog[]>(() => localFarmStorage.getBiogasLogs());
+  const [demoReminders, setDemoReminders] = useState<ReminderTask[]>(() => localFarmStorage.getReminders());
+  const [demoHealthRecords, setDemoHealthRecords] = useState<HealthRecord[]>(() => localFarmStorage.getHealthRecords());
+  const [demoAttendance, setDemoAttendance] = useState<AttendanceRecord[]>(() => localFarmStorage.getAttendance());
+  const [demoInspections, setDemoInspections] = useState<BiogasInspectionItem[]>(() => localFarmStorage.getInspections());
 
   // Phase 2, 4 & 5 Cloud Data (populated from Supabase when authenticated)
   const [cloudCows, setCloudCows] = useState<Cow[]>([]);
@@ -172,6 +173,43 @@ function FarmDashboard() {
       });
     }
   }, [isLiveCloud, user?.id, fetchCloudData]);
+
+  // Automatically persist local farm storage whenever records change
+  useEffect(() => {
+    localFarmStorage.saveCows(demoCows);
+  }, [demoCows]);
+
+  useEffect(() => {
+    localFarmStorage.saveMilkRecords(demoMilkRecords);
+  }, [demoMilkRecords]);
+
+  useEffect(() => {
+    localFarmStorage.saveFinancialRecords(demoFinancialRecords);
+  }, [demoFinancialRecords]);
+
+  useEffect(() => {
+    localFarmStorage.saveEmployees(demoEmployees);
+  }, [demoEmployees]);
+
+  useEffect(() => {
+    localFarmStorage.saveBiogasLogs(demoBiogasLogs);
+  }, [demoBiogasLogs]);
+
+  useEffect(() => {
+    localFarmStorage.saveReminders(demoReminders);
+  }, [demoReminders]);
+
+  useEffect(() => {
+    localFarmStorage.saveHealthRecords(demoHealthRecords);
+  }, [demoHealthRecords]);
+
+  useEffect(() => {
+    localFarmStorage.saveAttendance(demoAttendance);
+  }, [demoAttendance]);
+
+  useEffect(() => {
+    localFarmStorage.saveInspections(demoInspections);
+  }, [demoInspections]);
 
   // Active dataset based on whether live cloud or demo mode is active
   const cows = isLiveCloud ? cloudCows : demoCows;
@@ -283,7 +321,7 @@ function FarmDashboard() {
       return { success: true };
     }
 
-    // Demo Mode: Local memory update
+    // Demo / Local Offline Mode: Local storage update
     setDemoMilkRecords([record, ...demoMilkRecords]);
     if (isSold) {
       const incomeRecord: FinancialRecord = {
@@ -301,12 +339,12 @@ function FarmDashboard() {
       };
       setDemoFinancialRecords([incomeRecord, ...demoFinancialRecords]);
       showToast(
-        'দুধের নতুন হিসাব ও বিক্রয় আয় যোগ হয়েছে! (নমুনা)',
+        'দুধের নতুন হিসাব ও বিক্রয় আয় সফলভাবে সংরক্ষিত হয়েছে!',
         `${record.totalLiters} লিটার সংগৃহীত, ${soldLiters} লিটার বিক্রয় (৳ ${record.totalAmount.toLocaleString('en-US')})`
       );
     } else {
       showToast(
-        'দুধ সংগ্রহের হিসাব সংরক্ষিত হয়েছে! (নমুনা - অবিক্রিত)',
+        'দুধ সংগ্রহের হিসাব সংরক্ষিত হয়েছে!',
         `${record.totalLiters} লিটার দুধ সংগৃহীত`
       );
     }
@@ -328,10 +366,10 @@ function FarmDashboard() {
       return { success: true };
     }
 
-    // Demo Mode
+    // Local Offline Mode
     setDemoFinancialRecords([record, ...demoFinancialRecords]);
     showToast(
-      record.type === 'income' ? 'নতুন আয় যুক্ত হয়েছে! (নমুনা)' : 'নতুন খরচ যুক্ত হয়েছে! (নমুনা)',
+      record.type === 'income' ? 'নতুন আয় সফলভাবে যুক্ত হয়েছে!' : 'নতুন খরচ সফলভাবে যুক্ত হয়েছে!',
       `${record.title} (৳ ${record.amount.toLocaleString('en-US')})`
     );
     return { success: true };
@@ -349,9 +387,9 @@ function FarmDashboard() {
       return { success: true };
     }
 
-    // Demo Mode
+    // Local Offline Mode
     setDemoFinancialRecords(demoFinancialRecords.map((r) => (r.id === record.id ? record : r)));
-    showToast('লেনদেন হালনাগাদ করা হয়েছে! (নমুনা)', `${record.title} (৳ ${record.amount.toLocaleString('en-US')})`);
+    showToast('লেনদেন সফলভাবে হালনাগাদ করা হয়েছে!', `${record.title} (৳ ${record.amount.toLocaleString('en-US')})`);
     return { success: true };
   };
 
@@ -367,9 +405,9 @@ function FarmDashboard() {
       return { success: true };
     }
 
-    // Demo Mode
+    // Local Offline Mode
     setDemoFinancialRecords(demoFinancialRecords.filter((r) => r.id !== txId));
-    showToast('লেনদেন মুছে ফেলা হয়েছে! (নমুনা)');
+    showToast('লেনদেন সফলভাবে মুছে ফেলা হয়েছে!');
     return { success: true };
   };
 
@@ -395,13 +433,13 @@ function FarmDashboard() {
       }
     }
 
-    // Demo Mode
+    // Local Offline Mode
     if (isExisting) {
       setDemoCows(demoCows.map((c) => (c.id === cow.id ? cow : c)));
-      showToast('গরুর তথ্য সফলভাবে হালনাগাদ হয়েছে! (নমুনা)', `${cow.tagNumber} — ${cow.name}`);
+      showToast('গরুর তথ্য সফলভাবে সংরক্ষিত হয়েছে!', `${cow.tagNumber} — ${cow.name}`);
     } else {
       setDemoCows([cow, ...demoCows]);
-      showToast('নতুন গরু সফলভাবে তালিকাভুক্ত হয়েছে! (নমুনা)', `${cow.tagNumber} — ${cow.name}`);
+      showToast('নতুন গরু সফলভাবে তালিকাভুক্ত হয়েছে!', `${cow.tagNumber} — ${cow.name}`);
     }
     return { success: true };
   };
@@ -438,11 +476,11 @@ function FarmDashboard() {
             : c
         )
       );
-      showToast('গরুটিকে নিরাপদভাবে আর্কাইভ করা হয়েছে! (নমুনা)', 'অতীতের দুধ ও স্বাস্থ্য রেকর্ড সুরক্ষিত রাখা হয়েছে।');
+      showToast('গরুটিকে নিরাপদভাবে সংরক্ষণ করা হয়েছে!', 'অতীতের দুধ ও স্বাস্থ্য রেকর্ড সুরক্ষিত রাখা হয়েছে।');
       return { success: true, isArchived: true };
     } else {
       setDemoCows(demoCows.filter((c) => c.id !== cow.id));
-      showToast('গরুটি সফলভাবে মুছে ফেলা হয়েছে! (নমুনা)');
+      showToast('গরুটি সফলভাবে মুছে ফেলা হয়েছে!');
       return { success: true, isArchived: false };
     }
   };
@@ -468,7 +506,7 @@ function FarmDashboard() {
       return { success: true };
     }
 
-    // Demo Mode
+    // Local Offline Mode
     setDemoHealthRecords([record, ...demoHealthRecords]);
     if (createExpense && record.cost && record.cost > 0) {
       const expenseRecord: FinancialRecord = {
@@ -505,7 +543,7 @@ function FarmDashboard() {
     }
 
     showToast(
-      'স্বাস্থ্য রেকর্ড যোগ করা হয়েছে! (নমুনা)',
+      'স্বাস্থ্য রেকর্ড সফলভাবে যোগ করা হয়েছে!',
       createExpense && record.cost
         ? `${record.treatmentName} (খরচ: ৳ ${record.cost.toLocaleString('en-US')})`
         : record.treatmentName
@@ -525,9 +563,9 @@ function FarmDashboard() {
       return { success: true };
     }
 
-    // Demo Mode
+    // Local Offline Mode
     setDemoReminders([task, ...demoReminders]);
-    showToast('নতুন কাজ ও অনুস্মারক যোগ করা হয়েছে! (নমুনা)', task.title);
+    showToast('নতুন কাজ ও অনুস্মারক সফলভাবে যোগ করা হয়েছে!', task.title);
     return { success: true };
   };
 
@@ -580,7 +618,7 @@ function FarmDashboard() {
       return;
     }
 
-    // Demo Mode
+    // Local Offline Mode
     const currentDemo = demoReminders.find((r) => r.id === taskId);
     if (currentDemo) {
       setDemoReminders(
@@ -588,7 +626,7 @@ function FarmDashboard() {
           if (r.id === taskId) {
             const newState = !r.completed;
             showToast(
-              newState ? 'কাজটি সম্পন্ন হিসেবে চিহ্নিত করা হয়েছে! (নমুনা)' : 'কাজটি পুনরায় পেন্ডিং তালিকায় রাখা হয়েছে',
+              newState ? 'কাজটি সম্পন্ন হিসেবে চিহ্নিত করা হয়েছে!' : 'কাজটি পুনরায় পেন্ডিং তালিকায় রাখা হয়েছে',
               r.title
             );
             return {
@@ -601,7 +639,7 @@ function FarmDashboard() {
         })
       );
     } else {
-      // Auto-generated consolidated task in Demo Mode
+      // Auto-generated consolidated task in Local Mode
       const autoTask = consolidatedReminders.find((r) => r.id === taskId);
       if (autoTask) {
         const completedAuto: ReminderTask = {
@@ -610,7 +648,7 @@ function FarmDashboard() {
           completedAt: targetDate,
         };
         setDemoReminders([completedAuto, ...demoReminders]);
-        showToast('অনুস্মারকটি সফলভাবে সম্পন্ন করা হয়েছে! (নমুনা)', autoTask.title);
+        showToast('অনুস্মারকটি সফলভাবে সম্পন্ন করা হয়েছে!', autoTask.title);
       }
     }
   };
@@ -627,9 +665,9 @@ function FarmDashboard() {
       return;
     }
 
-    // Demo Mode
+    // Local Offline Mode
     setDemoBiogasLogs([log, ...demoBiogasLogs]);
-    showToast('বায়োগ্যাস দৈনিক লগ সংরক্ষিত হয়েছে! (নমুনা)', `${log.dungInputKg} কেজি গোবর ইনপুট`);
+    showToast('বায়োগ্যাস দৈনিক লগ সংরক্ষিত হয়েছে!', `${log.dungInputKg} কেজি গোবর ইনপুট`);
   };
 
   const handleUpdateBiogasLog = async (log: BiogasDailyLog): Promise<{ success: boolean; error?: string }> => {
@@ -644,9 +682,9 @@ function FarmDashboard() {
       return { success: true };
     }
 
-    // Demo Mode
+    // Local Offline Mode
     setDemoBiogasLogs(demoBiogasLogs.map((l) => (l.id === log.id ? log : l)));
-    showToast('বায়োগ্যাস লগ সংশোধন সম্পন্ন! (নমুনা)', `${log.dungInputKg} কেজি গোবর ইনপুট`);
+    showToast('বায়োগ্যাস লগ সংশোধন সম্পন্ন!', `${log.dungInputKg} কেজি গোবর ইনপুট`);
     return { success: true };
   };
 
@@ -662,9 +700,9 @@ function FarmDashboard() {
       return { success: true };
     }
 
-    // Demo Mode
+    // Local Offline Mode
     setDemoBiogasLogs(demoBiogasLogs.filter((l) => l.id !== logId));
-    showToast('বায়োগ্যাস লগ মুছে ফেলা হয়েছে (নমুনা)');
+    showToast('বায়োগ্যাস লগ মুছে ফেলা হয়েছে');
     return { success: true };
   };
 
@@ -680,9 +718,9 @@ function FarmDashboard() {
       return { success: true };
     }
 
-    // Demo Mode
+    // Local Offline Mode
     setDemoInspections([item, ...demoInspections]);
-    showToast('নিরাপত্তা পরিদর্শন সম্পন্ন হয়েছে! (নমুনা)', item.itemNameBn);
+    showToast('নিরাপত্তা পরিদর্শন সম্পন্ন হয়েছে!', item.itemNameBn);
     return { success: true };
   };
 
@@ -708,14 +746,14 @@ function FarmDashboard() {
       }
     }
 
-    // Demo Mode
+    // Local Offline Mode
     const isExisting = demoEmployees.some((e) => e.id === emp.id);
     if (isExisting) {
       setDemoEmployees(demoEmployees.map((e) => (e.id === emp.id ? emp : e)));
-      showToast('কর্মচারীর তথ্য সংশোধন করা হয়েছে! (নমুনা)', emp.name);
+      showToast('কর্মচারীর তথ্য সংশোধন করা হয়েছে!', emp.name);
     } else {
       setDemoEmployees([...demoEmployees, emp]);
-      showToast('নতুন কর্মচারী যোগ করা হয়েছে! (নমুনা)', emp.name);
+      showToast('নতুন কর্মচারী যোগ করা হয়েছে!', emp.name);
     }
     return { success: true };
   };
@@ -733,7 +771,7 @@ function FarmDashboard() {
             e.id === empId ? { ...e, isArchived: true, status: 'inactive' } : e
           )
         );
-        showToast('কর্মচারীর রেকর্ড নিরাপদে সংরক্ষণ/আর্কাইভ করা হয়েছে', 'অতীতের উপস্থিতি ও বেতন সংক্রান্ত হিসাব সুরক্ষিত রয়েছে');
+        showToast('কর্মচারীর রেকর্ড নিরাপদে সংরক্ষণ করা হয়েছে', 'অতীতের উপস্থিতি ও বেতন সংক্রান্ত হিসাব সুরক্ষিত রয়েছে');
       } else {
         setCloudEmployees(cloudEmployees.filter((e) => e.id !== empId));
         showToast('কর্মচারী স্থায়ীভাবে মুছে ফেলা হয়েছে');
@@ -741,7 +779,7 @@ function FarmDashboard() {
       return;
     }
 
-    // Demo Mode
+    // Local Offline Mode
     const hasHistory =
       demoAttendance.some((a) => a.employeeId === empId) ||
       demoReminders.some((t) => t.assignedEmployeeId === empId) ||
@@ -753,10 +791,10 @@ function FarmDashboard() {
           e.id === empId ? { ...e, isArchived: true, status: 'inactive' } : e
         )
       );
-      showToast('কর্মচারীর রেকর্ড নিরাপদে সংরক্ষণ/আর্কাইভ করা হয়েছে (নমুনা)', 'অতীতের উপস্থিতি ও বেতন সংক্রান্ত হিসাব সুরক্ষিত রয়েছে');
+      showToast('কর্মচারীর রেকর্ড নিরাপদে সংরক্ষণ করা হয়েছে', 'অতীতের উপস্থিতি ও বেতন সংক্রান্ত হিসাব সুরক্ষিত রয়েছে');
     } else {
       setDemoEmployees(demoEmployees.filter((e) => e.id !== empId));
-      showToast('কর্মচারী মুছে ফেলা হয়েছে (নমুনা)');
+      showToast('কর্মচারী মুছে ফেলা হয়েছে');
     }
   };
 
@@ -780,7 +818,7 @@ function FarmDashboard() {
       return { success: true };
     }
 
-    // Demo Mode
+    // Local Offline Mode
     const exists = demoAttendance.some((a) => a.employeeId === record.employeeId && a.date === record.date);
     if (exists) {
       setDemoAttendance(
@@ -791,7 +829,7 @@ function FarmDashboard() {
     } else {
       setDemoAttendance([record, ...demoAttendance]);
     }
-    showToast('উপস্থিতি রেকর্ড সংরক্ষিত হয়েছে! (নমুনা)', `${record.employeeName || ''} - ${record.statusBn}`);
+    showToast('উপস্থিতি রেকর্ড সংরক্ষিত হয়েছে!', `${record.employeeName || ''} - ${record.statusBn}`);
     return { success: true };
   };
 
@@ -824,7 +862,7 @@ function FarmDashboard() {
       return { success: true };
     }
 
-    // Demo Mode
+    // Local Offline Mode
     const newRecord: FinancialRecord = {
       id: generateId('fin'),
       date: paymentDate,
@@ -842,7 +880,7 @@ function FarmDashboard() {
 
     setDemoFinancialRecords([newRecord, ...demoFinancialRecords]);
     showToast(
-      'বেতন পরিশোধ সফলভাবে রেকর্ড হয়েছে! (নমুনা)',
+      'বেতন পরিশোধ সফলভাবে রেকর্ড হয়েছে!',
       `${employee.name} (৳ ${amount.toLocaleString('en-US')})`
     );
     return { success: true };
@@ -853,6 +891,25 @@ function FarmDashboard() {
       showToast('আপনি বর্তমানে ক্লাউড মোডে আছেন। নমুনা তথ্য রিসেট ক্লাউড ডেটাবেজকে প্রভাবিত করে না।', undefined, 'info');
       return;
     }
+    localFarmStorage.clearToEmptyFarm();
+    setDemoCows([]);
+    setDemoMilkRecords([]);
+    setDemoFinancialRecords([]);
+    setDemoEmployees([]);
+    setDemoBiogasLogs([]);
+    setDemoReminders([]);
+    setDemoHealthRecords([]);
+    setDemoAttendance([]);
+    setDemoInspections([]);
+    showToast('খামারের সমস্ত ডেটা মুছে নতুন খামার প্রস্তুত করা হয়েছে!');
+  };
+
+  const handleLoadSampleData = () => {
+    if (isLiveCloud) {
+      showToast('আপনি বর্তমানে ক্লাউড মোডে আছেন।', undefined, 'info');
+      return;
+    }
+    localFarmStorage.loadDemoData();
     setDemoCows(INITIAL_COWS);
     setDemoMilkRecords(INITIAL_MILK_RECORDS);
     setDemoFinancialRecords(INITIAL_FINANCIAL_RECORDS);
@@ -862,7 +919,27 @@ function FarmDashboard() {
     setDemoHealthRecords(INITIAL_HEALTH_RECORDS);
     setDemoAttendance(INITIAL_ATTENDANCE_RECORDS);
     setDemoInspections(INITIAL_BIOGAS_INSPECTIONS);
-    showToast('নমুনা তথ্য সফলভাবে রিসেট করা হয়েছে!');
+    showToast('পরীক্ষামূলক নমুনা তথ্য সফলভাবে লোড হয়েছে!');
+  };
+
+  const handleImportBackup = (jsonString: string): boolean => {
+    const success = localFarmStorage.importBackup(jsonString);
+    if (success) {
+      setDemoCows(localFarmStorage.getCows());
+      setDemoMilkRecords(localFarmStorage.getMilkRecords());
+      setDemoFinancialRecords(localFarmStorage.getFinancialRecords());
+      setDemoEmployees(localFarmStorage.getEmployees());
+      setDemoBiogasLogs(localFarmStorage.getBiogasLogs());
+      setDemoReminders(localFarmStorage.getReminders());
+      setDemoHealthRecords(localFarmStorage.getHealthRecords());
+      setDemoAttendance(localFarmStorage.getAttendance());
+      setDemoInspections(localFarmStorage.getInspections());
+      showToast('ব্যাকআপ সফলভাবে রিস্টোর করা হয়েছে!');
+      return true;
+    } else {
+      showToast('ব্যাকআপ ফাইলটি সঠিক নয়!', undefined, 'error');
+      return false;
+    }
   };
 
   return (
@@ -953,6 +1030,7 @@ function FarmDashboard() {
                 biogasLogs={biogasLogs}
                 employees={employees}
                 attendanceRecords={attendanceRecords}
+                isLiveCloud={isLiveCloud}
                 onNavigate={(tab: NavigationTab) => {
                   setCurrentTab(tab);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1118,9 +1196,11 @@ function FarmDashboard() {
             {currentTab === 'settings' && (
               <SettingsView
                 onResetDemoData={handleResetDemoData}
+                onLoadSampleData={handleLoadSampleData}
                 onShowToast={(msg) => showToast(msg)}
                 onOpenAuth={() => setIsAuthModalOpen(true)}
                 onOpenSetup={() => setIsSetupModalOpen(true)}
+                onImportBackup={handleImportBackup}
               />
             )}
           </main>
@@ -1233,7 +1313,7 @@ function FarmDashboard() {
         initialEmployeeId={selectedEmployeeForSalary}
       />
 
-      <AuthModal
+      <FarmPinModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         onOpenSetupGuide={() => {

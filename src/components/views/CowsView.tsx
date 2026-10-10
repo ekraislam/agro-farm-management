@@ -356,8 +356,23 @@ export const CowsView = ({
       </div>
 
       {filteredCows.length === 0 && (
-        <div className="bg-white rounded-2xl p-12 text-center border border-[#EAE2D0]">
-          <p className="text-gray-500 font-medium">কোনো গরু পাওয়া যায়নি।</p>
+        <div className="bg-white rounded-3xl p-12 text-center border border-[#EAE2D0] shadow-xs space-y-3">
+          <div className="w-14 h-14 bg-[#EAF5EE] text-[#16402C] rounded-2xl mx-auto flex items-center justify-center">
+            <Plus className="w-7 h-7" />
+          </div>
+          <h4 className="text-lg font-bold text-[#16402C]">খামারে কোনো গরু পাওয়া যায়নি</h4>
+          <p className="text-xs md:text-sm text-gray-500 max-w-md mx-auto">
+            {search || filter !== 'all'
+              ? 'আপনার ফিল্টার বা অনুসন্ধানের সাথে মেলে এমন কোনো গরু পাওয়া যায়নি।'
+              : 'আপনার খামারের গাভী, বাছুর বা ষাঁড়ের তথ্য যুক্ত করে সহজে দুধ ও স্বাস্থ্যের নিয়মিত হিসাব রাখুন।'}
+          </p>
+          <button
+            onClick={() => onOpenAddCow()}
+            className="px-5 py-2.5 rounded-2xl bg-[#16402C] hover:bg-[#1f563b] text-white font-bold text-xs md:text-sm inline-flex items-center gap-2 shadow-xs transition-all cursor-pointer"
+          >
+            <Plus className="w-4 h-4 text-[#E5B842]" />
+            <span>নতুন গরু যোগ করুন</span>
+          </button>
         </div>
       )}
 

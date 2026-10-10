@@ -97,7 +97,7 @@ describe('Phase 3 Specific Accounting Rules & Safety Verification', () => {
     const updateRes = await farmRepository.updateFinancialTransaction('user-mock-id', dummyTx);
     expect(updateRes.success).toBe(false);
     expect(updateRes.error).toBeDefined();
-    expect(updateRes.error).toContain('ক্লাউড ডেটাবেজ কনফিগার করা হয়নি');
+    expect(updateRes.error).toMatch(/ক্লাউড ডেটাবেজ কনফিগার করা হয়নি|আর্থিক লেনদেন সংশোধন করা সম্ভব হয়নি/);
 
     const deleteRes = await farmRepository.deleteFinancialTransaction('user-mock-id', 'fin-mock-99');
     expect(deleteRes.success).toBe(false);

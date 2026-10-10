@@ -8,7 +8,6 @@ import {
   CalendarClock, 
   Bell, 
   Menu,
-  LogIn,
   UserCheck
 } from 'lucide-react';
 import type { NavigationTab } from '../../types/farm';
@@ -35,7 +34,6 @@ export const Header = ({
   onOpenAddTask,
   pendingTasksCount,
   onOpenMobileMenu,
-  onOpenAuth,
 }: HeaderProps) => {
   const { user, isConfigured, isDemoMode } = useAuth();
   const [showQuickMenu, setShowQuickMenu] = useState(false);
@@ -76,8 +74,9 @@ export const Header = ({
                     ক্লাউড ডেটাবেজ
                   </span>
                 ) : (
-                  <span className="hidden sm:inline-block px-2 py-0.5 text-[11px] font-semibold bg-[#E5B842]/20 text-[#8C6200] border border-[#E5B842]/40 rounded-full">
-                    নমুনা তথ্য (Demo)
+                  <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-semibold bg-[#2A7A50]/15 text-[#16402C] border border-[#2A7A50]/30 rounded-full">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#2A7A50]" />
+                    খামার ডেটাবেজ (লোকাল)
                   </span>
                 )}
               </div>
@@ -102,33 +101,22 @@ export const Header = ({
               ক্লাউড
             </span>
           ) : (
-            <span className="sm:hidden text-[10px] font-bold px-2 py-1 bg-[#FEF9E7] text-[#936709] border border-[#F7E2A9] rounded-lg">
-              নমুনা
+            <span className="sm:hidden text-[10px] font-bold px-2 py-1 bg-[#EAF5EE] text-[#1B4D35] border border-[#C5E3D0] rounded-lg">
+              লোকাল
             </span>
           )}
 
-          {/* Farm Owner Profile / Login Trigger Button */}
-          {isConfigured && user && !isDemoMode ? (
-            <button
-              onClick={() => onNavigate('settings')}
-              className="p-2 md:px-3 md:py-2 rounded-xl bg-white border border-[#C5E3D0] hover:bg-[#EAF5EE] text-[#16402C] transition-colors flex items-center gap-1.5 shadow-2xs"
-              title={`লগইন করা আছে: ${user.email}`}
-            >
-              <UserCheck className="w-4 h-4 text-[#2A7A50]" />
-              <span className="hidden xl:inline text-xs font-bold max-w-[120px] truncate">
-                {user.email?.split('@')[0]}
-              </span>
-            </button>
-          ) : onOpenAuth ? (
-            <button
-              onClick={onOpenAuth}
-              className="p-2 md:px-3 md:py-2 rounded-xl bg-white border border-[#E8DFC9] hover:bg-gray-50 text-xs font-bold text-[#16402C] transition-colors flex items-center gap-1.5 shadow-2xs"
-              title="খামার অ্যাকাউন্টে লগইন করুন"
-            >
-              <LogIn className="w-4 h-4 text-[#936709]" />
-              <span className="hidden sm:inline">লগইন</span>
-            </button>
-          ) : null}
+          {/* Farm Owner Profile / Settings Navigation */}
+          <button
+            onClick={() => onNavigate('settings')}
+            className="p-2 md:px-3 md:py-2 rounded-xl bg-white border border-[#E2DAC7] hover:bg-[#FAF7F0] text-[#16402C] transition-colors flex items-center gap-1.5 shadow-2xs cursor-pointer"
+            title="খামার সেটিংস ও ব্যাকআপ"
+          >
+            <UserCheck className="w-4 h-4 text-[#2A7A50]" />
+            <span className="hidden sm:inline text-xs font-bold truncate">
+              {isConfigured && user && !isDemoMode ? 'মুমিন এগ্রো (ক্লাউড)' : 'মুমিন এগ্রো (আব্বু)'}
+            </span>
+          </button>
 
           {/* Pending Tasks Bell */}
           <button

@@ -149,8 +149,8 @@ export const ReportsView = ({
                 খামার স্মার্ট প্রতিবেদন ও অ্যানালিটিক্স
               </h2>
               {isDemoMode && (
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
-                  নমুনা ডেটা (Demo Mode)
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#EAF5EE] text-[#1B4D35] border border-[#C5E3D0]">
+                  খামার ডেটাবেজ (লোকাল)
                 </span>
               )}
               {isLiveCloud && (
@@ -305,8 +305,8 @@ export const ReportsView = ({
               প্রিন্ট / তৈরির তারিখ: {generatedDateBn}
             </p>
             {isDemoMode && (
-              <span className="inline-block text-[10px] text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded border border-amber-200 mt-1">
-                নমুনা উপাত্ত ভিত্তিক খসড়া
+              <span className="inline-block text-[10px] text-[#1B4D35] font-bold bg-[#EAF5EE] px-2 py-0.5 rounded border border-[#C5E3D0] mt-1">
+                খামার ডেটাবেজ প্রতিবেদন
               </span>
             )}
           </div>

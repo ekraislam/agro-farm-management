@@ -293,8 +293,8 @@ export const AdvisorView = ({
                       <Sparkles className="w-4 h-4 text-[#E5B842]" />
                       <span className="font-bold text-xs text-[#16402C]">মুমিন এগ্রো AI উপদেষ্টা</span>
                       {msg.isDemoPreview && (
-                        <span className="ml-auto text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300">
-                          নমুনা প্রিভিউ
+                        <span className="ml-auto text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#EAF5EE] text-[#1B4D35] border border-[#C5E3D0]">
+                          পরামর্শ
                         </span>
                       )}
                     </div>

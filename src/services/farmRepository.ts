@@ -20,9 +20,13 @@ export interface RepositoryResult<T> {
 
 const translateDbError = (error: unknown, fallback: string): string => {
   if (!error) return fallback;
-  const msg = error instanceof Error ? error.message : String(error);
-  if (msg.includes('JWT') || msg.includes('auth') || msg.includes('unauthorized')) {
-    return 'ব্যবহারকারীর সেশন মেয়াদোত্তীর্ণ হয়েছে। অনুগ্রহ করে আবার লগইন করুন।';
+  const msg = error instanceof Error
+    ? error.message
+    : typeof error === 'object' && error && 'message' in error
+      ? String((error as { message: unknown }).message)
+      : String(error);
+  if (msg.includes('JWT') || msg.includes('auth') || msg.includes('unauthorized') || msg.includes('row-level security') || msg.includes('violates row-level security policy')) {
+    return 'ব্যবহারকারীর সেশন মেয়াদোত্তীর্ণ বা অনুমোদনহীন। অনুগ্রহ করে আবার লগইন করুন।';
   }
   if (msg.includes('network') || msg.includes('Failed to fetch')) {
     return 'ক্লাউড সার্ভারের সাথে যোগাযোগ করা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করুন।';

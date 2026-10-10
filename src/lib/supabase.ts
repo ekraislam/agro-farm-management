@@ -22,6 +22,14 @@ const isPlaceholderKey =
 
 export const isSupabaseConfigured: boolean = Boolean(!isPlaceholderUrl && !isPlaceholderKey);
 
+// Configured Single-Family Farm account email (used internally for zero-email-input unlock)
+const rawFarmEmail = import.meta.env.VITE_FARM_EMAIL;
+
+export const defaultFarmEmail: string =
+  typeof rawFarmEmail === 'string' && rawFarmEmail.trim()
+    ? rawFarmEmail.trim()
+    : 'ekraislamohi2023@gmail.com';
+
 export interface SupabaseConfigStatus {
   isConfigured: boolean;
   url: string | null;

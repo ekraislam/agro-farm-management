@@ -10,7 +10,6 @@ import {
   Clock, 
   CheckCircle2, 
   Flame, 
-  Info,
   Users
 } from 'lucide-react';
 import type { 
@@ -34,6 +33,7 @@ interface DashboardViewProps {
   biogasLogs: BiogasDailyLog[];
   employees?: Employee[];
   attendanceRecords?: AttendanceRecord[];
+  isLiveCloud?: boolean;
   onNavigate: (tab: NavigationTab) => void;
   onOpenAddMilk: () => void;
   onOpenAddExpense: () => void;
@@ -45,6 +45,7 @@ interface DashboardViewProps {
 export const DashboardView = ({
   summary,
   milkRecords,
+  financialRecords = [],
   reminders,
   biogasLogs,
   employees = [],
@@ -56,67 +57,50 @@ export const DashboardView = ({
   onOpenAddTask,
   onToggleTask,
 }: DashboardViewProps) => {
-  // Recent farm activities combining milk records, expenses, and biogas
-  const recentActivities = [
-    {
-      id: 'act-1',
-      title: 'আজকের বিকালের দুধ দোয়ানো ও সংগ্রহ সম্পন্ন',
-      time: 'আজ বিকাল ৫:১৫',
+  // Dynamically compute activities from actual farm records
+  const dynamicActivities = [];
+  if (milkRecords.length > 0) {
+    const latestMilk = milkRecords[0];
+    dynamicActivities.push({
+      id: `milk-${latestMilk.id}`,
+      title: `দুধ সংগ্রহ: ${latestMilk.totalLiters} লিটার`,
+      time: latestMilk.date,
       category: 'milk',
-      detail: '৩৩.০ লিটার সংগ্রহ (রহিম উদ্দিন)',
+      detail: `সকাল: ${latestMilk.morningLiters} লিটার, বিকাল: ${latestMilk.eveningLiters} লিটার (${latestMilk.recordedBy || 'খামার রেকর্ড'})`,
       icon: Droplets,
       iconColor: 'text-[#2A7A50] bg-[#EAF5EE]',
-    },
-    {
-      id: 'act-2',
-      title: 'আজকের বায়োগ্যাস ডাইজেস্টারে গোবর ও পানি ইনপুট সম্পন্ন',
-      time: 'আজ দুপুর ১২:৩০',
-      category: 'biogas',
-      detail: '১১০ কেজি গোবর + ১১০ লিটার পানি মিশ্রণ (করিম হাসান)',
+    });
+  }
+  if (financialRecords && financialRecords.length > 0) {
+    const latestFin = financialRecords[0];
+    dynamicActivities.push({
+      id: `fin-${latestFin.id}`,
+      title: `${latestFin.title}`,
+      time: latestFin.date,
+      category: latestFin.type,
+      detail: `৳ ${latestFin.amount.toLocaleString('en-US')} (${latestFin.categoryLabelBn})`,
+      icon: latestFin.type === 'income' ? DollarSign : Receipt,
+      iconColor: latestFin.type === 'income' ? 'text-[#1B4D35] bg-[#EAF5EE]' : 'text-[#9E2A2B] bg-[#FDF2F2]',
+    });
+  }
+  if (biogasLogs.length > 0) {
+    const latestBio = biogasLogs[0];
+    dynamicActivities.push({
+      id: `bio-${latestBio.id}`,
+      title: `বায়োগ্যাস দৈনিক লগ: ${latestBio.statusBn}`,
+      time: latestBio.date,
+      detail: `গোবর: ${latestBio.dungInputKg} কেজি, চাপ: ${latestBio.gasPressurePsi ?? 2} PSI`,
       icon: Flame,
       iconColor: 'text-[#936709] bg-[#FEF9E7]',
-    },
-    {
-      id: 'act-3',
-      title: 'আজকের দুধ বিক্রির নগদ টাকা জমা',
-      time: 'আজ সকাল ১০:০০',
-      category: 'income',
-      detail: '৳ ৫,৯৬০ নগদ প্রাপ্তি',
-      icon: DollarSign,
-      iconColor: 'text-[#1B4D35] bg-[#EAF5EE]',
-    },
-    {
-      id: 'act-4',
-      title: 'পশুখাদ্য ক্রয় (গমের ভুসি ও সরিষার খৈল)',
-      time: '০৮ অক্টোবর',
-      category: 'expense',
-      detail: '৳ ৯,২০০ বিকাশ পেমেন্ট (ভাই ভাই ফিড)',
-      icon: Receipt,
-      iconColor: 'text-[#9E2A2B] bg-[#FDF2F2]',
-    },
-  ];
+    });
+  }
 
+  const recentActivities = dynamicActivities;
   const pendingReminders = reminders.filter((r) => !r.completed).slice(0, 3);
   const latestBiogas = biogasLogs[0];
 
   return (
     <div className="space-y-6 pb-20 md:pb-12">
-      {/* Demo Notice Banner (Prominent & Clear) */}
-      <div className="bg-[#FEF9E7] border border-[#F7E2A9] rounded-2xl p-3 md:p-4 flex items-center justify-between gap-3 text-xs md:text-sm text-[#8C6200]">
-        <div className="flex items-center gap-2.5">
-          <Info className="w-5 h-5 shrink-0 text-[#936709]" />
-          <div>
-            <span className="font-bold">নমুনা তথ্য প্রদর্শিত (Demo Data):</span>{' '}
-            <span className="text-gray-700">
-              অ্যাপ্লিকেশনের কার্যকারিতা প্রদর্শনের জন্য কাল্পনিক তথ্য ব্যবহার করা হয়েছে। নতুন হিসাব যোগ করতে উপরের বোতামগুলো ব্যবহার করুন।
-            </span>
-          </div>
-        </div>
-        <span className="hidden sm:inline-block px-2.5 py-1 bg-white rounded-lg text-xs font-bold text-[#8C6200] border border-[#E8DFC9] shrink-0">
-          ১-১০ গাভী সংস্করণ
-        </span>
-      </div>
-
       {/* Hero Welcome & Quick Action Bar */}
       <div className="bg-linear-to-r from-[#16402C] via-[#1B4D35] to-[#226141] rounded-3xl p-5 md:p-7 text-white shadow-md relative overflow-hidden">
         {/* Subtle decorative background shape */}
@@ -133,9 +117,17 @@ export const DashboardView = ({
               আসসালামু আলাইকুম, আব্বু
             </h2>
             <p className="text-sm md:text-base text-white/80 mt-1 max-w-xl">
-              আজকের খামার কার্যক্রম স্বাভাবিক রয়েছে। সকাল ও বিকালের মোট দুধ উৎপাদন{' '}
-              <strong className="text-[#E5B842] font-bold">{summary.todayMilkLiters} লিটার</strong>{' '}
-              এবং বায়োগ্যাস প্ল্যান্ট সচল আছে।
+              {summary.todayMilkLiters > 0 ? (
+                <>
+                  আজকের খামার কার্যক্রম স্বাভাবিক রয়েছে। সকাল ও বিকালের মোট দুধ উৎপাদন{' '}
+                  <strong className="text-[#E5B842] font-bold">{summary.todayMilkLiters} লিটার</strong>{' '}
+                  {biogasLogs.length > 0 ? 'এবং বায়োগ্যাস প্ল্যান্ট সচল আছে।' : 'লিপিবদ্ধ হয়েছে।'}
+                </>
+              ) : (
+                <>
+                  খামারের প্রতিদিনের দুধ দোয়ানো, ক্রয়-বিক্রয় ও নিয়মিত কার্যক্রম সহজে হিসাব রাখতে উপরের বোতামগুলো ব্যবহার করুন।
+                </>
+              )}
             </p>
           </div>
 
@@ -199,7 +191,11 @@ export const DashboardView = ({
             title="মোট গরু"
             value={summary.totalCows}
             unit="টি"
-            subtitle={`${summary.milkingCows} দুধাল • ${summary.pregnantCows} গাভীন • ${summary.calvesCount} বাছুর`}
+            subtitle={
+              summary.totalCows > 0
+                ? `${summary.milkingCows} দুধাল • ${summary.pregnantCows} গাভীন • ${summary.calvesCount} বাছুর`
+                : 'নতুন গরু যোগ করুন'
+            }
             icon={Layers}
             variant="green"
             onClick={() => onNavigate('cows')}
@@ -210,10 +206,10 @@ export const DashboardView = ({
             title="আজকের দুধ"
             value={summary.todayMilkLiters}
             unit="লিটার"
-            subtitle="সকাল ৪১.৫ + বিকাল ৩৩.০"
+            subtitle={summary.todayMilkLiters > 0 ? 'দৈনিক মোট উৎপাদন' : 'আজকের দুধের হিসাব দিন'}
             icon={Droplets}
             variant="cream"
-            trend={{ text: 'স্থিতিশীল', isPositive: true }}
+            trend={summary.todayMilkLiters > 0 ? { text: 'আজকের সংগৃহীত', isPositive: true } : undefined}
             onClick={() => onNavigate('milk')}
           />
 
@@ -224,7 +220,7 @@ export const DashboardView = ({
             subtitle="দুধ বিক্রি ও ক্যাশ আদায়"
             icon={DollarSign}
             variant="gold"
-            trend={{ text: '+১০০%', isPositive: true }}
+            trend={summary.todayIncomeTk > 0 ? { text: 'নগদ জমা', isPositive: true } : undefined}
             onClick={() => onNavigate('finance')}
           />
 
@@ -245,7 +241,7 @@ export const DashboardView = ({
             subtitle="আনুমানিক উদ্বৃত্ত আয়"
             icon={TrendingUp}
             variant="green"
-            trend={{ text: 'লাভজনক', isPositive: true }}
+            trend={summary.estimatedMonthProfitTk > 0 ? { text: 'উদ্বৃত্ত', isPositive: true } : undefined}
             onClick={() => onNavigate('reports')}
           />
 
@@ -254,10 +250,10 @@ export const DashboardView = ({
             title="বাকি কাজ"
             value={summary.pendingTasksCount}
             unit="টি"
-            subtitle="টিকা ও খাদ্য ব্যবস্থাপনা"
+            subtitle="টিকা ও নিয়মিত কার্যক্রম"
             icon={CalendarClock}
             variant="blue"
-            trend={{ text: 'মনোযোগ দিন', isPositive: false }}
+            trend={summary.pendingTasksCount > 0 ? { text: 'মনোযোগ দিন', isPositive: false } : undefined}
             onClick={() => onNavigate('reminders')}
           />
         </div>
@@ -362,27 +358,33 @@ export const DashboardView = ({
               <span className="text-xs text-gray-400">সর্বশেষ আপডেট</span>
             </div>
 
-            <div className="divide-y divide-[#F4EFE2] mt-2">
-              {recentActivities.map((act) => {
-                const Icon = act.icon;
-                return (
-                  <div key={act.id} className="py-3.5 flex items-start gap-3">
-                    <div className={`p-2 rounded-xl shrink-0 ${act.iconColor}`}>
-                      <Icon className="w-4 h-4" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="text-xs md:text-sm font-bold text-gray-900 truncate">
-                          {act.title}
-                        </p>
-                        <span className="text-[11px] text-gray-400 shrink-0">{act.time}</span>
+            {recentActivities.length === 0 ? (
+              <div className="py-8 text-center text-gray-500 text-sm">
+                🌾 এখনো কোনো কার্যক্রম লিপিবদ্ধ করা হয়নি। নতুন দুধের হিসাব বা খরচ যোগ করলে এখানে দেখতে পাবেন।
+              </div>
+            ) : (
+              <div className="divide-y divide-[#F4EFE2] mt-2">
+                {recentActivities.map((act) => {
+                  const Icon = act.icon;
+                  return (
+                    <div key={act.id} className="py-3.5 flex items-start gap-3">
+                      <div className={`p-2 rounded-xl shrink-0 ${act.iconColor}`}>
+                        <Icon className="w-4 h-4" />
                       </div>
-                      <p className="text-xs text-gray-600 mt-0.5">{act.detail}</p>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="text-xs md:text-sm font-bold text-gray-900 truncate">
+                            {act.title}
+                          </p>
+                          <span className="text-[11px] text-gray-400 shrink-0">{act.time}</span>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-0.5">{act.detail}</p>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           <div className="pt-4 border-t border-[#F2ECE1] mt-2">

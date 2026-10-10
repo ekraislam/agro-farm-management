@@ -9,10 +9,26 @@ interface MilkTrendChartProps {
 export const MilkTrendChart = ({ records }: MilkTrendChartProps) => {
   // Sort or take last 7 records in chronological order
   const displayRecords = [...records].slice(0, 7).reverse();
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(displayRecords.length - 1);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(
+    displayRecords.length > 0 ? displayRecords.length - 1 : null
+  );
 
-  const maxMilk = Math.max(...displayRecords.map((r) => r.totalLiters), 80);
-  const selectedRecord = selectedIndex !== null ? displayRecords[selectedIndex] : displayRecords[displayRecords.length - 1];
+  const avgDaily =
+    displayRecords.length > 0
+      ? (
+          displayRecords.reduce((sum, r) => sum + r.totalLiters, 0) /
+          displayRecords.length
+        ).toFixed(1)
+      : '০';
+
+  const maxMilk =
+    displayRecords.length > 0
+      ? Math.max(...displayRecords.map((r) => r.totalLiters), 10)
+      : 10;
+  const selectedRecord =
+    selectedIndex !== null && displayRecords[selectedIndex]
+      ? displayRecords[selectedIndex]
+      : null;
 
   return (
     <div className="bg-white rounded-2xl p-4 md:p-6 border border-[#EBE4D5] shadow-xs">
@@ -44,93 +60,107 @@ export const MilkTrendChart = ({ records }: MilkTrendChartProps) => {
         </div>
       </div>
 
-      {/* Selected Day Quick Inspector */}
-      {selectedRecord && (
-        <div className="my-3 p-3 bg-[#FAF7F0] rounded-xl border border-[#EBE3D0] flex flex-wrap items-center justify-between gap-2 text-xs md:text-sm">
-          <div className="font-semibold text-[#16402C]">
-            তারিখ: {selectedRecord.date}
+      {displayRecords.length === 0 ? (
+        <div className="h-64 flex flex-col items-center justify-center text-center p-6 text-gray-500">
+          <div className="w-12 h-12 rounded-full bg-[#EAF5EE] text-[#2A7A50] flex items-center justify-center mb-3">
+            <Droplets className="w-6 h-6" />
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-[#1B4D35]">
-              সকাল: <strong className="font-bold">{selectedRecord.morningLiters}</strong> লি.
-            </span>
-            <span className="text-[#936709]">
-              বিকাল: <strong className="font-bold">{selectedRecord.eveningLiters}</strong> লি.
-            </span>
-            <span className="bg-[#16402C] text-white px-2 py-0.5 rounded-md font-bold">
-              মোট: {selectedRecord.totalLiters} লিটার
-            </span>
-          </div>
+          <p className="font-semibold text-gray-700 text-sm">এখনো কোনো দুধ সংগ্রহের রেকর্ড নেই</p>
+          <p className="text-xs text-gray-500 mt-1 max-w-sm">
+            প্রতিদিনের দুধ দোয়ানোর হিসাব যোগ করলে এখানে বিগত ৭ দিনের সকাল ও বিকালের চার্ট দেখতে পাবেন।
+          </p>
         </div>
-      )}
-
-      {/* SVG Responsive Bar Chart */}
-      <div className="mt-4 pt-2">
-        <div className="h-48 md:h-56 w-full flex items-end justify-between gap-2 md:gap-4 px-1 pb-6 pt-4 border-b border-[#EAE3D2] relative">
-          {/* Subtle grid lines */}
-          <div className="absolute inset-x-0 top-0 border-b border-dashed border-gray-200 pointer-events-none" />
-          <div className="absolute inset-x-0 top-1/2 border-b border-dashed border-gray-200 pointer-events-none" />
-
-          {displayRecords.map((item, idx) => {
-            const morningHeightPercent = (item.morningLiters / maxMilk) * 100;
-            const eveningHeightPercent = (item.eveningLiters / maxMilk) * 100;
-            const isSelected = selectedIndex === idx;
-
-            // Short date label (e.g. "০৪ অক্টো")
-            const shortDate = item.date.split(' ').slice(0, 2).join(' ');
-
-            return (
-              <div
-                key={item.id}
-                onClick={() => setSelectedIndex(idx)}
-                className="flex-1 flex flex-col items-center h-full justify-end group cursor-pointer relative"
-              >
-                {/* Total label above bar */}
-                <span className={`text-[11px] md:text-xs font-bold mb-1 transition-colors ${
-                  isSelected ? 'text-[#16402C]' : 'text-gray-500 group-hover:text-gray-800'
-                }`}>
-                  {item.totalLiters}L
+      ) : (
+        <>
+          {/* Selected Day Quick Inspector */}
+          {selectedRecord && (
+            <div className="my-3 p-3 bg-[#FAF7F0] rounded-xl border border-[#EBE3D0] flex flex-wrap items-center justify-between gap-2 text-xs md:text-sm">
+              <div className="font-semibold text-[#16402C]">
+                তারিখ: {selectedRecord.date}
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-[#1B4D35]">
+                  সকাল: <strong className="font-bold">{selectedRecord.morningLiters}</strong> লি.
                 </span>
-
-                {/* Stacked Bar */}
-                <div
-                  className={`w-full max-w-[36px] rounded-t-lg overflow-hidden flex flex-col justify-end transition-all duration-200 ${
-                    isSelected ? 'ring-2 ring-[#16402C] ring-offset-1' : 'opacity-85 hover:opacity-100'
-                  }`}
-                  style={{ height: `${morningHeightPercent + eveningHeightPercent}%` }}
-                >
-                  {/* Evening bar segment */}
-                  <div
-                    className="w-full bg-[#D4A017] transition-all"
-                    style={{ height: `${(eveningHeightPercent / (morningHeightPercent + eveningHeightPercent)) * 100}%` }}
-                    title={`বিকাল: ${item.eveningLiters} লি.`}
-                  />
-                  {/* Morning bar segment */}
-                  <div
-                    className="w-full bg-[#2A7A50] transition-all"
-                    style={{ height: `${(morningHeightPercent / (morningHeightPercent + eveningHeightPercent)) * 100}%` }}
-                    title={`সকাল: ${item.morningLiters} লি.`}
-                  />
-                </div>
-
-                {/* X-axis date */}
-                <span className={`absolute -bottom-6 text-[10px] md:text-xs whitespace-nowrap transition-colors ${
-                  isSelected ? 'font-bold text-[#16402C]' : 'text-gray-500'
-                }`}>
-                  {shortDate}
+                <span className="text-[#936709]">
+                  বিকাল: <strong className="font-bold">{selectedRecord.eveningLiters}</strong> লি.
+                </span>
+                <span className="bg-[#16402C] text-white px-2 py-0.5 rounded-md font-bold">
+                  মোট: {selectedRecord.totalLiters} লিটার
                 </span>
               </div>
-            );
-          })}
-        </div>
+            </div>
+          )}
 
-        <div className="flex items-center justify-between text-xs text-gray-500 mt-7 pt-1 px-1">
-          <span>* বারে ট্যাপ করে ঐ দিনের সকাল ও বিকালের হিসাব দেখুন</span>
-          <span className="font-semibold text-[#16402C] flex items-center gap-1">
-            <TrendingUp className="w-3.5 h-3.5 text-[#2A7A50]" /> গড় দৈনিক: ৭৪.৩ লিটার
-          </span>
-        </div>
-      </div>
+          {/* SVG Responsive Bar Chart */}
+          <div className="mt-4 pt-2">
+            <div className="h-48 md:h-56 w-full flex items-end justify-between gap-2 md:gap-4 px-1 pb-6 pt-4 border-b border-[#EAE3D2] relative">
+              {/* Subtle grid lines */}
+              <div className="absolute inset-x-0 top-0 border-b border-dashed border-gray-200 pointer-events-none" />
+              <div className="absolute inset-x-0 top-1/2 border-b border-dashed border-gray-200 pointer-events-none" />
+
+              {displayRecords.map((item, idx) => {
+                const morningHeightPercent = (item.morningLiters / maxMilk) * 100;
+                const eveningHeightPercent = (item.eveningLiters / maxMilk) * 100;
+                const isSelected = selectedIndex === idx;
+
+                // Short date label (e.g. "০৪ অক্টো")
+                const shortDate = item.date.split(' ').slice(0, 2).join(' ');
+
+                return (
+                  <div
+                    key={item.id}
+                    onClick={() => setSelectedIndex(idx)}
+                    className="flex-1 flex flex-col items-center h-full justify-end group cursor-pointer relative"
+                  >
+                    {/* Total label above bar */}
+                    <span className={`text-[11px] md:text-xs font-bold mb-1 transition-colors ${
+                      isSelected ? 'text-[#16402C]' : 'text-gray-500 group-hover:text-gray-800'
+                    }`}>
+                      {item.totalLiters}L
+                    </span>
+
+                    {/* Stacked Bar */}
+                    <div
+                      className={`w-full max-w-[36px] rounded-t-lg overflow-hidden flex flex-col justify-end transition-all duration-200 ${
+                        isSelected ? 'ring-2 ring-[#16402C] ring-offset-1' : 'opacity-85 hover:opacity-100'
+                      }`}
+                      style={{ height: `${morningHeightPercent + eveningHeightPercent}%` }}
+                    >
+                      {/* Evening bar segment */}
+                      <div
+                        className="w-full bg-[#D4A017] transition-all"
+                        style={{ height: `${(eveningHeightPercent / (morningHeightPercent + eveningHeightPercent)) * 100}%` }}
+                        title={`বিকাল: ${item.eveningLiters} লি.`}
+                      />
+                      {/* Morning bar segment */}
+                      <div
+                        className="w-full bg-[#2A7A50] transition-all"
+                        style={{ height: `${(morningHeightPercent / (morningHeightPercent + eveningHeightPercent)) * 100}%` }}
+                        title={`সকাল: ${item.morningLiters} লি.`}
+                      />
+                    </div>
+
+                    {/* X-axis date */}
+                    <span className={`absolute -bottom-6 text-[10px] md:text-xs whitespace-nowrap transition-colors ${
+                      isSelected ? 'font-bold text-[#16402C]' : 'text-gray-500'
+                    }`}>
+                      {shortDate}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="flex items-center justify-between text-xs text-gray-500 mt-7 pt-1 px-1">
+              <span>* বারে ট্যাপ করে ঐ দিনের সকাল ও বিকালের হিসাব দেখুন</span>
+              <span className="font-semibold text-[#16402C] flex items-center gap-1">
+                <TrendingUp className="w-3.5 h-3.5 text-[#2A7A50]" /> গড় দৈনিক: {avgDaily} লিটার
+              </span>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
@@ -169,11 +199,13 @@ export const IncomeExpenseChart = ({
           </p>
         </div>
         <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${
-          isSurplus
+          totalFlow === 0
+            ? 'bg-[#FAF7F0] text-gray-600 border-[#EAE2D0]'
+            : isSurplus
             ? 'bg-[#EAF5EE] text-[#1B4D35] border-[#C5E3D0]'
             : 'bg-[#FDF2F2] text-[#9E2A2B] border-[#F8C8C8]'
         }`}>
-          {isSurplus ? 'লাভজনক খামার' : 'পরিচালন ঘাটতি'}
+          {totalFlow === 0 ? 'হিসাব শুরু করুন' : isSurplus ? 'লাভজনক খামার' : 'পরিচালন ঘাটতি'}
         </span>
       </div>
 
@@ -210,7 +242,7 @@ export const IncomeExpenseChart = ({
           <p className="text-sm md:text-base font-bold text-[#16402C] mt-0.5">
             ৳{monthIncome.toLocaleString('en-US')}
           </p>
-          <p className="text-[10px] text-gray-500 mt-0.5">দুধ ও জৈব সার</p>
+          <p className="text-[10px] text-gray-500 mt-0.5">দুধ ও অন্যান্য</p>
         </div>
 
         <div className="bg-[#FDF3F3] rounded-xl p-2.5 md:p-3 border border-[#F9D7D7] text-center">
@@ -224,12 +256,16 @@ export const IncomeExpenseChart = ({
         <div className="bg-[#FEF9E7] rounded-xl p-2.5 md:p-3 border border-[#F7E2A9] text-center">
           <p className="text-[11px] md:text-xs text-[#936709] font-medium">নিট ফলাফল</p>
           <p className={`text-sm md:text-base font-bold mt-0.5 ${
-            isSurplus ? 'text-[#805B00]' : 'text-[#9E2A2B]'
+            totalFlow === 0
+              ? 'text-gray-700'
+              : isSurplus
+              ? 'text-[#805B00]'
+              : 'text-[#9E2A2B]'
           }`}>
-            {isSurplus ? '+' : ''}৳{estimatedProfit.toLocaleString('en-US')}
+            {totalFlow > 0 && isSurplus ? '+' : ''}৳{estimatedProfit.toLocaleString('en-US')}
           </p>
           <p className="text-[10px] text-[#936709] mt-0.5">
-            {isSurplus ? 'পরিচালন উদ্বৃত্ত' : 'পরিচালন ঘাটতি'}
+            {totalFlow === 0 ? 'উদ্বৃত্ত/ঘাটতি' : isSurplus ? 'পরিচালন উদ্বৃত্ত' : 'পরিচালন ঘাটতি'}
           </p>
         </div>
       </div>
