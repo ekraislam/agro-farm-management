@@ -170,10 +170,10 @@ export const ReportsView = ({
           <button
             onClick={handleExportCsv}
             className="px-4 py-2.5 rounded-2xl bg-white hover:bg-[#FAF7F0] text-[#16402C] font-semibold text-xs md:text-sm border border-[#E8DFC9] flex items-center gap-2 shadow-2xs transition-all active:scale-95 cursor-pointer"
-            title="বাংলা সাপোর্টসহ এক্সেল উপযোগী UTF-8 BOM CSV ডাউনলোড"
+            title="কম্পিউটার বা মোবাইলে খামারের সম্পূর্ণ হিসাব ডাউনলোড করুন"
           >
             <Download className="w-4 h-4 text-[#16402C]" />
-            <span>CSV ডাউনলোড</span>
+            <span>হিসাব ফাইল ডাউনলোড</span>
           </button>
 
           <button

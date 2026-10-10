@@ -201,8 +201,8 @@ export const AdvisorView = ({
                 AI ফার্ম অ্যাডভাইজার
               </h2>
               {isDemoMode ? (
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
-                  ডেমো প্রিভিউ (Demo Preview)
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#EAF5EE] text-[#1B4D35] border border-[#C5E3D0]">
+                  স্মার্ট পরামর্শক সক্রিয়
                 </span>
               ) : isLiveCloud ? (
                 <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
