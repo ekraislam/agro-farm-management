@@ -6,6 +6,7 @@ import type {
   FinancialRecord,
   AttendanceStatus 
 } from '../types/farm';
+import { roundMoney } from './accounting';
 
 export const ATTENDANCE_STATUS_LABELS: Record<AttendanceStatus, { bn: string; badgeClass: string; dotClass: string }> = {
   present: {
@@ -162,8 +163,8 @@ export function calculatePayrollStatus(
     return txMonth === targetPeriod || (tx.date && tx.date.includes(targetPeriod));
   });
 
-  const paidAmount = payments.reduce((sum, p) => sum + p.amount, 0);
-  const dueAmount = Math.max(0, employee.salaryMonthly - paidAmount);
+  const paidAmount = roundMoney(payments.reduce((sum, p) => sum + p.amount, 0));
+  const dueAmount = roundMoney(Math.max(0, employee.salaryMonthly - paidAmount));
 
   let status: 'paid' | 'partial' | 'unpaid' = 'unpaid';
   let statusBn = 'বকেয়া';

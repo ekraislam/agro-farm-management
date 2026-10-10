@@ -1,3 +1,4 @@
+import { formatCurrency } from '../../utils/accounting';
 import { useState } from 'react';
 import { 
   Droplets, 
@@ -88,7 +89,7 @@ export const MilkRecordsView = ({
           <div>
             <p className="text-xs font-semibold text-gray-600">মোট দুধ বিক্রির টাকা</p>
             <p className="text-2xl font-bold text-[#16402C] mt-1">
-              ৳ {totalAmount.toLocaleString('en-US')}
+              ৳ {formatCurrency(totalAmount)}
             </p>
             <p className="text-[11px] text-gray-500 mt-0.5">গড় দর: ৳ ৮০/লিটার</p>
           </div>
@@ -168,7 +169,7 @@ export const MilkRecordsView = ({
                       </td>
                       <td className="py-3.5 px-4 text-gray-600">৳{r.pricePerLiter}</td>
                       <td className="py-3.5 px-4 font-bold text-[#16402C]">
-                        ৳{r.totalAmount.toLocaleString('en-US')}
+                        ৳{r.formatCurrency(totalAmount)}
                       </td>
                       <td className="py-3.5 px-4 text-gray-600 text-xs">
                         {r.recordedBy}
@@ -206,7 +207,7 @@ export const MilkRecordsView = ({
 
                   <div className="flex items-center justify-between text-xs pt-1">
                     <span className="text-gray-600">
-                      মোট মূল্য: <strong className="text-[#16402C] font-bold">৳{r.totalAmount.toLocaleString('en-US')}</strong> (৳{r.pricePerLiter}/লি)
+                      মোট মূল্য: <strong className="text-[#16402C] font-bold">৳{r.formatCurrency(totalAmount)}</strong> (৳{r.pricePerLiter}/লি)
                     </span>
                     <span className="text-gray-500 text-[11px]">{r.recordedBy}</span>
                   </div>

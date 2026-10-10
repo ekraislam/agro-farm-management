@@ -11,6 +11,11 @@ import type {
   FarmSummary
 } from '../types/farm';
 
+// IDs of hardcoded demo employees - used to filter them out of localStorage
+// so they never appear when the user has no real employees entered.
+export const DEMO_EMPLOYEE_IDS = new Set(['emp-1', 'emp-2']);
+export const DEMO_COW_IDS = new Set(['cow-1', 'cow-2', 'cow-3', 'cow-4']);
+
 export const INITIAL_COWS: Cow[] = [
   {
     id: 'cow-1',

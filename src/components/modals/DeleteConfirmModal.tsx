@@ -1,3 +1,4 @@
+import { formatCurrency } from '../../utils/accounting';
 import { AlertTriangle, Trash2, X } from 'lucide-react';
 import type { FinancialRecord } from '../../types/farm';
 
@@ -67,7 +68,7 @@ export const DeleteConfirmModal = ({
               <span className={`text-base font-bold ${
                 isIncome ? 'text-[#16402C]' : 'text-[#9E2A2B]'
               }`}>
-                ৳ {record.amount.toLocaleString('en-US')}
+                ৳ {record.formatCurrency(amount)}
               </span>
             </div>
             <div className="flex justify-between items-center">

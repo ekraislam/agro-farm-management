@@ -50,6 +50,36 @@ export const roundMoney = (amount: number): number => {
   return Math.round((amount + Number.EPSILON) * 100) / 100;
 };
 
+/**
+ * Formats a monetary amount for display.
+ * Shows paise (2 decimal places) only when the fractional part is non-zero.
+ * Examples: 1234.50 → "১,২৩৪.৫০"  |  1234 → "১,২৩৪"  |  1234.5 → "১,২৩৪.৫০"
+ * Always wrap the result with the ৳ symbol in JSX.
+ */
+export const formatCurrency = (amount: number): string => {
+  const safe = roundMoney(amount);
+  if (!Number.isFinite(safe)) return '০';
+  // Check if there is a meaningful fractional part
+  const hasPaise = safe % 1 !== 0;
+  // Use en-IN grouping which matches South Asian comma placement
+  return safe.toLocaleString('en-IN', {
+    minimumFractionDigits: hasPaise ? 2 : 0,
+    maximumFractionDigits: 2,
+  });
+};
+
+/**
+ * Parses a user-entered string (may contain Bengali digits or decimals) to a safe number.
+ * Returns 0 for invalid input.
+ */
+export const parseCurrency = (value: string): number => {
+  if (!value || value.trim() === '') return 0;
+  // Convert Bengali digits to ASCII first
+  const ascii = value.replace(/[০-৯]/g, (d) => String('০১২৩৪৫৬৭৮৯'.indexOf(d)));
+  const num = parseFloat(ascii.replace(/,/g, ''));
+  return Number.isFinite(num) ? roundMoney(num) : 0;
+};
+
 // ------------------------------------------------------------------------------
 // 2. Bengali & ISO Date Parsing Utilities
 // ------------------------------------------------------------------------------

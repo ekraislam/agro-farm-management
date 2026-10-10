@@ -1,3 +1,4 @@
+import { formatCurrency } from './utils/accounting';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { 
   NavigationTab, 
@@ -22,7 +23,8 @@ import {
   INITIAL_BIOGAS_INSPECTIONS,
   INITIAL_REMINDERS,
   INITIAL_HEALTH_RECORDS,
-  INITIAL_ATTENDANCE_RECORDS
+  INITIAL_ATTENDANCE_RECORDS,
+  DEMO_EMPLOYEE_IDS,
 } from './data/demoData';
 
 import { X, Loader2, AlertTriangle, RefreshCw } from 'lucide-react';
@@ -76,7 +78,9 @@ function FarmDashboard() {
   const [demoCows, setDemoCows] = useState<Cow[]>(() => localFarmStorage.getCows());
   const [demoMilkRecords, setDemoMilkRecords] = useState<MilkRecord[]>(() => localFarmStorage.getMilkRecords());
   const [demoFinancialRecords, setDemoFinancialRecords] = useState<FinancialRecord[]>(() => localFarmStorage.getFinancialRecords());
-  const [demoEmployees, setDemoEmployees] = useState<Employee[]>(() => localFarmStorage.getEmployees());
+  const [demoEmployees, setDemoEmployees] = useState<Employee[]>(() => 
+    localFarmStorage.getEmployees().filter((e) => !DEMO_EMPLOYEE_IDS.has(e.id))
+  );
   const [demoBiogasLogs, setDemoBiogasLogs] = useState<BiogasDailyLog[]>(() => localFarmStorage.getBiogasLogs());
   const [demoReminders, setDemoReminders] = useState<ReminderTask[]>(() => localFarmStorage.getReminders());
   const [demoHealthRecords, setDemoHealthRecords] = useState<HealthRecord[]>(() => localFarmStorage.getHealthRecords());
@@ -324,7 +328,7 @@ function FarmDashboard() {
         }
         showToast(
           'দুধের হিসাব ও বিক্রয় আয় সফলভাবে ক্লাউডে সংরক্ষিত হয়েছে!',
-          `${record.totalLiters} লিটার সংগৃহীত, ${soldLiters} লিটার বিক্রয় (৳ ${record.totalAmount.toLocaleString('en-US')})`
+          `${record.totalLiters} লিটার সংগৃহীত, ${soldLiters} লিটার বিক্রয় (৳ ${record.formatCurrency(totalAmount)})`
         );
       } else {
         showToast(
@@ -355,7 +359,7 @@ function FarmDashboard() {
       setDemoFinancialRecords([incomeRecord, ...demoFinancialRecords]);
       showToast(
         'দুধের নতুন হিসাব ও বিক্রয় আয় সফলভাবে সংরক্ষিত হয়েছে!',
-        `${record.totalLiters} লিটার সংগৃহীত, ${soldLiters} লিটার বিক্রয় (৳ ${record.totalAmount.toLocaleString('en-US')})`
+        `${record.totalLiters} লিটার সংগৃহীত, ${soldLiters} লিটার বিক্রয় (৳ ${record.formatCurrency(totalAmount)})`
       );
     } else {
       showToast(
@@ -376,7 +380,7 @@ function FarmDashboard() {
       setCloudFinancialRecords([res.data!, ...cloudFinancialRecords]);
       showToast(
         record.type === 'income' ? 'নতুন আয় ক্লাউডে সংরক্ষিত হয়েছে!' : 'নতুন খরচ ক্লাউডে সংরক্ষিত হয়েছে!',
-        `${record.title} (৳ ${record.amount.toLocaleString('en-US')})`
+        `${record.title} (৳ ${record.formatCurrency(amount)})`
       );
       return { success: true };
     }
@@ -385,7 +389,7 @@ function FarmDashboard() {
     setDemoFinancialRecords([record, ...demoFinancialRecords]);
     showToast(
       record.type === 'income' ? 'নতুন আয় সফলভাবে যুক্ত হয়েছে!' : 'নতুন খরচ সফলভাবে যুক্ত হয়েছে!',
-      `${record.title} (৳ ${record.amount.toLocaleString('en-US')})`
+      `${record.title} (৳ ${record.formatCurrency(amount)})`
     );
     return { success: true };
   };
@@ -398,13 +402,13 @@ function FarmDashboard() {
       }
 
       setCloudFinancialRecords(cloudFinancialRecords.map((r) => (r.id === record.id ? res.data! : r)));
-      showToast('লেনদেন সফলভাবে হালনাগাদ করা হয়েছে!', `${record.title} (৳ ${record.amount.toLocaleString('en-US')})`);
+      showToast('লেনদেন সফলভাবে হালনাগাদ করা হয়েছে!', `${record.title} (৳ ${record.formatCurrency(amount)})`);
       return { success: true };
     }
 
     // Local Offline Mode
     setDemoFinancialRecords(demoFinancialRecords.map((r) => (r.id === record.id ? record : r)));
-    showToast('লেনদেন সফলভাবে হালনাগাদ করা হয়েছে!', `${record.title} (৳ ${record.amount.toLocaleString('en-US')})`);
+    showToast('লেনদেন সফলভাবে হালনাগাদ করা হয়েছে!', `${record.title} (৳ ${record.formatCurrency(amount)})`);
     return { success: true };
   };
 
@@ -515,7 +519,7 @@ function FarmDashboard() {
       showToast(
         'স্বাস্থ্য রেকর্ড ক্লাউডে সংরক্ষিত হয়েছে!',
         createExpense && record.cost
-          ? `${record.treatmentName} (খরচ: ৳ ${record.cost.toLocaleString('en-US')})`
+          ? `${record.treatmentName} (খরচ: ৳ ${record.formatCurrency(cost)})`
           : record.treatmentName
       );
       return { success: true };
@@ -560,7 +564,7 @@ function FarmDashboard() {
     showToast(
       'স্বাস্থ্য রেকর্ড সফলভাবে যোগ করা হয়েছে!',
       createExpense && record.cost
-        ? `${record.treatmentName} (খরচ: ৳ ${record.cost.toLocaleString('en-US')})`
+        ? `${record.treatmentName} (খরচ: ৳ ${record.formatCurrency(cost)})`
         : record.treatmentName
     );
     return { success: true };
@@ -872,7 +876,7 @@ function FarmDashboard() {
       setCloudFinancialRecords([res.data!, ...cloudFinancialRecords]);
       showToast(
         'বেতন পরিশোধের আর্থিক হিসাব ক্লাউডে সংরক্ষিত হয়েছে!',
-        `${employee.name} (${salaryPeriod}) ৳ ${amount.toLocaleString('en-US')}`
+        `${employee.name} (${salaryPeriod}) ৳ ${formatCurrency(amount)}`
       );
       return { success: true };
     }
@@ -896,7 +900,7 @@ function FarmDashboard() {
     setDemoFinancialRecords([newRecord, ...demoFinancialRecords]);
     showToast(
       'বেতন পরিশোধ সফলভাবে রেকর্ড হয়েছে!',
-      `${employee.name} (৳ ${amount.toLocaleString('en-US')})`
+      `${employee.name} (৳ ${formatCurrency(amount)})`
     );
     return { success: true };
   };

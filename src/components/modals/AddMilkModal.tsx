@@ -2,6 +2,7 @@ import { useState, useEffect, type FormEvent } from 'react';
 import { X, Droplets, Check, AlertCircle, Info, DollarSign } from 'lucide-react';
 import type { Cow, MilkRecord, Employee } from '../../types/farm';
 import { generateId } from '../../utils/id';
+import { roundMoney, formatCurrency } from '../../utils/accounting';
 
 interface AddMilkModalProps {
   isOpen: boolean;
@@ -74,7 +75,7 @@ export const AddMilkModal = ({
   // Derived liter calculations
   const morningNum = parseFloat(morningLiters) || 0;
   const eveningNum = parseFloat(eveningLiters) || 0;
-  const totalLiters = Math.round((morningNum + eveningNum) * 10) / 10;
+  const totalLiters = roundMoney(morningNum + eveningNum);
 
   // Auto-sync sold liters with total collected milk unless user explicitly edited it
   useEffect(() => {
@@ -93,7 +94,7 @@ export const AddMilkModal = ({
     : 0;
 
   const priceNum = isSold ? (parseFloat(pricePerLiter) || 0) : 0;
-  const totalAmount = isSold ? Math.round(effectiveSoldLiters * priceNum) : 0;
+  const totalAmount = isSold ? roundMoney(effectiveSoldLiters * priceNum) : 0;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -432,7 +433,7 @@ export const AddMilkModal = ({
                       বিক্রি: <strong>{effectiveSoldLiters}</strong> লিটার (দর ৳{priceNum})
                     </span>
                     <span className="text-sm font-bold text-[#16402C]">
-                      মোট বিক্রির টাকা: ৳ {totalAmount.toLocaleString('en-US')}
+                      মোট বিক্রির টাকা: ৳ {formatCurrency(totalAmount)}
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5 text-xs text-[#2A7A50] font-semibold">

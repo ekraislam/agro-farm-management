@@ -40,7 +40,7 @@ import {
   exportBiogasCsv
 } from '../../utils/farmReports';
 import type { ReportDateRangeType } from '../../utils/farmReports';
-import { formatBanglaDate } from '../../utils/accounting';
+import { formatBanglaDate, formatCurrency } from '../../utils/accounting';
 import { useAuth } from '../../context/useAuth';
 
 interface ReportsViewProps {
@@ -333,7 +333,7 @@ export const ReportsView = ({
               <div className="p-4 bg-[#FAF7F0] rounded-2xl border border-[#EAE2D0] metric-card">
                 <span className="text-xs text-gray-500 block">মোট জমা (আয়)</span>
                 <span className="text-xl md:text-2xl font-black text-[#16402C] mt-1 block">
-                  ৳ {financialReport.summary.totalIncome.toLocaleString('en-US')}
+                  ৳ {financialReport.summary.formatCurrency(totalIncome)}
                 </span>
                 <span className="text-[11px] text-[#2A7A50] mt-0.5 block">
                   {financialReport.summary.incomeRecordsCount}টি আয়ের ভুক্তি
@@ -343,7 +343,7 @@ export const ReportsView = ({
               <div className="p-4 bg-[#FAF7F0] rounded-2xl border border-[#EAE2D0] metric-card">
                 <span className="text-xs text-gray-500 block">মোট খরচ (ব্যয়)</span>
                 <span className="text-xl md:text-2xl font-black text-[#9E2A2B] mt-1 block">
-                  ৳ {financialReport.summary.totalExpenses.toLocaleString('en-US')}
+                  ৳ {financialReport.summary.formatCurrency(totalExpenses)}
                 </span>
                 <span className="text-[11px] text-gray-500 mt-0.5 block">
                   {financialReport.summary.expenseRecordsCount}টি ব্যয়ের ভুক্তি
@@ -359,7 +359,7 @@ export const ReportsView = ({
                 <span className={`text-xl md:text-2xl font-black mt-1 block ${
                   financialReport.summary.isSurplus ? 'text-[#1B4D35]' : 'text-[#991B1B]'
                 }`}>
-                  {financialReport.summary.netOperatingResult >= 0 ? '+' : ''}৳ {financialReport.summary.netOperatingResult.toLocaleString('en-US')}
+                  {financialReport.summary.netOperatingResult >= 0 ? '+' : ''}৳ {financialReport.summary.formatCurrency(netOperatingResult)}
                 </span>
                 <span className={`text-[11px] font-bold mt-0.5 block ${
                   financialReport.summary.isSurplus ? 'text-[#2A7A50]' : 'text-[#DC2626]'
@@ -392,12 +392,12 @@ export const ReportsView = ({
                     {financialReport.summary.incomeCategoryBreakdown.map((item) => (
                       <div key={item.category} className="flex justify-between items-center py-1 border-b border-gray-50 last:border-none">
                         <span className="text-gray-700">{item.categoryLabelBn} ({item.count}টি)</span>
-                        <span className="font-bold text-[#16402C]">৳ {item.totalAmount.toLocaleString('en-US')}</span>
+                        <span className="font-bold text-[#16402C]">৳ {item.formatCurrency(totalAmount)}</span>
                       </div>
                     ))}
                     <div className="flex justify-between pt-2 border-t border-gray-200 font-bold text-sm">
                       <span>সর্বমোট জমা (আয়):</span>
-                      <span className="text-[#16402C]">৳ {financialReport.summary.totalIncome.toLocaleString('en-US')}</span>
+                      <span className="text-[#16402C]">৳ {financialReport.summary.formatCurrency(totalIncome)}</span>
                     </div>
                   </div>
                 ) : (
@@ -416,12 +416,12 @@ export const ReportsView = ({
                     {financialReport.summary.categoryBreakdown.map((item) => (
                       <div key={item.category} className="flex justify-between items-center py-1 border-b border-gray-50 last:border-none">
                         <span className="text-gray-700">{item.categoryLabelBn} ({item.count}টি)</span>
-                        <span className="font-semibold text-gray-900">৳ {item.totalAmount.toLocaleString('en-US')}</span>
+                        <span className="font-semibold text-gray-900">৳ {item.formatCurrency(totalAmount)}</span>
                       </div>
                     ))}
                     <div className="flex justify-between pt-2 border-t border-gray-200 font-bold text-sm">
                       <span>সর্বমোট খরচ (ব্যয়):</span>
-                      <span className="text-[#9E2A2B]">৳ {financialReport.summary.totalExpenses.toLocaleString('en-US')}</span>
+                      <span className="text-[#9E2A2B]">৳ {financialReport.summary.formatCurrency(totalExpenses)}</span>
                     </div>
                   </div>
                 ) : (
@@ -456,15 +456,15 @@ export const ReportsView = ({
                         <tr key={row.month} className="hover:bg-gray-50/50">
                           <td className="py-2.5 px-3 font-bold text-gray-800">{row.monthBn}</td>
                           <td className="py-2.5 px-3 text-right font-bold text-[#16402C]">
-                            ৳ {row.income.toLocaleString('en-US')}
+                            ৳ {row.formatCurrency(income)}
                           </td>
                           <td className="py-2.5 px-3 text-right font-semibold text-[#9E2A2B]">
-                            ৳ {row.expense.toLocaleString('en-US')}
+                            ৳ {row.formatCurrency(expense)}
                           </td>
                           <td className={`py-2.5 px-3 text-right font-black ${
                             row.net >= 0 ? 'text-[#1B4D35]' : 'text-[#991B1B]'
                           }`}>
-                            {row.net >= 0 ? '+' : ''}৳ {row.net.toLocaleString('en-US')}
+                            {row.net >= 0 ? '+' : ''}৳ {row.formatCurrency(net)}
                           </td>
                           <td className="py-2.5 px-3 text-center">
                             <span className={`px-2 py-0.5 rounded-md text-[11px] font-bold ${
@@ -492,28 +492,28 @@ export const ReportsView = ({
                 <div className="p-2.5 bg-white rounded-xl border border-[#EAE2D0]">
                   <span className="font-bold text-gray-800 block">নগদ টাকা</span>
                   <span className="text-[#16402C] font-semibold block mt-1">
-                    আয়: ৳ {financialReport.summary.paymentMethodBreakdown.cash.income.toLocaleString('en-US')}
+                    আয়: ৳ {financialReport.summary.paymentMethodBreakdown.cash.formatCurrency(income)}
                   </span>
                   <span className="text-[#9E2A2B] font-semibold block">
-                    ব্যয়: ৳ {financialReport.summary.paymentMethodBreakdown.cash.expense.toLocaleString('en-US')}
+                    ব্যয়: ৳ {financialReport.summary.paymentMethodBreakdown.cash.formatCurrency(expense)}
                   </span>
                 </div>
                 <div className="p-2.5 bg-white rounded-xl border border-[#EAE2D0]">
                   <span className="font-bold text-gray-800 block">বিকাশ</span>
                   <span className="text-[#16402C] font-semibold block mt-1">
-                    আয়: ৳ {financialReport.summary.paymentMethodBreakdown.bkash.income.toLocaleString('en-US')}
+                    আয়: ৳ {financialReport.summary.paymentMethodBreakdown.bkash.formatCurrency(income)}
                   </span>
                   <span className="text-[#9E2A2B] font-semibold block">
-                    ব্যয়: ৳ {financialReport.summary.paymentMethodBreakdown.bkash.expense.toLocaleString('en-US')}
+                    ব্যয়: ৳ {financialReport.summary.paymentMethodBreakdown.bkash.formatCurrency(expense)}
                   </span>
                 </div>
                 <div className="p-2.5 bg-white rounded-xl border border-[#EAE2D0]">
                   <span className="font-bold text-gray-800 block">ব্যাংক হিসাব</span>
                   <span className="text-[#16402C] font-semibold block mt-1">
-                    আয়: ৳ {financialReport.summary.paymentMethodBreakdown.bank.income.toLocaleString('en-US')}
+                    আয়: ৳ {financialReport.summary.paymentMethodBreakdown.bank.formatCurrency(income)}
                   </span>
                   <span className="text-[#9E2A2B] font-semibold block">
-                    ব্যয়: ৳ {financialReport.summary.paymentMethodBreakdown.bank.expense.toLocaleString('en-US')}
+                    ব্যয়: ৳ {financialReport.summary.paymentMethodBreakdown.bank.formatCurrency(expense)}
                   </span>
                 </div>
               </div>
@@ -554,7 +554,7 @@ export const ReportsView = ({
                         <td className={`py-2 px-3 text-right font-bold whitespace-nowrap ${
                           item.type === 'income' ? 'text-[#16402C]' : 'text-[#9E2A2B]'
                         }`}>
-                          {item.type === 'income' ? '+' : '-'}৳ {item.amount.toLocaleString('en-US')}
+                          {item.type === 'income' ? '+' : '-'}৳ {item.formatCurrency(amount)}
                         </td>
                         <td className="py-2 px-3 text-gray-500 text-xs whitespace-nowrap">
                           {item.paymentMethod === 'bkash' ? 'বিকাশ' : item.paymentMethod === 'bank' ? 'ব্যাংক' : 'নগদ'}
@@ -614,7 +614,7 @@ export const ReportsView = ({
                   {milkReport.totalSoldLiters} <span className="text-xs font-normal">লিটার</span>
                 </span>
                 <span className="text-[11px] text-[#2A7A50] mt-0.5 block font-bold">
-                  মোট বিক্রির টাকা: ৳ {milkReport.totalRevenueTk.toLocaleString('en-US')}
+                  মোট বিক্রির টাকা: ৳ {milkReport.formatCurrency(totalRevenueTk)}
                 </span>
               </div>
 
@@ -657,7 +657,7 @@ export const ReportsView = ({
                           <td className="py-2.5 px-3 text-right font-bold text-[#16402C]">{row.collectedLiters} L</td>
                           <td className="py-2.5 px-3 text-right font-semibold text-emerald-800">{row.soldLiters} L</td>
                           <td className="py-2.5 px-3 text-right font-bold text-[#16402C]">
-                            ৳ {row.revenueTk.toLocaleString('en-US')}
+                            ৳ {row.formatCurrency(revenueTk)}
                           </td>
                           <td className="py-2.5 px-3 text-right text-amber-800">{row.retainedLiters} L</td>
                         </tr>
@@ -695,7 +695,7 @@ export const ReportsView = ({
                         <td className="py-2 px-3 text-right font-bold text-[#16402C]">{row.totalLiters} L</td>
                         <td className="py-2 px-3 text-right font-semibold text-emerald-800">{row.soldLiters} L</td>
                         <td className="py-2 px-3 text-right font-bold text-[#16402C]">
-                          {row.revenueTk > 0 ? `৳ ${row.revenueTk.toLocaleString('en-US')}` : '—'}
+                          {row.revenueTk > 0 ? `৳ ${row.formatCurrency(revenueTk)}` : '—'}
                         </td>
                         <td className="py-2 px-3 text-right text-amber-800">{row.retainedLiters} L</td>
                       </tr>
@@ -781,7 +781,7 @@ export const ReportsView = ({
               <div className="p-4 bg-[#FAF7F0] rounded-2xl border border-[#EAE2D0] metric-card">
                 <span className="text-xs text-gray-500 block">মোট চিকিৎসা ও ঔষধ খরচ</span>
                 <span className="text-xl md:text-2xl font-black text-[#9E2A2B] mt-1 block">
-                  ৳ {healthReport.totalHealthCostTk.toLocaleString('en-US')}
+                  ৳ {healthReport.formatCurrency(totalHealthCostTk)}
                 </span>
                 <span className="text-[11px] text-gray-500 mt-0.5 block">
                   ডাক্তার ফি ও ঔষধ বাবদ প্রকৃত ব্যয়
@@ -893,7 +893,7 @@ export const ReportsView = ({
                         <td className="py-2 px-3 text-gray-800 font-medium">{e.treatmentName}</td>
                         <td className="py-2 px-3 text-gray-600 text-xs">{e.doctorName || '—'}</td>
                         <td className="py-2 px-3 text-right font-bold text-[#9E2A2B]">
-                          {e.cost > 0 ? `৳ ${e.cost.toLocaleString('en-US')}` : 'বিনামূল্যে'}
+                          {e.cost > 0 ? `৳ ${e.formatCurrency(cost)}` : 'বিনামূল্যে'}
                         </td>
                         <td className="py-2 px-3 text-gray-600 text-xs whitespace-nowrap">
                           {e.nextDueDate ? formatBanglaDate(e.nextDueDate) : '—'}
@@ -952,7 +952,7 @@ export const ReportsView = ({
               <div className="p-4 bg-[#FAF7F0] rounded-2xl border border-[#EAE2D0] metric-card">
                 <span className="text-xs text-gray-500 block">মাসিক নির্ধারিত বেতন</span>
                 <span className="text-xl md:text-2xl font-black text-gray-800 mt-1 block">
-                  ৳ {employeeReport.totalConfiguredSalaryTk.toLocaleString('en-US')}
+                  ৳ {employeeReport.formatCurrency(totalConfiguredSalaryTk)}
                 </span>
                 <span className="text-[11px] text-gray-500 mt-0.5 block">
                   সক্রিয় কর্মীদের মাসিক চুক্তি
@@ -962,7 +962,7 @@ export const ReportsView = ({
               <div className="p-4 bg-[#EAF5EE] rounded-2xl border border-[#C5E3D0] metric-card">
                 <span className="text-xs text-[#1B4D35] block font-semibold">প্রকৃত পরিশোধিত বেতন</span>
                 <span className="text-xl md:text-2xl font-black text-[#1B4D35] mt-1 block">
-                  ৳ {employeeReport.totalPaidSalaryTk.toLocaleString('en-US')}
+                  ৳ {employeeReport.formatCurrency(totalPaidSalaryTk)}
                 </span>
                 <span className="text-[11px] text-[#2A7A50] mt-0.5 block font-bold">
                   আর্থিক খাতায় সংরক্ষিত বেতন
@@ -999,7 +999,7 @@ export const ReportsView = ({
                         <td className="py-2.5 px-3 font-bold text-gray-900">{emp.name}</td>
                         <td className="py-2.5 px-3 text-gray-600 text-xs">{emp.role}</td>
                         <td className="py-2.5 px-3 text-right font-semibold text-gray-800">
-                          ৳ {emp.salaryMonthly.toLocaleString('en-US')}
+                          ৳ {emp.formatCurrency(salaryMonthly)}
                         </td>
                         <td className="py-2.5 px-3 text-center text-emerald-800 font-bold">{emp.presentDays}</td>
                         <td className="py-2.5 px-3 text-center text-red-700 font-bold">{emp.absentDays}</td>
@@ -1024,10 +1024,10 @@ export const ReportsView = ({
                           </span>
                         </td>
                         <td className="py-2.5 px-3 text-right font-bold text-[#16402C]">
-                          ৳ {emp.payrollStatus.paidAmount.toLocaleString('en-US')}
+                          ৳ {emp.payrollStatus.formatCurrency(paidAmount)}
                         </td>
                         <td className="py-2.5 px-3 text-right font-semibold text-red-700">
-                          ৳ {emp.payrollStatus.dueAmount.toLocaleString('en-US')}
+                          ৳ {emp.payrollStatus.formatCurrency(dueAmount)}
                         </td>
                       </tr>
                     ))}

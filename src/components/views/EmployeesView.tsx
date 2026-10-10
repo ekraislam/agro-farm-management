@@ -1,3 +1,4 @@
+import { formatCurrency } from '../../utils/accounting';
 import { useState } from 'react';
 import { 
   Users, 
@@ -141,7 +142,7 @@ export const EmployeesView = ({
           <span className="text-xs font-semibold text-gray-500 block">মাসের মোট বেতন</span>
           <div className="flex items-baseline gap-1.5 mt-1">
             <span className="text-2xl font-bold text-gray-900">
-              ৳ {totalSalaryBudget.toLocaleString('en-US')}
+              ৳ {formatCurrency(totalSalaryBudget)}
             </span>
           </div>
           <span className="text-[11px] text-gray-400 mt-0.5 block">চলতি মাস (অক্টোবর ২০২৬)</span>
@@ -281,7 +282,7 @@ export const EmployeesView = ({
                       <span className="text-gray-500 block">মাসিক বেতন:</span>
                       <span className="font-bold text-gray-900 flex items-center gap-1">
                         <Wallet className="w-3.5 h-3.5 text-gray-600" />
-                        ৳ {emp.salaryMonthly.toLocaleString('en-US')}
+                        ৳ {emp.formatCurrency(salaryMonthly)}
                       </span>
                     </div>
                   </div>
@@ -291,7 +292,7 @@ export const EmployeesView = ({
                     <div>
                       <span className="text-gray-500 text-[11px] block">চলতি মাসের বেতন:</span>
                       <span className="font-bold text-gray-800">
-                        পরিশোধিত: ৳ {payroll.paidAmount.toLocaleString('en-US')}
+                        পরিশোধিত: ৳ {payroll.formatCurrency(paidAmount)}
                       </span>
                     </div>
                     <span

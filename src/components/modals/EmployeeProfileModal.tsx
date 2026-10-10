@@ -1,3 +1,4 @@
+import { formatCurrency } from '../../utils/accounting';
 import { useState } from 'react';
 import { 
   X, 
@@ -94,7 +95,7 @@ export const EmployeeProfileModal = ({
               <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
                 <span>যোগদান: {employee.joiningDate || 'তারিখ নেই'}</span>
                 <span>•</span>
-                <span>মাসিক বেতন: ৳ {employee.salaryMonthly.toLocaleString('en-US')}</span>
+                <span>মাসিক বেতন: ৳ {employee.formatCurrency(salaryMonthly)}</span>
               </div>
             </div>
           </div>
@@ -155,7 +156,7 @@ export const EmployeeProfileModal = ({
                   <span className="text-gray-500 text-xs block mb-1">মাসিক বেতন:</span>
                   <div className="font-bold text-gray-900 text-sm flex items-center gap-1.5">
                     <Wallet className="w-4 h-4 text-[#2A7A50]" />
-                    <span>৳ {employee.salaryMonthly.toLocaleString('en-US')}</span>
+                    <span>৳ {employee.formatCurrency(salaryMonthly)}</span>
                   </div>
                 </div>
               </div>
@@ -361,7 +362,7 @@ export const EmployeeProfileModal = ({
                   <div>
                     <p className="text-xs text-gray-500">মাসিক নির্ধারিত বেতন</p>
                     <p className="text-xl font-bold text-gray-900 mt-0.5">
-                      ৳ {employee.salaryMonthly.toLocaleString('en-US')}
+                      ৳ {employee.formatCurrency(salaryMonthly)}
                     </p>
                   </div>
                   <span
@@ -381,13 +382,13 @@ export const EmployeeProfileModal = ({
                   <div>
                     <span className="text-gray-500 block">পরিশোধিত অর্থ:</span>
                     <span className="text-base font-bold text-[#2A7A50]">
-                      ৳ {payrollStatus.paidAmount.toLocaleString('en-US')}
+                      ৳ {payrollStatus.formatCurrency(paidAmount)}
                     </span>
                   </div>
                   <div>
                     <span className="text-gray-500 block">অবশিষ্ট বকেয়া:</span>
                     <span className={`text-base font-bold ${payrollStatus.dueAmount > 0 ? 'text-[#C53030]' : 'text-gray-600'}`}>
-                      ৳ {payrollStatus.dueAmount.toLocaleString('en-US')}
+                      ৳ {payrollStatus.formatCurrency(dueAmount)}
                     </span>
                   </div>
                 </div>
@@ -410,7 +411,7 @@ export const EmployeeProfileModal = ({
                         </div>
                         <div className="text-right">
                           <span className="font-bold text-[#C53030] text-sm block">
-                            - ৳ {tx.amount.toLocaleString('en-US')}
+                            - ৳ {tx.formatCurrency(amount)}
                           </span>
                           <span className="text-[11px] text-gray-400">খরচ</span>
                         </div>

@@ -1,3 +1,4 @@
+import { formatCurrency } from '../../utils/accounting';
 import { useState } from 'react';
 import { 
   Layers, 
@@ -282,7 +283,7 @@ export const CowsView = ({
                     <p className="flex items-center justify-between text-gray-500">
                       <span>ক্রয়মূল্য:</span>
                       <strong className="font-semibold text-gray-800">
-                        ৳ {cow.purchasePrice.toLocaleString('en-US')}
+                        ৳ {cow.formatCurrency(purchasePrice)}
                       </strong>
                     </p>
                   )}

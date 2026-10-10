@@ -1,3 +1,4 @@
+import { formatCurrency } from '../../utils/accounting';
 import { useState } from 'react';
 import { Droplets, TrendingUp, DollarSign } from 'lucide-react';
 import type { MilkRecord } from '../../types/farm';
@@ -213,10 +214,10 @@ export const IncomeExpenseChart = ({
       <div className="mt-4 space-y-3">
         <div className="flex justify-between items-end text-xs md:text-sm">
           <span className="text-[#16402C] font-semibold">
-            মোট আয়: ৳ {monthIncome.toLocaleString('en-US')} ({incomePct}%)
+            মোট আয়: ৳ {formatCurrency(monthIncome)} ({incomePct}%)
           </span>
           <span className="text-[#C53030] font-semibold">
-            মোট ব্যয়: ৳ {monthExpenses.toLocaleString('en-US')} ({expensePct}%)
+            মোট ব্যয়: ৳ {formatCurrency(monthExpenses)} ({expensePct}%)
           </span>
         </div>
 
@@ -240,7 +241,7 @@ export const IncomeExpenseChart = ({
         <div className="bg-[#F3F9F5] rounded-xl p-2.5 md:p-3 border border-[#D5EADF] text-center">
           <p className="text-[11px] md:text-xs text-gray-600 font-medium">মোট আয়</p>
           <p className="text-sm md:text-base font-bold text-[#16402C] mt-0.5">
-            ৳{monthIncome.toLocaleString('en-US')}
+            ৳{formatCurrency(monthIncome)}
           </p>
           <p className="text-[10px] text-gray-500 mt-0.5">দুধ ও অন্যান্য</p>
         </div>
@@ -248,7 +249,7 @@ export const IncomeExpenseChart = ({
         <div className="bg-[#FDF3F3] rounded-xl p-2.5 md:p-3 border border-[#F9D7D7] text-center">
           <p className="text-[11px] md:text-xs text-gray-600 font-medium">মোট ব্যয়</p>
           <p className="text-sm md:text-base font-bold text-[#C53030] mt-0.5">
-            ৳{monthExpenses.toLocaleString('en-US')}
+            ৳{formatCurrency(monthExpenses)}
           </p>
           <p className="text-[10px] text-gray-500 mt-0.5">খাদ্য, বেতন ও ঔষধ</p>
         </div>
@@ -262,7 +263,7 @@ export const IncomeExpenseChart = ({
               ? 'text-[#805B00]'
               : 'text-[#9E2A2B]'
           }`}>
-            {totalFlow > 0 && isSurplus ? '+' : ''}৳{estimatedProfit.toLocaleString('en-US')}
+            {totalFlow > 0 && isSurplus ? '+' : ''}৳{formatCurrency(estimatedProfit)}
           </p>
           <p className="text-[10px] text-[#936709] mt-0.5">
             {totalFlow === 0 ? 'উদ্বৃত্ত/ঘাটতি' : isSurplus ? 'পরিচালন উদ্বৃত্ত' : 'পরিচালন ঘাটতি'}

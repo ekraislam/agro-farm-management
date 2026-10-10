@@ -1,3 +1,4 @@
+import { formatCurrency } from '../../utils/accounting';
 import { useState, useEffect, type FormEvent } from 'react';
 import { X, ShieldPlus, AlertCircle, Calendar, DollarSign, UserCheck, Stethoscope } from 'lucide-react';
 import type { Cow, HealthRecord, HealthEventType } from '../../types/farm';
@@ -280,7 +281,7 @@ export const AddHealthRecordModal = ({
                       খামারের খরচের খাতায় এই হিসাব যোগ করবেন?
                     </label>
                     <p className="text-[10px] text-gray-600 mt-0.5">
-                      টিক দিলে ৳{costNumber.toLocaleString('en-US')} টাকা খরচের খাতায় যোগ হবে
+                      টিক দিলে ৳{formatCurrency(costNumber)} টাকা খরচের খাতায় যোগ হবে
                     </p>
                   </div>
                   <input
@@ -294,7 +295,7 @@ export const AddHealthRecordModal = ({
                 {createExpense && (
                   <p className="text-[11px] text-[#2A7A50] font-medium flex items-center gap-1">
                     <UserCheck className="w-3.5 h-3.5" />
-                    খরচের খাতায় 'পশুচিকিৎসা ও ঔষধ' বাবদ ৳{costNumber.toLocaleString('en-US')} যোগ হবে।
+                    খরচের খাতায় 'পশুচিকিৎসা ও ঔষধ' বাবদ ৳{formatCurrency(costNumber)} যোগ হবে।
                   </p>
                 )}
               </div>

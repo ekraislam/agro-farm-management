@@ -21,6 +21,7 @@ import {
   INITIAL_REMINDERS,
   INITIAL_HEALTH_RECORDS,
   INITIAL_ATTENDANCE_RECORDS,
+  DEMO_EMPLOYEE_IDS,
 } from '../data/demoData';
 
 const STORAGE_KEYS = {
@@ -80,10 +81,20 @@ export const localFarmStorage = {
   },
 
   getEmployees(): Employee[] {
-    return safeGet<Employee[]>(STORAGE_KEYS.EMPLOYEES, []);
+    // Always strip old hardcoded demo employees (emp-1, emp-2) so they
+    // never appear as real employees when the user hasn't added any.
+    const stored = safeGet<Employee[]>(STORAGE_KEYS.EMPLOYEES, []);
+    const filtered = stored.filter((e) => !DEMO_EMPLOYEE_IDS.has(e.id));
+    // If we filtered any out, persist the cleaned list immediately
+    if (filtered.length !== stored.length) {
+      safeSet(STORAGE_KEYS.EMPLOYEES, filtered);
+    }
+    return filtered;
   },
   saveEmployees(employees: Employee[]): void {
-    safeSet(STORAGE_KEYS.EMPLOYEES, employees);
+    // Never persist demo employee IDs
+    const clean = employees.filter((e) => !DEMO_EMPLOYEE_IDS.has(e.id));
+    safeSet(STORAGE_KEYS.EMPLOYEES, clean);
   },
 
   getBiogasLogs(): BiogasDailyLog[] {
