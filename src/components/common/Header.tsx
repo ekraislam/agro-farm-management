@@ -71,12 +71,12 @@ export const Header = ({
                 {isConfigured && user && !isDemoMode ? (
                   <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-semibold bg-[#2A7A50]/15 text-[#16402C] border border-[#2A7A50]/30 rounded-full">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#2A7A50] animate-pulse" />
-                    ক্লাউড ডেটাবেজ
+                    ক্লাউড ব্যাকআপ সক্রিয়
                   </span>
                 ) : (
                   <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-semibold bg-[#2A7A50]/15 text-[#16402C] border border-[#2A7A50]/30 rounded-full">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#2A7A50]" />
-                    খামার ডেটাবেজ (লোকাল)
+                    খামার সক্রিয়
                   </span>
                 )}
               </div>
@@ -102,7 +102,7 @@ export const Header = ({
             </span>
           ) : (
             <span className="sm:hidden text-[10px] font-bold px-2 py-1 bg-[#EAF5EE] text-[#1B4D35] border border-[#C5E3D0] rounded-lg">
-              লোকাল
+              সক্রিয়
             </span>
           )}
 
@@ -114,7 +114,7 @@ export const Header = ({
           >
             <UserCheck className="w-4 h-4 text-[#2A7A50]" />
             <span className="hidden sm:inline text-xs font-bold truncate">
-              {isConfigured && user && !isDemoMode ? 'মুমিন এগ্রো (ক্লাউড)' : 'মো: মোমিনুল ইসলাম (মালিক)'}
+              {isConfigured && user && !isDemoMode ? 'মুমিন এগ্রো (ক্লাউড)' : 'মুমিনুল ইসলাম (মালিক)'}
             </span>
           </button>
 

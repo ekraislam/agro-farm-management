@@ -67,7 +67,7 @@ export const farmRepository = {
           data: {
             userId,
             farmName: 'মুমিন এগ্রো',
-            ownerName: 'মো: মোমিনুল ইসলাম',
+            ownerName: 'মুমিনুল ইসলাম',
             phone: '০১৭XXXXXXXX',
             address: 'খামার প্রাঙ্গণ',
             defaultMilkRate: 80,
@@ -105,7 +105,7 @@ export const farmRepository = {
       const payload = {
         user_id: userId,
         farm_name: profile.farmName ?? 'মুমিন এগ্রো',
-        owner_name: profile.ownerName ?? 'মো: মোমিনুল ইসলাম',
+        owner_name: profile.ownerName ?? 'মুমিনুল ইসলাম',
         phone: profile.phone ?? null,
         address: profile.address ?? null,
         default_milk_rate: profile.defaultMilkRate ?? 80,
@@ -694,7 +694,7 @@ export const farmRepository = {
           title: `চিকিৎসা খরচ: ${record.treatmentName} (${record.cowTag})`,
           amount: record.cost,
           payment_method: paymentMethod,
-          recorded_by: 'আব্বু (খামার মালিক)',
+          recorded_by: 'মুমিনুল ইসলাম (মালিক)',
           description: record.notes || `ডাক্তার: ${record.doctorName || 'উদ্ধৃত নেই'}`,
           related_health_record_id: hData.id,
         };
@@ -1356,7 +1356,7 @@ export const farmRepository = {
         payment_method: params.paymentMethod,
         related_employee_id: params.employee.id,
         salary_period: params.salaryPeriod,
-        recorded_by: 'আব্বু (খামার মালিক)',
+        recorded_by: 'মুমিনুল ইসলাম (মালিক)',
         description: params.notes || `মাসিক বেতন পরিশোধ - ${params.salaryPeriod}`,
       };
 

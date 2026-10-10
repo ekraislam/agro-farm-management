@@ -53,7 +53,7 @@ export const AddTaskModal = ({
     if (emp) {
       setAssignedTo(emp.name);
     } else if (empId === 'owner') {
-      setAssignedTo('মো: মোমিনুল ইসলাম (মালিক)');
+      setAssignedTo('মুমিনুল ইসলাম (মালিক)');
     } else {
       setAssignedTo(empId);
     }
@@ -240,7 +240,7 @@ export const AddTaskModal = ({
                     <option value="করিম হাসান">করিম হাসান (বায়োগ্যাস ইনচার্জ)</option>
                   </>
                 )}
-                <option value="owner">মো: মোমিনুল ইসলাম (মালিক)</option>
+                <option value="owner">মুমিনুল ইসলাম (মালিক)</option>
               </select>
             </div>
           </div>

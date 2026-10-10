@@ -32,7 +32,7 @@ const AddExpenseModalDialog = ({
   const [category, setCategory] = useState<string>(initialRecord?.category || (initialType === 'income' ? 'milk_sale' : 'feed'));
   const [date, setDate] = useState(initialRecord?.date || '১০ অক্টোবর ২০২৬');
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'bkash' | 'bank'>(initialRecord?.paymentMethod || 'cash');
-  const [recordedBy, setRecordedBy] = useState(initialRecord?.recordedBy || 'মো: মোমিনুল ইসলাম (মালিক)');
+  const [recordedBy, setRecordedBy] = useState(initialRecord?.recordedBy || 'মুমিনুল ইসলাম (মালিক)');
   const [notes, setNotes] = useState(initialRecord?.notes || '');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -291,7 +291,7 @@ const AddExpenseModalDialog = ({
               onChange={(e) => setRecordedBy(e.target.value)}
               className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm bg-white"
             >
-              <option value="মো: মোমিনুল ইসলাম (মালিক)">মো: মোমিনুল ইসলাম (মালিক)</option>
+              <option value="মুমিনুল ইসলাম (মালিক)">মুমিনুল ইসলাম (মালিক)</option>
               <option value="মো: রহিম উদ্দিন">মো: রহিম উদ্দিন (প্রধান গোয়ালা)</option>
               <option value="করিম হাসান">করিম হাসান (সহকারী)</option>
             </select>

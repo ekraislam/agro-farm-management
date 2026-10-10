@@ -295,7 +295,7 @@ export const ReportsView = ({
               <h3 className="text-2xl font-bold text-[#16402C]">মুমিন এগ্রো (Mumin Agro)</h3>
             </div>
             <p className="text-sm font-semibold text-gray-700 mt-1">স্মার্ট ডেইরি ও বায়োগ্যাস খামার ব্যবস্থাপনা</p>
-            <p className="text-xs text-gray-500 mt-0.5">মালিক: মো: মোমিনুল ইসলাম • অবস্থান: খামার প্রাঙ্গণ</p>
+            <p className="text-xs text-gray-500 mt-0.5">মালিক: মুমিনুল ইসলাম • অবস্থান: খামার প্রাঙ্গণ</p>
           </div>
           <div className="sm:text-right">
             <span className="inline-block px-3.5 py-1.5 bg-[#FAF7F0] text-[#16402C] text-xs font-bold rounded-xl border border-[#E8DFC9]">

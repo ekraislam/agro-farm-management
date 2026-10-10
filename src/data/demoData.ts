@@ -294,7 +294,7 @@ export const INITIAL_FINANCIAL_RECORDS: FinancialRecord[] = [
     title: 'আজকের দুধ বিক্রি (৭৪.৫ লিটার)',
     amount: 5960,
     paymentMethod: 'cash',
-    recordedBy: 'আব্বু (খামার মালিক)',
+    recordedBy: 'মুমিনুল ইসলাম (মালিক)',
     notes: 'নগদ গ্রহণ',
     relatedMilkRecordId: 'mr-1'
   },
@@ -319,7 +319,7 @@ export const INITIAL_FINANCIAL_RECORDS: FinancialRecord[] = [
     title: 'গমের ভুসি ও সরিষার খৈল ক্রয় (৪ বস্তা)',
     amount: 9200,
     paymentMethod: 'bkash',
-    recordedBy: 'আব্বু (খামার মালিক)',
+    recordedBy: 'মুমিনুল ইসলাম (মালিক)',
     notes: 'মেসার্স ভাই ভাই ফিড থেকে ক্রয়'
   },
   {
@@ -355,7 +355,7 @@ export const INITIAL_FINANCIAL_RECORDS: FinancialRecord[] = [
     title: 'মাসিক বেতন আংশিক (মো: রহিম উদ্দিন)',
     amount: 8000,
     paymentMethod: 'cash',
-    recordedBy: 'আব্বু (খামার মালিক)',
+    recordedBy: 'মুমিনুল ইসলাম (মালিক)',
     notes: 'অক্টোবর ২০২৬ মাসের বেতন বাবদ আংশিক প্রদান',
     relatedEmployeeId: 'emp-1',
     salaryPeriod: '2026-10'
@@ -369,7 +369,7 @@ export const INITIAL_FINANCIAL_RECORDS: FinancialRecord[] = [
     title: 'মাসিক বেতন আংশিক (করিম হাসান)',
     amount: 6000,
     paymentMethod: 'cash',
-    recordedBy: 'আব্বু (খামার মালিক)',
+    recordedBy: 'মুমিনুল ইসলাম (মালিক)',
     notes: 'অক্টোবর ২০২৬ মাসের বেতন বাবদ আংশিক প্রদান',
     relatedEmployeeId: 'emp-2',
     salaryPeriod: '2026-10'
@@ -383,7 +383,7 @@ export const INITIAL_FINANCIAL_RECORDS: FinancialRecord[] = [
     title: 'কাঁচা নেপিয়ার ঘাস ও শুকনো খড় ক্রয়',
     amount: 11300,
     paymentMethod: 'bank',
-    recordedBy: 'আব্বু (খামার মালিক)',
+    recordedBy: 'মুমিনুল ইসলাম (মালিক)',
     notes: 'মাসিক চুক্তিতে সংগ্রহ'
   }
 ];
@@ -765,7 +765,7 @@ export const INITIAL_REMINDERS: ReminderTask[] = [
     priorityBn: 'জরুরি',
     category: 'feed',
     completed: false,
-    assignedTo: 'আব্বু (মালিক)'
+    assignedTo: 'মুমিনুল ইসলাম (মালিক)'
   },
   {
     id: 'rem-3',

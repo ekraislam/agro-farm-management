@@ -131,7 +131,7 @@ export const authService = {
         password,
         options: {
           data: {
-            owner_name: ownerName.trim() || 'মো: মোমিনুল ইসলাম',
+            owner_name: ownerName.trim() || 'মুমিনুল ইসলাম',
             farm_name: farmName.trim() || 'মুমিন এগ্রো',
           },
         },
@@ -150,7 +150,7 @@ export const authService = {
           await supabase.from('farm_profiles').upsert({
             user_id: data.user.id,
             farm_name: farmName.trim() || 'মুমিন এগ্রো',
-            owner_name: ownerName.trim() || 'মো: মোমিনুল ইসলাম',
+            owner_name: ownerName.trim() || 'মুমিনুল ইসলাম',
             default_milk_rate: 80,
             dairy_capacity: 10,
           });

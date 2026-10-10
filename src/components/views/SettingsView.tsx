@@ -33,7 +33,7 @@ export const SettingsView = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [farmName, setFarmName] = useState('মুমিন এগ্রো (Mumin Agro)');
-  const [ownerName, setOwnerName] = useState('মো: মোমিনুল ইসলাম');
+  const [ownerName, setOwnerName] = useState('মুমিনুল ইসলাম');
   const [phone, setPhone] = useState('০১৭XXXXXXXX');
   const [defaultRate, setDefaultRate] = useState('80');
   const [dairyCapacity, setDairyCapacity] = useState('10');
