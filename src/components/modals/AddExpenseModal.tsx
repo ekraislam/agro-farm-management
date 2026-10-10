@@ -5,7 +5,10 @@ import { generateId } from '../../utils/id';
 import { 
   EXPENSE_CATEGORIES, 
   INCOME_CATEGORIES, 
-  validateFinancialTransaction 
+  validateFinancialTransaction,
+  toIsoDateString,
+  formatBanglaDate,
+  parseCurrency
 } from '../../utils/accounting';
 
 interface AddExpenseModalProps {
@@ -35,7 +38,12 @@ const AddExpenseModalDialog = ({
   const [title, setTitle] = useState(initialRecord?.title || '');
   const [amount, setAmount] = useState(initialRecord?.amount ? String(initialRecord.amount) : '');
   const [category, setCategory] = useState<string>(initialRecord?.category || (initialType === 'income' ? 'milk_sale' : 'feed'));
-  const [date, setDate] = useState(initialRecord?.date || '১০ অক্টোবর ২০২৬');
+  const [pickerDate, setPickerDate] = useState(() => {
+    return initialRecord?.date ? toIsoDateString(initialRecord.date) : toIsoDateString(new Date());
+  });
+  const [date, setDate] = useState(() => {
+    return initialRecord?.date || formatBanglaDate(new Date());
+  });
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'bkash' | 'bank'>(initialRecord?.paymentMethod || 'cash');
   const [recordedBy, setRecordedBy] = useState(initialRecord?.recordedBy || `${ownerName} (মালিক)`);
   const [notes, setNotes] = useState(initialRecord?.notes || '');
@@ -44,7 +52,12 @@ const AddExpenseModalDialog = ({
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const amountNum = parseFloat(amount);
+    const amountNum = parseCurrency(amount);
+
+    if (amountNum <= 0) {
+      setError('অনুগ্রহ করে সঠিক টাকার পরিমাণ লিখুন (০ অপেক্ষা বেশি)');
+      return;
+    }
 
     const validation = validateFinancialTransaction({
       title: title.trim(),
@@ -216,15 +229,14 @@ const AddExpenseModalDialog = ({
               <div className="relative">
                 <span className="absolute left-3 top-2.5 text-gray-500 font-bold text-sm">৳</span>
                 <input
-                  type="number"
-                  min="1"
-                  step="any"
+                  type="text"
+                  inputMode="decimal"
                   value={amount}
                   onChange={(e) => {
                     setAmount(e.target.value);
                     setError('');
                   }}
-                  placeholder="0"
+                  placeholder="০"
                   className="w-full pl-8 pr-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] focus:ring-1 focus:ring-[#16402C] outline-hidden text-sm font-bold bg-white"
                   required
                 />
@@ -261,13 +273,33 @@ const AddExpenseModalDialog = ({
               <label className="block text-xs font-semibold text-gray-700 mb-1">
                 তারিখ *
               </label>
-              <input
-                type="text"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] focus:ring-1 focus:ring-[#16402C] outline-hidden text-sm bg-gray-50/50"
-                required
-              />
+              <div className="flex items-center gap-2">
+                <input
+                  type="date"
+                  value={pickerDate}
+                  onChange={(e) => {
+                    const iso = e.target.value;
+                    setPickerDate(iso);
+                    if (iso) {
+                      setDate(formatBanglaDate(iso));
+                    }
+                  }}
+                  className="px-3 py-2 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm bg-white cursor-pointer shrink-0"
+                  required
+                />
+                <input
+                  type="text"
+                  value={date}
+                  onChange={(e) => {
+                    setDate(e.target.value);
+                    const parsedIso = toIsoDateString(e.target.value);
+                    setPickerDate(parsedIso);
+                  }}
+                  placeholder="যেমন: ১০ অক্টোবর ২০২৬"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm font-semibold text-gray-900 bg-white"
+                  required
+                />
+              </div>
             </div>
 
             <div>

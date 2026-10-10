@@ -12,6 +12,7 @@ import {
 import type { BiogasDailyLog, Employee } from '../../types/farm';
 import { validateBiogasLog } from '../../utils/biogasAccounting';
 import { generateId } from '../../utils/id';
+import { parseCurrency } from '../../utils/accounting';
 
 interface AddBiogasLogModalProps {
   isOpen: boolean;
@@ -53,12 +54,17 @@ export const AddBiogasLogModal = ({
     e.preventDefault();
     setErrorBanner('');
 
+    const dungKgNum = parseCurrency(dungKg);
+    const waterLitersNum = parseCurrency(waterLiters);
+    const burnHoursNum = parseCurrency(burnHours);
+    const slurryBagsNum = Math.round(parseCurrency(slurryBags));
+
     const logData: Partial<BiogasDailyLog> = {
       date: date.trim(),
-      dungInputKg: parseFloat(dungKg) || 0,
-      waterInputLiters: parseFloat(waterLiters) || 0,
-      burnHoursToday: parseFloat(burnHours) || 0,
-      slurryProducedBags: parseInt(slurryBags) || 0,
+      dungInputKg: dungKgNum,
+      waterInputLiters: waterLitersNum,
+      burnHoursToday: burnHoursNum,
+      slurryProducedBags: slurryBagsNum,
       recordedByEmployeeId: recordedByEmpId || undefined,
       notes: notes.trim(),
     };
@@ -76,11 +82,11 @@ export const AddBiogasLogModal = ({
     const logToSave: BiogasDailyLog = {
       id: initialLog ? initialLog.id : generateId('bg'),
       date: date.trim(),
-      dungInputKg: parseFloat(dungKg) || 0,
-      waterInputLiters: parseFloat(waterLiters) || 0,
+      dungInputKg: dungKgNum,
+      waterInputLiters: waterLitersNum,
       gasPressurePsi: initialLog?.gasPressurePsi ?? 2.3,
-      burnHoursToday: parseFloat(burnHours) || 0,
-      slurryProducedBags: parseInt(slurryBags) || 0,
+      burnHoursToday: burnHoursNum,
+      slurryProducedBags: slurryBagsNum,
       status: 'optimal',
       statusBn: 'চমৎকার কার্যক্ষম',
       recordedByEmployeeId: recordedByEmpId || undefined,
@@ -156,9 +162,7 @@ export const AddBiogasLogModal = ({
                 <span>গোবর দেওয়া হয়েছে (কেজি)</span>
               </label>
               <input
-                type="number"
-                min="0"
-                step="any"
+                type="text"
                 inputMode="decimal"
                 value={dungKg}
                 onChange={(e) => handleDungChange(e.target.value)}
@@ -179,9 +183,7 @@ export const AddBiogasLogModal = ({
                 <span>পানি মেশানো হয়েছে (লিটার)</span>
               </label>
               <input
-                type="number"
-                min="0"
-                step="any"
+                type="text"
                 inputMode="decimal"
                 value={waterLiters}
                 onChange={(e) => setWaterLiters(e.target.value)}
@@ -208,10 +210,7 @@ export const AddBiogasLogModal = ({
                 <span>চুলা জ্বলার সময় (ঘণ্টা)</span>
               </label>
               <input
-                type="number"
-                min="0"
-                max="24"
-                step="any"
+                type="text"
                 inputMode="decimal"
                 value={burnHours}
                 onChange={(e) => setBurnHours(e.target.value)}
@@ -232,9 +231,7 @@ export const AddBiogasLogModal = ({
                 <span>উৎপাদিত জৈব সার (বস্তা)</span>
               </label>
               <input
-                type="number"
-                min="0"
-                step="any"
+                type="text"
                 inputMode="decimal"
                 value={slurryBags}
                 onChange={(e) => setSlurryBags(e.target.value)}

@@ -20,6 +20,7 @@ import type { FarmProfile } from '../../types/farm';
 import { localFarmStorage } from '../../services/localFarmStorage';
 import { SecurityPinModal } from '../modals/SecurityPinModal';
 import { ChangePinModal } from '../modals/ChangePinModal';
+import { parseCurrency } from '../../utils/accounting';
 
 interface SettingsViewProps {
   farmProfile: FarmProfile;
@@ -100,8 +101,8 @@ export const SettingsView = ({
       ownerName: trimmedOwner || trimmedFarm || 'মুমিনুল ইসলাম',
       phone: phone.trim(),
       address: address.trim() || 'খামার প্রাঙ্গণ',
-      defaultMilkRate: parseFloat(defaultRate) || 80,
-      dairyCapacity: parseInt(dairyCapacity, 10) || 10,
+      defaultMilkRate: parseCurrency(defaultRate) || 80,
+      dairyCapacity: Math.round(parseCurrency(dairyCapacity)) || 10,
       notificationsEnabled: notifications,
       securityPin: securityPin.trim() || '1234',
     };
@@ -298,7 +299,8 @@ export const SettingsView = ({
                 সর্বোচ্চ গাভী ধারণক্ষমতা
               </label>
               <input
-                type="number"
+                type="text"
+                inputMode="decimal"
                 value={dairyCapacity}
                 onChange={(e) => setDairyCapacity(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm"
@@ -312,7 +314,8 @@ export const SettingsView = ({
               <div className="relative">
                 <span className="absolute left-3.5 top-2.5 text-gray-500 font-bold text-sm">৳</span>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   value={defaultRate}
                   onChange={(e) => setDefaultRate(e.target.value)}
                   className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm font-bold"

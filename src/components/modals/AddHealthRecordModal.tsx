@@ -1,4 +1,4 @@
-import { formatCurrency } from '../../utils/accounting';
+import { formatCurrency, parseCurrency } from '../../utils/accounting';
 import { useState, useEffect, type FormEvent } from 'react';
 import { X, ShieldPlus, AlertCircle, Calendar, DollarSign, UserCheck, Stethoscope } from 'lucide-react';
 import type { Cow, HealthRecord, HealthEventType } from '../../types/farm';
@@ -54,7 +54,7 @@ export const AddHealthRecordModal = ({
 
   if (!isOpen) return null;
 
-  const costNumber = cost ? parseFloat(cost) : 0;
+  const costNumber = cost ? parseCurrency(cost) : 0;
   const targetCow = cows.find((c) => c.id === selectedCowId);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -71,7 +71,7 @@ export const AddHealthRecordModal = ({
       eventType,
       treatmentName,
       eventDate,
-      cost: cost ? parseFloat(cost) : undefined,
+      cost: cost ? parseCurrency(cost) : undefined,
     });
 
     if (!validation.isValid) {
@@ -256,16 +256,14 @@ export const AddHealthRecordModal = ({
               <div className="relative">
                 <span className="absolute left-3 top-2.5 text-gray-500 font-bold text-sm">৳</span>
                 <input
-                  type="number"
-                  min="0"
-                  step="any"
+                  type="text"
                   inputMode="decimal"
                   value={cost}
                   onChange={(e) => {
                     setCost(e.target.value);
                     if (!e.target.value) setCreateExpense(false);
                   }}
-                  placeholder="0"
+                  placeholder="০"
                   className="w-full pl-8 pr-3 py-2 rounded-xl border border-gray-300 focus:border-[#16402C] text-sm bg-white"
                 />
               </div>

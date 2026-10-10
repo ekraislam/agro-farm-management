@@ -16,7 +16,11 @@ import {
   Flame,
   Wheat,
   Syringe,
-  X
+  X,
+  Pencil,
+  Trash2,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import type { 
   ReminderTask, 
@@ -30,6 +34,7 @@ import {
   consolidateFarmReminders 
 } from '../../utils/healthAccounting';
 import { formatBanglaDate } from '../../utils/accounting';
+import { AddTaskModal } from '../modals/AddTaskModal';
 
 interface RemindersViewProps {
   reminders: ReminderTask[];
@@ -39,6 +44,9 @@ interface RemindersViewProps {
   biogasInspections?: BiogasInspectionItem[];
   onOpenAddTask: () => void;
   onToggleTask: (taskId: string, completionDate?: string) => void;
+  onUpdateTask?: (task: ReminderTask) => Promise<{ success: boolean; error?: string } | void> | void;
+  onDeleteTask?: (taskId: string) => Promise<{ success: boolean; error?: string } | void> | void;
+  ownerName?: string;
 }
 
 type ReminderTab = 'all' | 'overdue' | 'dueToday' | 'dueSoon' | 'upcoming' | 'completed';
@@ -53,12 +61,17 @@ export const RemindersView = ({
   biogasInspections = [],
   onOpenAddTask,
   onToggleTask,
+  onUpdateTask,
+  onDeleteTask,
+  ownerName = 'মুমিনুল ইসলাম',
 }: RemindersViewProps) => {
   const [activeTab, setActiveTab] = useState<ReminderTab>('all');
   const [selectedWorkerFilter, setSelectedWorkerFilter] = useState<string>('all');
   const [selectedPriorityFilter, setSelectedPriorityFilter] = useState<PriorityFilter>('all');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<CategoryFilter>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [editingTask, setEditingTask] = useState<ReminderTask | null>(null);
+  const [showCompletedInAll, setShowCompletedInAll] = useState<boolean>(false);
 
   // Intelligently consolidate manual tasks, health booster/deworming follow-ups, and biogas inspections
   const consolidatedTasks = useMemo(() => {
@@ -163,6 +176,193 @@ export const RemindersView = ({
       default:
         return <Tag className="w-3.5 h-3.5 text-gray-500" />;
     }
+  };
+
+  const getCategoryLabelBn = (cat: string) => {
+    switch (cat) {
+      case 'vaccine': return 'টিকা';
+      case 'feed': return 'খাদ্য';
+      case 'biogas': return 'বায়োগ্যাস';
+      case 'vet': return 'ডাক্তার';
+      case 'medicine': return 'ঔষধ';
+      default: return 'সাধারণ';
+    }
+  };
+
+  const renderTaskCard = (task: ReminderTask) => {
+    const isDone = task.completed;
+    const isHigh = task.priority === 'high';
+    const isOverdue = !isDone && overdue.some((o) => o.id === task.id);
+    const isToday = !isDone && dueToday.some((d) => d.id === task.id);
+    const relatedCow = task.cowId ? cows.find((c) => c.id === task.cowId) : null;
+
+    return (
+      <div
+        key={task.id}
+        onClick={() => setEditingTask(task)}
+        className={`p-4 md:p-5 rounded-2xl border transition-all cursor-pointer flex items-start justify-between gap-4 select-none group ${
+          isDone
+            ? 'bg-gray-50/80 border-gray-200 opacity-75 hover:opacity-100'
+            : isOverdue
+            ? 'bg-red-50/50 border-red-200 hover:border-red-400 shadow-xs'
+            : isToday
+            ? 'bg-amber-50/50 border-amber-200 hover:border-amber-400 shadow-xs'
+            : 'bg-white border-[#EAE2D0] hover:border-[#16402C]/40 shadow-xs'
+        }`}
+      >
+        <div className="flex items-start gap-3.5">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleTask(task.id);
+            }}
+            className="mt-0.5 text-gray-400 hover:text-[#2A7A50] transition-colors cursor-pointer"
+            title={isDone ? 'কাজটি পুনরায় পেন্ডিং তালিকায় আনুন' : 'কাজটি সম্পন্ন হিসেবে চিহ্নিত করুন'}
+          >
+            {isDone ? (
+              <CheckCircle2 className="w-6 h-6 text-[#2A7A50]" />
+            ) : (
+              <Circle className="w-6 h-6" />
+            )}
+          </button>
+
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3
+                className={`text-sm md:text-base font-bold ${
+                  isDone ? 'line-through text-gray-400' : 'text-gray-900'
+                }`}
+              >
+                {task.title}
+              </h3>
+
+              {/* Priority Badge */}
+              <span
+                className={`text-[10px] md:text-xs px-2 py-0.5 rounded-md font-bold ${
+                  isHigh
+                    ? 'bg-[#FDF2F2] text-[#9E2A2B] border border-[#F8C8C8]'
+                    : task.priority === 'medium'
+                    ? 'bg-[#FEF9E7] text-[#936709] border border-[#F7E2A9]'
+                    : 'bg-gray-100 text-gray-700 border border-gray-200'
+                }`}
+              >
+                {task.priorityBn}
+              </span>
+
+              {/* Category Icon Badge */}
+              <span className="flex items-center gap-1 text-[10px] md:text-xs px-2 py-0.5 rounded-md bg-[#FAF7F0] border border-[#EAE2D0] text-gray-700">
+                {getCategoryIcon(task.category)}
+                <span>{getCategoryLabelBn(task.category)}</span>
+              </span>
+
+              {/* Cow Badge if linked */}
+              {relatedCow && (
+                <span className="text-[10px] px-2 py-0.5 rounded-md bg-blue-50 text-blue-800 border border-blue-200 font-semibold">
+                  গাভী: {relatedCow.tagNumber} ({relatedCow.name})
+                </span>
+              )}
+
+              {/* Urgency Badge */}
+              {isOverdue && (
+                <span className="text-[10px] px-2 py-0.5 rounded-md font-bold bg-red-100 text-red-800 border border-red-300">
+                  মেয়াদোত্তীর্ণ
+                </span>
+              )}
+              {isToday && (
+                <span className="text-[10px] px-2 py-0.5 rounded-md font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                  আজকের করণীয়
+                </span>
+              )}
+            </div>
+
+            {task.description && (
+              <p className={`text-xs md:text-sm ${isDone ? 'text-gray-400' : 'text-gray-600'}`}>
+                {task.description}
+              </p>
+            )}
+
+            <div className="flex items-center gap-3 text-xs text-gray-500 pt-1 flex-wrap">
+              <span className="flex items-center gap-1">
+                <Clock className="w-3.5 h-3.5 text-gray-400" />
+                নির্ধারিত তারিখ: <strong>{formatBanglaDate(task.dueDate)}</strong>
+              </span>
+              {task.completedAt && (
+                <>
+                  <span>•</span>
+                  <span className="text-emerald-700 font-medium">
+                    সম্পন্ন হয়েছে: {formatBanglaDate(task.completedAt)}
+                  </span>
+                </>
+              )}
+              <span>•</span>
+              <span>দায়িত্বপ্রাপ্ত: <strong>{task.assignedTo || 'খামার কর্মী'}</strong></span>
+            </div>
+          </div>
+        </div>
+
+        {/* Status Badge & Actions */}
+        <div className="shrink-0 text-right space-y-1.5 flex flex-col items-end">
+          <span
+            className={`text-xs font-bold px-2.5 py-1 rounded-xl inline-block ${
+              isDone
+                ? 'bg-gray-200 text-gray-700'
+                : isOverdue
+                ? 'bg-red-100 text-red-800 border border-red-200'
+                : 'bg-[#EAF5EE] text-[#1B4D35] border border-[#C5E3D0]'
+            }`}
+          >
+            {isDone ? 'সম্পন্ন' : isOverdue ? 'দেরি হয়েছে' : 'চলমান'}
+          </span>
+
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setEditingTask(task);
+              }}
+              className="px-2.5 py-1 rounded-xl border border-gray-200 hover:border-[#16402C] hover:bg-[#FAF7F0] text-gray-700 hover:text-[#16402C] transition-all flex items-center gap-1 text-xs font-medium cursor-pointer"
+              title="কাজের তথ্য বা কর্মী সংশোধন করুন"
+            >
+              <Pencil className="w-3 h-3 text-[#16402C]" />
+              <span>সম্পাদনা</span>
+            </button>
+
+            {onDeleteTask && (
+              <button
+                type="button"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  if (window.confirm(`আপনি কি নিশ্চিত যে "${task.title}" কাজটি তালিকা থেকে মুছে ফেলতে চান?`)) {
+                    await onDeleteTask(task.id);
+                  }
+                }}
+                className="p-1 rounded-xl border border-gray-200 hover:border-red-300 hover:bg-red-50 text-gray-400 hover:text-red-600 transition-all text-xs cursor-pointer"
+                title="মুছে ফেলুন"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          {isDone && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleTask(task.id);
+              }}
+              className="flex items-center gap-1 text-[11px] text-gray-500 hover:text-gray-800 underline block cursor-pointer pt-0.5"
+              title="পুনরায় সক্রিয় করুন"
+            >
+              <RotateCcw className="w-3 h-3" />
+              <span>পুনরায় চালু</span>
+            </button>
+          )}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -381,173 +581,91 @@ export const RemindersView = ({
 
       {/* Tasks List */}
       <div className="space-y-3">
-        {filteredTasks.map((task) => {
-          const isDone = task.completed;
-          const isHigh = task.priority === 'high';
-          const isOverdue = !isDone && overdue.some((o) => o.id === task.id);
-          const isToday = !isDone && dueToday.some((d) => d.id === task.id);
-          const relatedCow = task.cowId ? cows.find((c) => c.id === task.cowId) : null;
+        {activeTab === 'all' ? (
+          <>
+            {/* Active (Pending) Tasks */}
+            {filteredTasks.filter((t) => !t.completed).map((task) => renderTaskCard(task))}
 
-          return (
-            <div
-              key={task.id}
-              onClick={() => onToggleTask(task.id)}
-              className={`p-4 md:p-5 rounded-2xl border transition-all cursor-pointer flex items-start justify-between gap-4 select-none ${
-                isDone
-                  ? 'bg-gray-50/80 border-gray-200 opacity-70'
-                  : isOverdue
-                  ? 'bg-red-50/50 border-red-200 hover:border-red-400 shadow-xs'
-                  : isToday
-                  ? 'bg-amber-50/50 border-amber-200 hover:border-amber-400 shadow-xs'
-                  : 'bg-white border-[#EAE2D0] hover:border-[#16402C]/40 shadow-xs'
-              }`}
-            >
-              <div className="flex items-start gap-3.5">
+            {filteredTasks.filter((t) => !t.completed).length === 0 && (
+              <div className="bg-white rounded-3xl p-10 text-center border border-[#EAE2D0] space-y-2">
+                <CheckCircle2 className="w-12 h-12 text-[#2A7A50] mx-auto opacity-80" />
+                <h4 className="font-bold text-base text-[#16402C]">চমৎকার! কোনো বকেয়া কাজ অবশিষ্ট নেই</h4>
+                <p className="text-xs md:text-sm text-gray-500 max-w-md mx-auto">
+                  এই মুহূর্তের সকল কাজ সম্পন্ন হয়েছে। আপনার খামারের সকল কার্যক্রম সুষ্ঠুভাবে চলমান রয়েছে।
+                </p>
+              </div>
+            )}
+
+            {/* Collapsible Completed Tasks Section to keep view uncluttered */}
+            {filteredTasks.filter((t) => t.completed).length > 0 && (
+              <div className="mt-6 border border-[#EAE2D0] rounded-3xl bg-white overflow-hidden shadow-xs">
                 <button
                   type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onToggleTask(task.id);
-                  }}
-                  className="mt-0.5 text-gray-400 hover:text-[#2A7A50] transition-colors cursor-pointer"
-                  title={isDone ? 'কাজটি পুনরায় পেন্ডিং তালিকায় আনুন' : 'কাজটি সম্পন্ন হিসেবে চিহ্নিত করুন'}
+                  onClick={() => setShowCompletedInAll(!showCompletedInAll)}
+                  className="w-full p-4 md:p-5 bg-[#FAF7F0] hover:bg-[#F2ECE1] transition-colors flex items-center justify-between text-left cursor-pointer"
                 >
-                  {isDone ? (
-                    <CheckCircle2 className="w-6 h-6 text-[#2A7A50]" />
-                  ) : (
-                    <Circle className="w-6 h-6" />
-                  )}
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-gray-900">
+                        সম্পন্ন হওয়া কাজের খতিয়ান ({filteredTasks.filter((t) => t.completed).length}টি)
+                      </h4>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        মূল তালিকা পরিচ্ছন্ন ও হালকা রাখতে সম্পন্ন কাজগুলো ভাঁজ করে রাখা হয়েছে
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-[#16402C] bg-white px-3.5 py-1.5 rounded-xl border border-[#EAE2D0] shadow-2xs flex items-center gap-1.5">
+                      {showCompletedInAll ? (
+                        <><span>লুকান</span> <ChevronUp className="w-3.5 h-3.5" /></>
+                      ) : (
+                        <><span>তালিকা দেখুন ({filteredTasks.filter((t) => t.completed).length})</span> <ChevronDown className="w-3.5 h-3.5" /></>
+                      )}
+                    </span>
+                  </div>
                 </button>
 
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3
-                      className={`text-sm md:text-base font-bold ${
-                        isDone ? 'line-through text-gray-400' : 'text-gray-900'
-                      }`}
-                    >
-                      {task.title}
-                    </h3>
-
-                    {/* Priority Badge */}
-                    <span
-                      className={`text-[10px] md:text-xs px-2 py-0.5 rounded-md font-bold ${
-                        isHigh
-                          ? 'bg-[#FDF2F2] text-[#9E2A2B] border border-[#F8C8C8]'
-                          : task.priority === 'medium'
-                          ? 'bg-[#FEF9E7] text-[#936709] border border-[#F7E2A9]'
-                          : 'bg-gray-100 text-gray-700 border border-gray-200'
-                      }`}
-                    >
-                      {task.priorityBn}
-                    </span>
-
-                    {/* Category Icon Badge */}
-                    <span className="flex items-center gap-1 text-[10px] md:text-xs px-2 py-0.5 rounded-md bg-[#FAF7F0] border border-[#EAE2D0] text-gray-700">
-                      {getCategoryIcon(task.category)}
-                      <span>
-                        {task.category === 'vaccine'
-                          ? 'টিকা'
-                          : task.category === 'feed'
-                          ? 'খাদ্য'
-                          : task.category === 'biogas'
-                          ? 'বায়োগ্যাস'
-                          : task.category === 'vet'
-                          ? 'ডাক্তার'
-                          : task.category === 'medicine'
-                          ? 'ঔষধ'
-                          : 'সাধারণ'}
-                      </span>
-                    </span>
-
-                    {/* Cow Badge if linked */}
-                    {relatedCow && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-md bg-blue-50 text-blue-800 border border-blue-200 font-semibold">
-                        গাভী: {relatedCow.tagNumber} ({relatedCow.name})
-                      </span>
-                    )}
-
-                    {/* Urgency Badge */}
-                    {isOverdue && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-md font-bold bg-red-100 text-red-800 border border-red-300">
-                        মেয়াদোত্তীর্ণ
-                      </span>
-                    )}
-                    {isToday && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-md font-bold bg-amber-100 text-amber-900 border border-amber-300">
-                        আজকের করণীয়
-                      </span>
-                    )}
+                {showCompletedInAll && (
+                  <div className="p-4 md:p-5 space-y-3 bg-[#FCFBF8] border-t border-[#EAE2D0]">
+                    {filteredTasks.filter((t) => t.completed).map((task) => renderTaskCard(task))}
                   </div>
-
-                  {task.description && (
-                    <p className={`text-xs md:text-sm ${isDone ? 'text-gray-400' : 'text-gray-600'}`}>
-                      {task.description}
-                    </p>
-                  )}
-
-                  <div className="flex items-center gap-3 text-xs text-gray-500 pt-1 flex-wrap">
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-gray-400" />
-                      নির্ধারিত তারিখ: <strong>{formatBanglaDate(task.dueDate)}</strong>
-                    </span>
-                    {task.completedAt && (
-                      <>
-                        <span>•</span>
-                        <span className="text-emerald-700 font-medium">
-                          সম্পন্ন হয়েছে: {formatBanglaDate(task.completedAt)}
-                        </span>
-                      </>
-                    )}
-                    <span>•</span>
-                    <span>দায়িত্বপ্রাপ্ত: <strong>{task.assignedTo || 'খামার কর্মী'}</strong></span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Status Badge & Toggle Action */}
-              <div className="shrink-0 text-right space-y-1">
-                <span
-                  className={`text-xs font-bold px-2.5 py-1 rounded-xl inline-block ${
-                    isDone
-                      ? 'bg-gray-200 text-gray-700'
-                      : isOverdue
-                      ? 'bg-red-100 text-red-800 border border-red-200'
-                      : 'bg-[#EAF5EE] text-[#1B4D35] border border-[#C5E3D0]'
-                  }`}
-                >
-                  {isDone ? 'সম্পন্ন' : isOverdue ? 'দেরি হয়েছে' : 'চলমান'}
-                </span>
-
-                {isDone && (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onToggleTask(task.id);
-                    }}
-                    className="flex items-center gap-1 text-[11px] text-gray-500 hover:text-gray-800 underline block cursor-pointer"
-                    title="পুনরায় সক্রিয় করুন"
-                  >
-                    <RotateCcw className="w-3 h-3" />
-                    <span>পুনরায় চালু</span>
-                  </button>
                 )}
               </div>
-            </div>
-          );
-        })}
+            )}
+          </>
+        ) : (
+          <>
+            {filteredTasks.map((task) => renderTaskCard(task))}
 
-        {filteredTasks.length === 0 && (
-          <div className="bg-white rounded-3xl p-12 text-center border border-[#EAE2D0] space-y-2">
-            <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto opacity-70" />
-            <h4 className="font-bold text-base text-[#16402C]">কোনো কাজ অবশিষ্ট নেই!</h4>
-            <p className="text-xs md:text-sm text-gray-500 max-w-md mx-auto">
-              নির্বাচিত ফিল্টার বা ক্যাটাগরিতে এই মুহূর্তে কোনো কাজ পাওয়া যায়নি। আপনি নতুন কাজ যোগ করতে পারেন।
-            </p>
-          </div>
+            {filteredTasks.length === 0 && (
+              <div className="bg-white rounded-3xl p-12 text-center border border-[#EAE2D0] space-y-2">
+                <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto opacity-70" />
+                <h4 className="font-bold text-base text-[#16402C]">কোনো কাজ অবশিষ্ট নেই!</h4>
+                <p className="text-xs md:text-sm text-gray-500 max-w-md mx-auto">
+                  নির্বাচিত ফিল্টার বা ক্যাটাগরিতে এই মুহূর্তে কোনো কাজ পাওয়া যায়নি। আপনি নতুন কাজ যোগ করতে পারেন।
+                </p>
+              </div>
+            )}
+          </>
         )}
       </div>
+
+      {/* Task Edit Modal for reassigning, editing due date, priority or deleting */}
+      {editingTask && (
+        <AddTaskModal
+          isOpen={Boolean(editingTask)}
+          initialTask={editingTask}
+          onClose={() => setEditingTask(null)}
+          onAddTask={async () => {}}
+          onUpdateTask={onUpdateTask}
+          onDeleteTask={onDeleteTask}
+          employees={employees}
+          ownerName={ownerName}
+        />
+      )}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { formatCurrency } from '../../utils/accounting';
+import { formatCurrency, parseCurrency } from '../../utils/accounting';
 import { useState, useEffect } from 'react';
 import { 
   Wallet, 
@@ -96,7 +96,7 @@ export const RecordSalaryPaymentModal = ({
       return;
     }
 
-    const numAmount = parseFloat(amount);
+    const numAmount = parseCurrency(amount);
     const validation = validateSalaryPayment(
       currentEmployee,
       numAmount,
@@ -242,9 +242,7 @@ export const RecordSalaryPaymentModal = ({
             <div className="relative">
               <span className="absolute left-3.5 top-2.5 font-bold text-gray-500 text-base">৳</span>
               <input
-                type="number"
-                min="1"
-                step="any"
+                type="text"
                 inputMode="decimal"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}

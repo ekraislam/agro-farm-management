@@ -1519,6 +1519,84 @@ export const farmRepository = {
     }
   },
 
+  async updateTask(userId: string, task: ReminderTask): Promise<RepositoryResult<ReminderTask>> {
+    if (!supabase) {
+      return { success: false, error: 'ক্লাউড ডেটাবেজ কনফিগার করা হয়নি।' };
+    }
+
+    try {
+      const payload = {
+        title: task.title,
+        description: task.description || null,
+        due_date: toIsoDateString(task.dueDate),
+        priority: task.priority,
+        priority_bn: task.priorityBn,
+        category: task.category,
+        assigned_employee_id: task.assignedEmployeeId || null,
+        assigned_to: task.assignedTo || null,
+        completed: task.completed,
+        cow_id: task.cowId || null,
+        related_health_record_id: task.relatedHealthRecordId || null,
+        updated_at: new Date().toISOString(),
+      };
+
+      const { data, error } = await supabase
+        .from('tasks')
+        .update(payload)
+        .eq('id', task.id)
+        .eq('user_id', userId)
+        .select()
+        .single();
+
+      if (error) {
+        return { success: false, error: translateDbError(error, 'কাজ হালনাগাদ করা সম্ভব হয়নি') };
+      }
+
+      return {
+        success: true,
+        data: {
+          id: data.id,
+          title: data.title,
+          description: data.description || '',
+          dueDate: task.dueDate,
+          priority: data.priority,
+          priorityBn: data.priority_bn,
+          category: data.category as any,
+          completed: data.completed,
+          completedAt: data.completed_at || undefined,
+          assignedEmployeeId: data.assigned_employee_id || undefined,
+          assignedTo: data.assigned_to || undefined,
+          cowId: data.cow_id || undefined,
+          relatedHealthRecordId: data.related_health_record_id || undefined,
+        },
+      };
+    } catch (err) {
+      return { success: false, error: translateDbError(err, 'কাজ সংশোধনে সমস্যা হয়েছে') };
+    }
+  },
+
+  async deleteTask(userId: string, taskId: string): Promise<RepositoryResult<boolean>> {
+    if (!supabase) {
+      return { success: false, error: 'ক্লাউড ডেটাবেজ কনফিগার করা হয়নি।' };
+    }
+
+    try {
+      const { error } = await supabase
+        .from('tasks')
+        .delete()
+        .eq('id', taskId)
+        .eq('user_id', userId);
+
+      if (error) {
+        return { success: false, error: translateDbError(error, 'কাজ মুছে ফেলা যায়নি') };
+      }
+
+      return { success: true, data: true };
+    } catch (err) {
+      return { success: false, error: translateDbError(err, 'কাজ মুছে ফেলতে সমস্যা হয়েছে') };
+    }
+  },
+
   // --------------------------------------------------------------------------
   // Biogas Logs
   // --------------------------------------------------------------------------

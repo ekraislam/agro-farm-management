@@ -14,6 +14,7 @@ import {
 import type { Employee, EmployeeStatus } from '../../types/farm';
 import { validateEmployee } from '../../utils/employeeAccounting';
 import { generateId } from '../../utils/id';
+import { parseCurrency } from '../../utils/accounting';
 
 interface AddEmployeeModalProps {
   isOpen: boolean;
@@ -78,11 +79,13 @@ export const AddEmployeeModal = ({
     e.preventDefault();
     setErrorBanner('');
 
+    const salaryNum = parseCurrency(salaryMonthly);
+
     const empData: Partial<Employee> = {
       name: name.trim(),
       role: role.trim(),
       phone: phone.trim(),
-      salaryMonthly: parseFloat(salaryMonthly) || 0,
+      salaryMonthly: salaryNum,
       joiningDate: joiningDate.trim(),
       status,
       assignedDuties,
@@ -102,7 +105,7 @@ export const AddEmployeeModal = ({
       name: name.trim(),
       role: role.trim(),
       phone: phone.trim(),
-      salaryMonthly: parseFloat(salaryMonthly) || 0,
+      salaryMonthly: salaryNum,
       joiningDate: joiningDate.trim(),
       assignedDuties,
       status,
@@ -232,15 +235,14 @@ export const AddEmployeeModal = ({
               <div className="relative">
                 <Wallet className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
                 <input
-                  type="number"
-                  min="0"
-                  step="any"
+                  type="text"
                   inputMode="decimal"
                   value={salaryMonthly}
                   onChange={(e) => {
                     setSalaryMonthly(e.target.value);
                     setFormErrors((prev) => ({ ...prev, salaryMonthly: '' }));
                   }}
+                  placeholder="যেমন: ১৫,০০০"
                   className={`w-full pl-9 pr-3 py-2.5 rounded-xl border ${
                     formErrors.salaryMonthly ? 'border-red-400' : 'border-[#EAE2D0]'
                   } outline-hidden focus:border-[#16402C] bg-[#FAF7F0]/40 font-bold text-[#16402C]`}

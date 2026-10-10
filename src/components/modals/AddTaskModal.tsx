@@ -1,5 +1,5 @@
 import { useState, useEffect, type FormEvent } from 'react';
-import { X, CalendarClock, AlertCircle } from 'lucide-react';
+import { X, CalendarClock, AlertCircle, Trash2 } from 'lucide-react';
 import type { ReminderTask, Employee } from '../../types/farm';
 import { generateId } from '../../utils/id';
 import { toIsoDateString, formatBanglaDate } from '../../utils/accounting';
@@ -8,6 +8,9 @@ interface AddTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddTask: (task: ReminderTask) => Promise<{ success: boolean; error?: string } | void> | void;
+  onUpdateTask?: (task: ReminderTask) => Promise<{ success: boolean; error?: string } | void> | void;
+  onDeleteTask?: (taskId: string) => Promise<{ success: boolean; error?: string } | void> | void;
+  initialTask?: ReminderTask | null;
   employees?: Employee[];
   initialEmployeeId?: string;
   ownerName?: string;
@@ -25,12 +28,16 @@ export const AddTaskModal = ({
   isOpen,
   onClose,
   onAddTask,
+  onUpdateTask,
+  onDeleteTask,
+  initialTask = null,
   employees = [],
   initialEmployeeId,
   ownerName = 'মুমিনুল ইসলাম',
 }: AddTaskModalProps) => {
   const activeEmployees = employees.filter((e) => !e.isArchived && e.status === 'active');
   const farmOwner = `${ownerName} (মালিক)`;
+  const isEditing = Boolean(initialTask);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -45,7 +52,7 @@ export const AddTaskModal = ({
     return formatBanglaDate(d);
   });
   const [priority, setPriority] = useState<'high' | 'medium' | 'low'>('high');
-  const [category, setCategory] = useState<'vaccine' | 'feed' | 'vet' | 'worker' | 'biogas' | 'other'>('worker');
+  const [category, setCategory] = useState<ReminderTask['category']>('worker');
   const [assignedEmployeeId, setAssignedEmployeeId] = useState(
     initialEmployeeId || (activeEmployees.length > 0 ? activeEmployees[0].id : 'owner')
   );
@@ -58,9 +65,34 @@ export const AddTaskModal = ({
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Sync worker selection whenever modal opens or employee list updates
+  // Sync state whenever modal opens or initialTask changes
   useEffect(() => {
     if (isOpen) {
+      if (initialTask) {
+        setTitle(initialTask.title);
+        setDescription(initialTask.description || '');
+        setDueDate(initialTask.dueDate);
+        setPickerDate(toIsoDateString(initialTask.dueDate));
+        setPriority(initialTask.priority);
+        setCategory(initialTask.category);
+        const empId = initialTask.assignedEmployeeId || 
+          (initialTask.assignedTo === farmOwner ? 'owner' : (activeEmployees.find(e => e.name === initialTask.assignedTo)?.id || 'owner'));
+        setAssignedEmployeeId(empId);
+        setAssignedTo(initialTask.assignedTo || farmOwner);
+        setError('');
+        return;
+      }
+
+      // Add mode default
+      setTitle('');
+      setDescription('');
+      const d = new Date();
+      d.setDate(d.getDate() + 1);
+      setPickerDate(toIsoDateString(d));
+      setDueDate(formatBanglaDate(d));
+      setPriority('high');
+      setCategory('worker');
+
       const targetEmpId = initialEmployeeId || (activeEmployees.length > 0 ? activeEmployees[0].id : 'owner');
       setAssignedEmployeeId(targetEmpId);
       if (targetEmpId === 'owner') {
@@ -69,11 +101,11 @@ export const AddTaskModal = ({
         const emp = activeEmployees.find((e) => e.id === targetEmpId);
         setAssignedTo(emp ? emp.name : farmOwner);
       }
+      setError('');
     }
-  }, [isOpen, initialEmployeeId, employees]);
+  }, [isOpen, initialTask, initialEmployeeId, employees, farmOwner]);
 
   if (!isOpen) return null;
-
 
   const handleSelectTemplate = (template: { title: string; category: any }) => {
     setTitle(template.title);
@@ -105,25 +137,32 @@ export const AddTaskModal = ({
       low: 'সাধারণ',
     };
 
-    const newTask: ReminderTask = {
-      id: generateId('rem'),
+    const taskPayload: ReminderTask = {
+      ...(initialTask || {}),
+      id: initialTask?.id || generateId('rem'),
       title: title.trim(),
       description: description.trim() || 'নির্ধারিত সময়ে সম্পন্ন করতে হবে',
       dueDate,
       priority,
       priorityBn: priorityBnMap[priority],
       category,
-      completed: false,
-      assignedEmployeeId: assignedEmployeeId || undefined,
+      completed: initialTask?.completed ?? false,
+      completedAt: initialTask?.completedAt,
+      assignedEmployeeId: assignedEmployeeId === 'owner' ? undefined : (assignedEmployeeId || undefined),
       assignedTo,
     };
 
     setIsSubmitting(true);
     try {
-      const result = await onAddTask(newTask);
+      let result;
+      if (isEditing && onUpdateTask) {
+        result = await onUpdateTask(taskPayload);
+      } else {
+        result = await onAddTask(taskPayload);
+      }
       setIsSubmitting(false);
       if (result && !result.success) {
-        setError(result.error || 'কাজ ক্লাউডে সংরক্ষণ করা সম্ভব হয়নি।');
+        setError(result.error || 'কাজ সংরক্ষণ করা সম্ভব হয়নি।');
         return;
       }
       onClose();
@@ -143,8 +182,14 @@ export const AddTaskModal = ({
               <CalendarClock className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-lg md:text-xl font-bold">নতুন জরুরি কাজ যোগ করুন</h2>
-              <p className="text-xs text-white/80 mt-0.5">খামারের দৈনন্দিন কাজকর্ম ও তদারকির তালিকা</p>
+              <h2 className="text-lg md:text-xl font-bold">
+                {isEditing ? 'কাজের তথ্য ও দায়িত্ব সংশোধন' : 'নতুন জরুরি কাজ যোগ করুন'}
+              </h2>
+              <p className="text-xs text-white/80 mt-0.5">
+                {isEditing
+                  ? 'ভুল কর্মী পুনর্বণ্টন, তারিখ বা বিষয়বস্তু পরিবর্তন করুন'
+                  : 'খামারের দৈনন্দিন কাজকর্ম ও তদারকির তালিকা'}
+              </p>
             </div>
           </div>
           <button
@@ -250,6 +295,7 @@ export const AddTaskModal = ({
                 <option value="feed">খাবার ও ভুসি কেনা</option>
                 <option value="vaccine">টিকা ও কৃমিনাশক</option>
                 <option value="vet">ডাক্তার দেখানো ও চিকিৎসা</option>
+                <option value="medicine">ঔষধ ও সেবা</option>
                 <option value="other">অন্যান্য কাজ</option>
               </select>
             </div>
@@ -306,26 +352,46 @@ export const AddTaskModal = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="pt-3 flex items-center justify-end gap-3 border-t border-gray-100">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 font-medium text-sm transition-colors"
-            >
-              বাতিল
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-6 py-2.5 rounded-xl bg-[#16402C] hover:bg-[#123323] text-white font-semibold text-sm shadow-sm transition-colors flex items-center gap-2 disabled:opacity-60"
-            >
-              {isSubmitting ? (
-                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <CalendarClock className="w-4 h-4 text-[#E5B842]" />
-              )}
-              {isSubmitting ? 'সংরক্ষণ হচ্ছে...' : 'কাজের তালিকায় যোগ করুন'}
-            </button>
+          <div className="pt-3 flex items-center justify-between gap-3 border-t border-gray-100">
+            {isEditing && onDeleteTask ? (
+              <button
+                type="button"
+                onClick={async () => {
+                  if (window.confirm('আপনি কি নিশ্চিত যে এই কাজটি স্থায়ীভাবে তালিকা থেকে মুছে ফেলতে চান?')) {
+                    if (initialTask) {
+                      await onDeleteTask(initialTask.id);
+                      onClose();
+                    }
+                  }
+                }}
+                className="px-4 py-2.5 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 font-medium text-xs md:text-sm transition-colors flex items-center gap-1.5 cursor-pointer"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>মুছে ফেলুন</span>
+              </button>
+            ) : <div />}
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 font-medium text-sm transition-colors cursor-pointer"
+              >
+                বাতিল
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-6 py-2.5 rounded-xl bg-[#16402C] hover:bg-[#123323] text-white font-semibold text-sm shadow-sm transition-colors flex items-center gap-2 disabled:opacity-60 cursor-pointer"
+              >
+                {isSubmitting ? (
+                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <CalendarClock className="w-4 h-4 text-[#E5B842]" />
+                )}
+                {isSubmitting ? 'সংরক্ষণ হচ্ছে...' : isEditing ? 'পরিবর্তন সংরক্ষণ করুন' : 'কাজের তালিকায় যোগ করুন'}
+              </button>
+            </div>
           </div>
         </form>
       </div>

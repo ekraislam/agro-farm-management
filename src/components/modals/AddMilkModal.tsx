@@ -2,7 +2,7 @@ import { useState, useEffect, type FormEvent } from 'react';
 import { X, Droplets, Check, AlertCircle, Info, DollarSign } from 'lucide-react';
 import type { Cow, MilkRecord, Employee } from '../../types/farm';
 import { generateId } from '../../utils/id';
-import { roundMoney, formatCurrency } from '../../utils/accounting';
+import { roundMoney, formatCurrency, toIsoDateString, formatBanglaDate, parseCurrency } from '../../utils/accounting';
 
 interface AddMilkModalProps {
   isOpen: boolean;
@@ -39,7 +39,12 @@ export const AddMilkModal = ({
   const defaultRecorder = `${ownerName} (মালিক)`;
   const isEditMode = Boolean(initialRecord);
 
-  const [date, setDate] = useState('১০ অক্টোবর ২০২৬');
+  const [pickerDate, setPickerDate] = useState(() => {
+    return initialRecord?.date ? toIsoDateString(initialRecord.date) : toIsoDateString(new Date());
+  });
+  const [date, setDate] = useState(() => {
+    return initialRecord?.date || formatBanglaDate(new Date());
+  });
   const [selectedCowId, setSelectedCowId] = useState('all');
   const [morningLiters, setMorningLiters] = useState('');
   const [eveningLiters, setEveningLiters] = useState('');
@@ -58,6 +63,7 @@ export const AddMilkModal = ({
 
     if (initialRecord) {
       setDate(initialRecord.date);
+      setPickerDate(toIsoDateString(initialRecord.date));
       setSelectedCowId(initialRecord.cowId || 'all');
       setMorningLiters(initialRecord.morningLiters > 0 ? String(initialRecord.morningLiters) : '');
       setEveningLiters(initialRecord.eveningLiters > 0 ? String(initialRecord.eveningLiters) : '');
@@ -72,6 +78,9 @@ export const AddMilkModal = ({
       setError('');
       return;
     }
+
+    setDate(formatBanglaDate(new Date()));
+    setPickerDate(toIsoDateString(new Date()));
 
     if (initialCowId && initialCowId !== 'all') {
       setSelectedCowId(initialCowId);
@@ -98,9 +107,9 @@ export const AddMilkModal = ({
     setError('');
   }, [isOpen, initialRecord, initialCowId, cows, ownerName, defaultMilkRate, defaultRecorder]);
 
-  // Derived liter calculations
-  const morningNum = parseFloat(morningLiters) || 0;
-  const eveningNum = parseFloat(eveningLiters) || 0;
+  // Derived liter calculations supporting both Bengali and English digits
+  const morningNum = parseCurrency(morningLiters);
+  const eveningNum = parseCurrency(eveningLiters);
   const totalLiters = roundMoney(morningNum + eveningNum);
 
   // Auto-sync sold liters with total collected milk unless user explicitly edited it
@@ -115,11 +124,11 @@ export const AddMilkModal = ({
   // Effective sold liters handles blank cleanly
   const effectiveSoldLiters = isSold
     ? (soldLiters.trim() !== ''
-        ? parseFloat(soldLiters) || 0
+        ? parseCurrency(soldLiters)
         : (!isCustomSold && totalLiters > 0 ? totalLiters : 0))
     : 0;
 
-  const priceNum = isSold ? (parseFloat(pricePerLiter) || 0) : 0;
+  const priceNum = isSold ? parseCurrency(pricePerLiter) : 0;
   const totalAmount = isSold ? roundMoney(effectiveSoldLiters * priceNum) : 0;
 
   const handleSubmit = async (e: FormEvent) => {
@@ -227,13 +236,33 @@ export const AddMilkModal = ({
               <label className="block text-xs font-semibold text-gray-700 mb-1">
                 তারিখ *
               </label>
-              <input
-                type="text"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] focus:ring-1 focus:ring-[#16402C] outline-hidden text-sm bg-gray-50/50"
-                required
-              />
+              <div className="flex items-center gap-2">
+                <input
+                  type="date"
+                  value={pickerDate}
+                  onChange={(e) => {
+                    const iso = e.target.value;
+                    setPickerDate(iso);
+                    if (iso) {
+                      setDate(formatBanglaDate(iso));
+                    }
+                  }}
+                  className="px-3 py-2 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm bg-white cursor-pointer shrink-0"
+                  required
+                />
+                <input
+                  type="text"
+                  value={date}
+                  onChange={(e) => {
+                    setDate(e.target.value);
+                    const parsedIso = toIsoDateString(e.target.value);
+                    setPickerDate(parsedIso);
+                  }}
+                  placeholder="যেমন: ১০ অক্টোবর ২০২৬"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] focus:ring-1 focus:ring-[#16402C] outline-hidden text-sm bg-white font-semibold text-gray-900"
+                  required
+                />
+              </div>
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">
@@ -283,9 +312,7 @@ export const AddMilkModal = ({
                   সকালের দুধ (লিটার)
                 </label>
                 <input
-                  type="number"
-                  step="any"
-                  min="0"
+                  type="text"
                   inputMode="decimal"
                   value={morningLiters}
                   onChange={(e) => {
@@ -301,9 +328,7 @@ export const AddMilkModal = ({
                   বিকালের দুধ (লিটার)
                 </label>
                 <input
-                  type="number"
-                  step="any"
-                  min="0"
+                  type="text"
                   inputMode="decimal"
                   value={eveningLiters}
                   onChange={(e) => {
@@ -356,9 +381,7 @@ export const AddMilkModal = ({
                       বিক্রি করা দুধ (লিটার) *
                     </label>
                     <input
-                      type="number"
-                      step="any"
-                      min="0.1"
+                      type="text"
                       inputMode="decimal"
                       value={soldLiters}
                       onChange={(e) => {
@@ -420,9 +443,7 @@ export const AddMilkModal = ({
                     <div className="relative">
                       <span className="absolute left-3 top-2.5 text-gray-500 font-bold text-sm">৳</span>
                       <input
-                        type="number"
-                        min="1"
-                        step="any"
+                        type="text"
                         inputMode="decimal"
                         value={pricePerLiter}
                         onChange={(e) => {

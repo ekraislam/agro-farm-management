@@ -953,6 +953,42 @@ function FarmDashboard() {
     }
   };
 
+  const handleUpdateTask = async (task: ReminderTask): Promise<{ success: boolean; error?: string }> => {
+    if (isLiveCloud && user) {
+      const res = await farmRepository.updateTask(user.id, task);
+      if (!res.success) {
+        showToast('কাজের তথ্য সংশোধন ব্যর্থ হয়েছে', res.error, 'error');
+        return { success: false, error: res.error };
+      }
+      setCloudReminders(cloudReminders.map((r) => (r.id === task.id ? res.data! : r)));
+      showToast('কাজের বিবরণ ও দায়িত্ব সফলভাবে হালনাগাদ করা হয়েছে!', task.title);
+      return { success: true };
+    }
+
+    // Local Offline Mode
+    setDemoReminders(demoReminders.map((r) => (r.id === task.id ? task : r)));
+    showToast('কাজের বিবরণ ও দায়িত্ব সফলভাবে হালনাগাদ করা হয়েছে!', task.title);
+    return { success: true };
+  };
+
+  const handleDeleteTask = async (taskId: string): Promise<{ success: boolean; error?: string }> => {
+    if (isLiveCloud && user) {
+      const res = await farmRepository.deleteTask(user.id, taskId);
+      if (!res.success) {
+        showToast('কাজটি মুছে ফেলা সম্ভব হয়নি', res.error, 'error');
+        return { success: false, error: res.error };
+      }
+      setCloudReminders(cloudReminders.filter((r) => r.id !== taskId));
+      showToast('কাজটি সফলভাবে তালিকা থেকে মুছে ফেলা হয়েছে!');
+      return { success: true };
+    }
+
+    // Local Offline Mode
+    setDemoReminders(demoReminders.filter((r) => r.id !== taskId));
+    showToast('কাজটি সফলভাবে তালিকা থেকে মুছে ফেলা হয়েছে!');
+    return { success: true };
+  };
+
   const handleAddBiogasLog = async (log: BiogasDailyLog) => {
     if (isLiveCloud && user) {
       const res = await farmRepository.addBiogasLog(user.id, log);
@@ -1489,6 +1525,9 @@ function FarmDashboard() {
                   setIsAddTaskOpen(true);
                 }}
                 onToggleTask={handleToggleTask}
+                onUpdateTask={handleUpdateTask}
+                onDeleteTask={handleDeleteTask}
+                ownerName={displayOwnerName}
               />
             )}
 

@@ -3,6 +3,7 @@ import { X, PlusCircle, Edit3, AlertCircle, Calendar, Hash, Tag, DollarSign, Act
 import type { Cow, CowStatus } from '../../types/farm';
 import { generateId } from '../../utils/id';
 import { validateCow } from '../../utils/milkAccounting';
+import { parseCurrency } from '../../utils/accounting';
 
 interface AddCowModalProps {
   isOpen: boolean;
@@ -96,7 +97,7 @@ export const AddCowModal = ({
     setErrorBanner('');
 
     // Calculate age in years if verified dateOfBirth is entered
-    let finalAge = parseFloat(ageYears) || 0;
+    let finalAge = parseCurrency(ageYears) || 0;
     if (!isAgeEstimated && dateOfBirth) {
       const birth = new Date(dateOfBirth);
       if (!isNaN(birth.getTime())) {
@@ -111,7 +112,7 @@ export const AddCowModal = ({
       name: name.trim(),
       breed,
       ageYears: finalAge,
-      purchasePrice: purchasePrice ? parseFloat(purchasePrice) : undefined,
+      purchasePrice: purchasePrice ? parseCurrency(purchasePrice) : undefined,
     };
 
     const validation = validateCow(cowToValidate, existingCows, initialCow?.id);
@@ -132,11 +133,11 @@ export const AddCowModal = ({
       dateOfBirth: !isAgeEstimated && dateOfBirth ? dateOfBirth : undefined,
       status,
       statusLabelBn: COW_STATUS_MAP[status],
-      dailyAvgMilkLiters: status === 'milking' ? parseFloat(dailyAvgMilk) || 0 : 0,
-      lastMilkingLiters: status === 'milking' ? Math.round((parseFloat(dailyAvgMilk) / 2) * 10) / 10 : 0,
+      dailyAvgMilkLiters: status === 'milking' ? parseCurrency(dailyAvgMilk) || 0 : 0,
+      lastMilkingLiters: status === 'milking' ? Math.round((parseCurrency(dailyAvgMilk) / 2) * 10) / 10 : 0,
       lastVaccinatedDate: lastVaccinatedDate.trim() || undefined,
       purchaseDate: purchaseDate.trim() || undefined,
-      purchasePrice: purchasePrice ? parseFloat(purchasePrice) : undefined,
+      purchasePrice: purchasePrice ? parseCurrency(purchasePrice) : undefined,
       notes: notes.trim() || (isEditing ? initialCow?.notes : 'নতুন এন্ট্রি'),
       isArchived: initialCow?.isArchived || false,
       archivedAt: initialCow?.archivedAt,
@@ -353,9 +354,7 @@ export const AddCowModal = ({
                   আনুমানিক বয়স (বছর)
                 </label>
                 <input
-                  type="number"
-                  step="any"
-                  min="0.1"
+                  type="text"
                   inputMode="decimal"
                   value={ageYears}
                   onChange={(e) => setAgeYears(e.target.value)}
@@ -385,9 +384,7 @@ export const AddCowModal = ({
               দৈনিক গড় দুধের আনুমানিক হিসাব (লিটার)
             </label>
             <input
-              type="number"
-              step="any"
-              min="0"
+              type="text"
               inputMode="decimal"
               disabled={status !== 'milking'}
               value={status === 'milking' ? dailyAvgMilk : '০'}
@@ -423,9 +420,7 @@ export const AddCowModal = ({
                 ক্রয় মূল্য (টাকা, ঐচ্ছিক)
               </label>
               <input
-                type="number"
-                min="0"
-                step="any"
+                type="text"
                 inputMode="decimal"
                 value={purchasePrice}
                 onChange={(e) => setPurchasePrice(e.target.value)}
