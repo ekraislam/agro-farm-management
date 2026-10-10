@@ -55,8 +55,22 @@ describe('Dynamic Farm Owner and Demo Data Cleanliness', () => {
 
   it('clearToEmptyFarm leaves no demo employees or fake records', () => {
     localFarmStorage.loadDemoData();
-    expect(localFarmStorage.getEmployees().length).toBeGreaterThan(0);
     expect(localFarmStorage.getCows().length).toBeGreaterThan(0);
+
+    const testEmp: Employee = {
+      id: 'custom-emp-1',
+      name: 'মো: রফিকুল',
+      role: 'গোয়ালা',
+      phone: '০১৭০০০০০০০০',
+      salaryMonthly: 12000,
+      joiningDate: '১ জানুয়ারি ২০২৬',
+      status: 'active',
+      isArchived: false,
+      assignedDuties: ['গরু দোয়ানো'],
+      avatarInitials: 'মর',
+    };
+    localFarmStorage.saveEmployees([testEmp]);
+    expect(localFarmStorage.getEmployees().length).toBe(1);
 
     localFarmStorage.clearToEmptyFarm();
 
@@ -70,7 +84,7 @@ describe('Dynamic Farm Owner and Demo Data Cleanliness', () => {
   it('filters active employees properly without hardcoding fake workers', () => {
     const employees: Employee[] = [
       {
-        id: 'emp-1',
+        id: 'emp-101',
         name: 'আসল কর্মী ১',
         role: 'গোয়ালা',
         phone: '০১৭০০০০০০০০',
@@ -78,9 +92,11 @@ describe('Dynamic Farm Owner and Demo Data Cleanliness', () => {
         joiningDate: '১ জানুয়ারি ২০২৬',
         status: 'active',
         isArchived: false,
+        assignedDuties: ['গরু দোয়ানো'],
+        avatarInitials: 'আক',
       },
       {
-        id: 'emp-2',
+        id: 'emp-102',
         name: 'সাবেক কর্মী',
         role: 'সহকারী',
         phone: '০১৮০০০০০০০০',
@@ -88,6 +104,8 @@ describe('Dynamic Farm Owner and Demo Data Cleanliness', () => {
         joiningDate: '১ জানুয়ারি ২০২৬',
         status: 'inactive',
         isArchived: true,
+        assignedDuties: ['পরিচ্ছন্নতা'],
+        avatarInitials: 'সক',
       },
     ];
 

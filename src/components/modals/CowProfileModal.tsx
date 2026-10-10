@@ -204,7 +204,7 @@ export const CowProfileModal = ({
                   <div className="text-xs md:text-sm text-gray-900">
                     {cow.purchasePrice ? (
                       <p className="font-semibold text-[#16402C]">
-                        মূল্য: ৳ {cow.formatCurrency(purchasePrice)}
+                        মূল্য: ৳ {formatCurrency(cow.purchasePrice)}
                         {cow.purchaseDate && <span className="text-gray-500 text-xs font-normal"> ({cow.purchaseDate})</span>}
                       </p>
                     ) : (
@@ -392,7 +392,7 @@ export const CowProfileModal = ({
                           <span className="text-gray-500 font-medium">{h.eventDate}</span>
                           {h.cost && h.cost > 0 && (
                             <span className="block font-bold text-[#16402C] mt-0.5">
-                              ৳ {h.formatCurrency(cost)}
+                              ৳ {formatCurrency(h.cost)}
                             </span>
                           )}
                         </div>

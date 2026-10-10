@@ -89,7 +89,7 @@ export const DashboardView = ({
       title: `${latestFin.title}`,
       time: latestFin.date,
       category: latestFin.type,
-      detail: `৳ ${latestFin.formatCurrency(amount)} (${latestFin.categoryLabelBn})`,
+      detail: `৳ ${formatCurrency(latestFin.amount)} (${latestFin.categoryLabelBn})`,
       icon: latestFin.type === 'income' ? DollarSign : Receipt,
       iconColor: latestFin.type === 'income' ? 'text-[#1B4D35] bg-[#EAF5EE]' : 'text-[#9E2A2B] bg-[#FDF2F2]',
     });
@@ -231,7 +231,7 @@ export const DashboardView = ({
               </div>
               <p className="text-[11px] text-gray-500 font-medium">আজকের আয়</p>
               <p className="text-base font-bold text-[#16402C] mt-0.5">
-                ৳{summary.formatCurrency(todayIncomeTk)}
+                ৳{formatCurrency(summary.todayIncomeTk)}
               </p>
             </div>
 
@@ -345,7 +345,7 @@ export const DashboardView = ({
               <div className="grid grid-cols-2 gap-2.5">
                 <StatCard
                   title="মাসের খরচ"
-                  value={`৳${summary.formatCurrency(monthExpensesTk)}`}
+                  value={`৳${formatCurrency(summary.monthExpensesTk)}`}
                   subtitle="খাদ্য, বেতন ও ঔষধ"
                   icon={Receipt}
                   variant="red"
@@ -353,7 +353,7 @@ export const DashboardView = ({
                 />
                 <StatCard
                   title="মাসিক নিট লাভ"
-                  value={`৳${summary.formatCurrency(estimatedMonthProfitTk)}`}
+                  value={`৳${formatCurrency(summary.estimatedMonthProfitTk)}`}
                   subtitle="হাতে থাকা নিট লাভ"
                   icon={TrendingUp}
                   variant="green"
@@ -508,7 +508,7 @@ export const DashboardView = ({
           {/* 3. Today's Income */}
           <StatCard
             title="আজকের আয়"
-            value={`৳${summary.formatCurrency(todayIncomeTk)}`}
+            value={`৳${formatCurrency(summary.todayIncomeTk)}`}
             subtitle="দুধ বিক্রি থেকে জমা"
             icon={DollarSign}
             variant="gold"
@@ -519,7 +519,7 @@ export const DashboardView = ({
           {/* 4. Monthly Expenses */}
           <StatCard
             title="মাসের খরচ"
-            value={`৳${summary.formatCurrency(monthExpensesTk)}`}
+            value={`৳${formatCurrency(summary.monthExpensesTk)}`}
             subtitle="খাদ্য, বেতন ও ঔষধ বাবদ"
             icon={Receipt}
             variant="red"
@@ -529,7 +529,7 @@ export const DashboardView = ({
           {/* 5. Estimated Monthly Profit */}
           <StatCard
             title="মাসিক নিট লাভ"
-            value={`৳${summary.formatCurrency(estimatedMonthProfitTk)}`}
+            value={`৳${formatCurrency(summary.estimatedMonthProfitTk)}`}
             subtitle="হাতে থাকা নিট লাভ"
             icon={TrendingUp}
             variant="green"

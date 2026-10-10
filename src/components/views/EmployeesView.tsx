@@ -282,7 +282,7 @@ export const EmployeesView = ({
                       <span className="text-gray-500 block">মাসিক বেতন:</span>
                       <span className="font-bold text-gray-900 flex items-center gap-1">
                         <Wallet className="w-3.5 h-3.5 text-gray-600" />
-                        ৳ {emp.formatCurrency(salaryMonthly)}
+                        ৳ {formatCurrency(emp.salaryMonthly)}
                       </span>
                     </div>
                   </div>
@@ -292,7 +292,7 @@ export const EmployeesView = ({
                     <div>
                       <span className="text-gray-500 text-[11px] block">চলতি মাসের বেতন:</span>
                       <span className="font-bold text-gray-800">
-                        পরিশোধিত: ৳ {payroll.formatCurrency(paidAmount)}
+                        পরিশোধিত: ৳ {formatCurrency(payroll.paidAmount)}
                       </span>
                     </div>
                     <span

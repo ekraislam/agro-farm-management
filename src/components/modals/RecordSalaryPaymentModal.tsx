@@ -161,7 +161,7 @@ export const RecordSalaryPaymentModal = ({
             >
               {activeEmployees.map((emp) => (
                 <option key={emp.id} value={emp.id}>
-                  {emp.name} (মাসিক: ৳ {emp.formatCurrency(salaryMonthly)})
+                  {emp.name} (মাসিক: ৳ {formatCurrency(emp.salaryMonthly)})
                 </option>
               ))}
             </select>
@@ -204,16 +204,16 @@ export const RecordSalaryPaymentModal = ({
             <div className="p-3.5 bg-[#FAF7F0] rounded-2xl border border-[#EAE2D0] space-y-2">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-gray-500">নির্ধারিত মাসিক বেতন:</span>
-                <span className="font-bold text-gray-900">৳ {currentEmployee.formatCurrency(salaryMonthly)}</span>
+                <span className="font-bold text-gray-900">৳ {formatCurrency(currentEmployee.salaryMonthly)}</span>
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="text-gray-500">পূর্বে পরিশোধ করা হয়েছে:</span>
-                <span className="font-bold text-[#2A7A50]">৳ {payrollStatus.formatCurrency(paidAmount)}</span>
+                <span className="font-bold text-[#2A7A50]">৳ {formatCurrency(payrollStatus.paidAmount)}</span>
               </div>
               <div className="flex items-center justify-between text-xs pt-1.5 border-t border-[#EAE2D0]">
                 <span className="font-bold text-gray-700">বর্তমান বকেয়া:</span>
                 <span className={`font-bold ${payrollStatus.dueAmount > 0 ? 'text-[#C53030]' : 'text-[#2A7A50]'}`}>
-                  ৳ {payrollStatus.formatCurrency(dueAmount)}
+                  ৳ {formatCurrency(payrollStatus.dueAmount)}
                 </span>
               </div>
             </div>

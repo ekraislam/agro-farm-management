@@ -68,7 +68,7 @@ export const DeleteConfirmModal = ({
               <span className={`text-base font-bold ${
                 isIncome ? 'text-[#16402C]' : 'text-[#9E2A2B]'
               }`}>
-                ৳ {record.formatCurrency(amount)}
+                ৳ {formatCurrency(record.amount)}
               </span>
             </div>
             <div className="flex justify-between items-center">

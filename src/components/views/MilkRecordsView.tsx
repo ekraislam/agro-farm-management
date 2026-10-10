@@ -169,7 +169,7 @@ export const MilkRecordsView = ({
                       </td>
                       <td className="py-3.5 px-4 text-gray-600">৳{r.pricePerLiter}</td>
                       <td className="py-3.5 px-4 font-bold text-[#16402C]">
-                        ৳{r.formatCurrency(totalAmount)}
+                        ৳{formatCurrency(r.totalAmount)}
                       </td>
                       <td className="py-3.5 px-4 text-gray-600 text-xs">
                         {r.recordedBy}
@@ -207,7 +207,7 @@ export const MilkRecordsView = ({
 
                   <div className="flex items-center justify-between text-xs pt-1">
                     <span className="text-gray-600">
-                      মোট মূল্য: <strong className="text-[#16402C] font-bold">৳{r.formatCurrency(totalAmount)}</strong> (৳{r.pricePerLiter}/লি)
+                      মোট মূল্য: <strong className="text-[#16402C] font-bold">৳{formatCurrency(r.totalAmount)}</strong> (৳{r.pricePerLiter}/লি)
                     </span>
                     <span className="text-gray-500 text-[11px]">{r.recordedBy}</span>
                   </div>

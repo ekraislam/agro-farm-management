@@ -226,7 +226,7 @@ export const FinanceView = ({
           <div>
             <p className="text-xs font-semibold text-gray-600">মোট জমা (আয়)</p>
             <p className="text-2xl font-bold text-[#16402C] mt-1">
-              ৳ {summary.formatCurrency(totalIncome)}
+              ৳ {formatCurrency(summary.totalIncome)}
             </p>
             <p className="text-[11px] text-[#2A7A50] mt-0.5 font-medium">
               দুধ ও অন্যান্য বিক্রি ({summary.incomeRecordsCount}টি হিসাব)
@@ -242,7 +242,7 @@ export const FinanceView = ({
           <div>
             <p className="text-xs font-semibold text-gray-600">মোট খরচ (ব্যয়)</p>
             <p className="text-2xl font-bold text-[#9E2A2B] mt-1">
-              ৳ {summary.formatCurrency(totalExpenses)}
+              ৳ {formatCurrency(summary.totalExpenses)}
             </p>
             <p className="text-[11px] text-[#9E2A2B] mt-0.5 font-medium">
               খাবার, বেতন ও চিকিৎসা ({summary.expenseRecordsCount}টি হিসাব)
@@ -260,7 +260,7 @@ export const FinanceView = ({
             <p className={`text-2xl font-bold mt-1 ${
               summary.isSurplus ? 'text-[#16402C]' : 'text-[#9E2A2B]'
             }`}>
-              {summary.isSurplus ? '+' : ''}৳ {summary.formatCurrency(netOperatingResult)}
+              {summary.isSurplus ? '+' : ''}৳ {formatCurrency(summary.netOperatingResult)}
             </p>
             <p className={`text-[11px] mt-0.5 font-bold ${
               summary.isSurplus ? 'text-[#2A7A50]' : 'text-[#9E2A2B]'
@@ -319,7 +319,7 @@ export const FinanceView = ({
                         {item.categoryLabelBn} ({item.count}টি)
                       </span>
                       <span className="font-bold text-gray-900">
-                        ৳ {item.formatCurrency(totalAmount)}{' '}
+                        ৳ {formatCurrency(item.totalAmount)}{' '}
                         <span className="text-gray-400 font-normal">({item.percentage}%)</span>
                       </span>
                     </div>
@@ -348,30 +348,30 @@ export const FinanceView = ({
               <div className="p-2.5 rounded-xl bg-[#FAF7F0] border border-[#EAE2D0] text-center">
                 <span className="text-xs font-bold text-gray-700 block">নগদ টাকা (Cash)</span>
                 <span className="text-xs text-[#16402C] font-extrabold block mt-1">
-                  +৳ {summary.paymentMethodBreakdown.cash.formatCurrency(income)}
+                  +৳ {formatCurrency(summary.paymentMethodBreakdown.cash.income)}
                 </span>
                 <span className="text-xs text-[#9E2A2B] font-extrabold block mt-0.5">
-                  -৳ {summary.paymentMethodBreakdown.cash.formatCurrency(expense)}
+                  -৳ {formatCurrency(summary.paymentMethodBreakdown.cash.expense)}
                 </span>
               </div>
 
               <div className="p-2.5 rounded-xl bg-[#FAF7F0] border border-[#EAE2D0] text-center">
                 <span className="text-xs font-bold text-gray-700 block">বিকাশ (bKash)</span>
                 <span className="text-xs text-[#16402C] font-extrabold block mt-1">
-                  +৳ {summary.paymentMethodBreakdown.bkash.formatCurrency(income)}
+                  +৳ {formatCurrency(summary.paymentMethodBreakdown.bkash.income)}
                 </span>
                 <span className="text-xs text-[#9E2A2B] font-extrabold block mt-0.5">
-                  -৳ {summary.paymentMethodBreakdown.bkash.formatCurrency(expense)}
+                  -৳ {formatCurrency(summary.paymentMethodBreakdown.bkash.expense)}
                 </span>
               </div>
 
               <div className="p-2.5 rounded-xl bg-[#FAF7F0] border border-[#EAE2D0] text-center">
                 <span className="text-xs font-bold text-gray-700 block">ব্যাংক একাউন্ট</span>
                 <span className="text-xs text-[#16402C] font-extrabold block mt-1">
-                  +৳ {summary.paymentMethodBreakdown.bank.formatCurrency(income)}
+                  +৳ {formatCurrency(summary.paymentMethodBreakdown.bank.income)}
                 </span>
                 <span className="text-xs text-[#9E2A2B] font-extrabold block mt-0.5">
-                  -৳ {summary.paymentMethodBreakdown.bank.formatCurrency(expense)}
+                  -৳ {formatCurrency(summary.paymentMethodBreakdown.bank.expense)}
                 </span>
               </div>
             </div>
@@ -515,7 +515,7 @@ export const FinanceView = ({
                         isIncome ? 'text-[#16402C]' : 'text-[#9E2A2B]'
                       }`}
                     >
-                      {isIncome ? '+' : '-'} ৳{item.formatCurrency(amount)}
+                      {isIncome ? '+' : '-'} ৳{formatCurrency(item.amount)}
                     </span>
                     <span className="text-[10px] text-gray-400">
                       {isIncome ? 'প্রাপ্ত আয়' : 'পরিশোধিত ব্যয়'}

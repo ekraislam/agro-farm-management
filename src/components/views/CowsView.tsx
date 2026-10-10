@@ -283,7 +283,7 @@ export const CowsView = ({
                     <p className="flex items-center justify-between text-gray-500">
                       <span>ক্রয়মূল্য:</span>
                       <strong className="font-semibold text-gray-800">
-                        ৳ {cow.formatCurrency(purchasePrice)}
+                        ৳ {formatCurrency(cow.purchasePrice)}
                       </strong>
                     </p>
                   )}
