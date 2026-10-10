@@ -39,6 +39,11 @@
   min-width: 48px;
 }
 
+/* iOS & modern Android safe-area-inset padding helper */
+.pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 0.5rem);
+}
+
 /* Print-specific layout rules for A4 report generation */
 @media print {
   body {
