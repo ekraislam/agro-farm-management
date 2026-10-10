@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { X, CalendarClock, AlertCircle } from 'lucide-react';
 import type { ReminderTask, Employee } from '../../types/farm';
 import { generateId } from '../../utils/id';
@@ -44,10 +44,26 @@ export const AddTaskModal = ({
       ? (activeEmployees.find((e) => e.id === initialEmployeeId)?.name || farmOwner)
       : (activeEmployees.length > 0 ? activeEmployees[0].name : farmOwner)
   );
+
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Sync worker selection whenever modal opens or employee list updates
+  useEffect(() => {
+    if (isOpen) {
+      const targetEmpId = initialEmployeeId || (activeEmployees.length > 0 ? activeEmployees[0].id : 'owner');
+      setAssignedEmployeeId(targetEmpId);
+      if (targetEmpId === 'owner') {
+        setAssignedTo(farmOwner);
+      } else {
+        const emp = activeEmployees.find((e) => e.id === targetEmpId);
+        setAssignedTo(emp ? emp.name : farmOwner);
+      }
+    }
+  }, [isOpen, initialEmployeeId, employees]);
+
   if (!isOpen) return null;
+
 
   const handleSelectTemplate = (template: { title: string; category: any }) => {
     setTitle(template.title);

@@ -49,13 +49,58 @@ export const BottomNav = ({
     labelEn: string;
     icon: React.ElementType;
     badgeCount?: number;
+    iconBg: string;
+    iconColor: string;
   }[] = [
-    { id: 'employees', label: 'কর্মচারী ও বেতন', labelEn: 'Employees', icon: Users },
-    { id: 'biogas', label: 'বায়োগ্যাস প্ল্যান্ট', labelEn: 'Biogas System', icon: Flame },
-    { id: 'reports', label: 'হিসাব বিবরণী', labelEn: 'Farm Reports', icon: FileBarChart },
-    { id: 'reminders', label: 'কাজের তালিকা ও টিকা', labelEn: 'Tasks & Vaccines', icon: CalendarClock, badgeCount: pendingTasksCount },
-    { id: 'advisor', label: 'স্মার্ট পরামর্শক', labelEn: 'Farm Advisor', icon: Sparkles },
-    { id: 'settings', label: 'খামার সেটিংস', labelEn: 'Settings', icon: Settings },
+    { 
+      id: 'employees', 
+      label: 'কর্মচারী ও বেতন', 
+      labelEn: 'Employees & Payroll', 
+      icon: Users,
+      iconBg: 'bg-teal-50 border border-teal-200/60',
+      iconColor: 'text-teal-700'
+    },
+    { 
+      id: 'biogas', 
+      label: 'বায়োগ্যাস প্ল্যান্ট', 
+      labelEn: 'Biogas & Slurry', 
+      icon: Flame,
+      iconBg: 'bg-amber-50 border border-amber-200/60',
+      iconColor: 'text-amber-700'
+    },
+    { 
+      id: 'reports', 
+      label: 'হিসাব বিবরণী', 
+      labelEn: 'Monthly Analytics', 
+      icon: FileBarChart,
+      iconBg: 'bg-emerald-50 border border-emerald-200/60',
+      iconColor: 'text-[#16402C]'
+    },
+    { 
+      id: 'reminders', 
+      label: 'কাজের তালিকা ও টিকা', 
+      labelEn: 'Tasks & Vaccines', 
+      icon: CalendarClock, 
+      badgeCount: pendingTasksCount,
+      iconBg: 'bg-blue-50 border border-blue-200/60',
+      iconColor: 'text-blue-700'
+    },
+    { 
+      id: 'advisor', 
+      label: 'স্মার্ট পরামর্শক', 
+      labelEn: 'AI Farm Advisor', 
+      icon: Sparkles,
+      iconBg: 'bg-purple-50 border border-purple-200/60',
+      iconColor: 'text-purple-700'
+    },
+    { 
+      id: 'settings', 
+      label: 'খামার সেটিংস', 
+      labelEn: 'Farm Settings & PIN', 
+      icon: Settings,
+      iconBg: 'bg-slate-100 border border-slate-200/80',
+      iconColor: 'text-slate-700'
+    },
   ];
 
   const isMoreActive = moreTabs.some((t) => t.id === currentTab);
@@ -76,18 +121,20 @@ export const BottomNav = ({
                   onNavigate(tab.id);
                   setIsDrawerOpen(false);
                 }}
-                className={`flex-1 py-1.5 px-1 flex flex-col items-center justify-center rounded-xl transition-all touch-target ${
+                className={`flex-1 py-1 px-1 flex flex-col items-center justify-center rounded-xl transition-all active:scale-95 touch-target ${
                   isActive
                     ? 'text-[#16402C]'
                     : 'text-gray-500 hover:text-gray-800'
                 }`}
               >
                 <div
-                  className={`p-1 rounded-xl transition-transform ${
-                    isActive ? 'bg-[#16402C]/10 scale-105' : ''
+                  className={`w-10 h-7.5 rounded-xl flex items-center justify-center transition-all ${
+                    isActive 
+                      ? 'bg-linear-to-b from-[#16402C] to-[#1E5739] text-[#E5B842] shadow-xs' 
+                      : 'hover:bg-gray-100/80 text-gray-500'
                   }`}
                 >
-                  <Icon className={`w-5 h-5 ${isActive ? 'text-[#16402C]' : 'text-gray-500'}`} />
+                  <Icon className="w-4.5 h-4.5" />
                 </div>
                 <span className={`text-[11px] mt-0.5 tracking-tight ${
                   isActive ? 'font-bold text-[#16402C]' : 'font-medium'
@@ -95,7 +142,7 @@ export const BottomNav = ({
                   {tab.label}
                 </span>
                 {isActive && (
-                  <span className="w-1 h-1 rounded-full bg-[#E5B842] mt-0.5" />
+                  <span className="w-1.5 h-1 rounded-full bg-[#E5B842] mt-0.5" />
                 )}
               </button>
             );
@@ -104,14 +151,20 @@ export const BottomNav = ({
           {/* 5th Tab: More / Menu */}
           <button
             onClick={() => setIsDrawerOpen(true)}
-            className={`flex-1 py-1.5 px-1 flex flex-col items-center justify-center rounded-xl transition-all touch-target relative ${
+            className={`flex-1 py-1 px-1 flex flex-col items-center justify-center rounded-xl transition-all active:scale-95 touch-target relative ${
               isMoreActive ? 'text-[#16402C]' : 'text-gray-500 hover:text-gray-800'
             }`}
           >
-            <div className={`p-1 rounded-xl relative ${isMoreActive ? 'bg-[#16402C]/10' : ''}`}>
-              <Menu className={`w-5 h-5 ${isMoreActive ? 'text-[#16402C]' : 'text-gray-500'}`} />
+            <div
+              className={`w-10 h-7.5 rounded-xl flex items-center justify-center transition-all relative ${
+                isMoreActive 
+                  ? 'bg-linear-to-b from-[#16402C] to-[#1E5739] text-[#E5B842] shadow-xs' 
+                  : 'hover:bg-gray-100/80 text-gray-500'
+              }`}
+            >
+              <Menu className="w-4.5 h-4.5" />
               {pendingTasksCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#C53030] rounded-full ring-2 ring-white" />
+                <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-[#C53030] rounded-full ring-2 ring-white animate-pulse" />
               )}
             </div>
             <span className={`text-[11px] mt-0.5 tracking-tight ${
@@ -120,7 +173,7 @@ export const BottomNav = ({
               মেনু
             </span>
             {isMoreActive && (
-              <span className="w-1 h-1 rounded-full bg-[#E5B842] mt-0.5" />
+              <span className="w-1.5 h-1 rounded-full bg-[#E5B842] mt-0.5" />
             )}
           </button>
         </div>
@@ -134,16 +187,16 @@ export const BottomNav = ({
             onClick={() => setIsDrawerOpen(false)}
           />
 
-          <div className="bg-white rounded-t-3xl border-t border-[#EAE2D0] p-5 shadow-2xl max-h-[85vh] overflow-y-auto animate-in slide-in-from-bottom duration-300">
+          <div className="bg-[#FAF7F0] rounded-t-3xl border-t border-[#EAE2D0] p-5 shadow-2xl max-h-[85vh] overflow-y-auto animate-in slide-in-from-bottom duration-300">
             {/* Drawer Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E8DFC9]">
               <div>
                 <h3 className="font-bold text-base text-[#16402C]">খামার মেনু ও বিভাগসমূহ</h3>
                 <p className="text-xs text-gray-500">অন্যান্য বিভাগ ও দ্রুত সেবা</p>
               </div>
               <button
                 onClick={() => setIsDrawerOpen(false)}
-                className="p-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600"
+                className="p-2 rounded-xl bg-white border border-[#E8DFC9] hover:bg-gray-100 text-gray-600"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -156,9 +209,11 @@ export const BottomNav = ({
                   setIsDrawerOpen(false);
                   onOpenAddMilk();
                 }}
-                className="p-3 rounded-2xl bg-[#16402C]/10 border border-[#16402C]/20 text-[#16402C] flex items-center gap-2.5 text-xs font-bold"
+                className="p-3.5 rounded-2xl bg-linear-to-r from-[#16402C] to-[#25603E] text-white flex items-center gap-2.5 text-xs font-bold shadow-xs active:scale-98 transition-transform"
               >
-                <Droplets className="w-4 h-4 text-[#2A7A50]" />
+                <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                  <Droplets className="w-4.5 h-4.5 text-[#E5B842]" />
+                </div>
                 <span>+ দুধের হিসাব</span>
               </button>
 
@@ -167,15 +222,17 @@ export const BottomNav = ({
                   setIsDrawerOpen(false);
                   onOpenAddExpense();
                 }}
-                className="p-3 rounded-2xl bg-[#9E2A2B]/10 border border-[#9E2A2B]/20 text-[#9E2A2B] flex items-center gap-2.5 text-xs font-bold"
+                className="p-3.5 rounded-2xl bg-white border border-[#9E2A2B]/20 text-[#9E2A2B] flex items-center gap-2.5 text-xs font-bold shadow-xs active:scale-98 transition-transform"
               >
-                <Receipt className="w-4 h-4 text-[#9E2A2B]" />
-                <span>+ আয় বা খরচ যোগ</span>
+                <div className="w-8 h-8 rounded-xl bg-[#9E2A2B]/10 flex items-center justify-center shrink-0">
+                  <Receipt className="w-4.5 h-4.5 text-[#9E2A2B]" />
+                </div>
+                <span>+ আয় বা খরচ</span>
               </button>
             </div>
 
             {/* More Navigation Sections */}
-            <div className="space-y-1.5 py-2">
+            <div className="space-y-2 py-1">
               {moreTabs.map((item) => {
                 const Icon = item.icon;
                 const isActive = currentTab === item.id;
@@ -187,22 +244,22 @@ export const BottomNav = ({
                       onNavigate(item.id);
                       setIsDrawerOpen(false);
                     }}
-                    className={`w-full flex items-center justify-between p-3.5 rounded-2xl transition-all ${
+                    className={`w-full flex items-center justify-between p-3 rounded-2xl transition-all active:scale-98 ${
                       isActive
-                        ? 'bg-[#16402C] text-white font-bold'
-                        : 'bg-[#FAF7F0] text-gray-800 hover:bg-[#F2ECE1] font-medium'
+                        ? 'bg-linear-to-r from-[#16402C] to-[#215A3A] text-white font-bold shadow-sm'
+                        : 'bg-white border border-[#EAE2D0] text-gray-800 hover:bg-[#F2ECE1] font-medium shadow-2xs'
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-xl ${
-                        isActive ? 'bg-white/20 text-[#E5B842]' : 'bg-white text-[#16402C]'
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                        isActive ? 'bg-white/15 text-[#E5B842]' : `${item.iconBg} ${item.iconColor}`
                       }`}>
                         <Icon className="w-5 h-5" />
                       </div>
                       <div className="text-left">
-                        <span className="block text-sm leading-tight">{item.label}</span>
-                        <span className={`text-[11px] block ${
-                          isActive ? 'text-white/70' : 'text-gray-400'
+                        <span className="block text-sm leading-tight font-bold">{item.label}</span>
+                        <span className={`text-[11px] block mt-0.5 ${
+                          isActive ? 'text-[#E5B842]/90' : 'text-gray-400'
                         }`}>
                           {item.labelEn}
                         </span>
@@ -210,7 +267,7 @@ export const BottomNav = ({
                     </div>
 
                     {item.badgeCount !== undefined && item.badgeCount > 0 && (
-                      <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-[#C53030] text-white">
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#C53030] text-white shadow-xs">
                         {item.badgeCount}
                       </span>
                     )}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Calendar, 
   X, 
@@ -43,21 +43,40 @@ export const RecordAttendanceModal = ({
   const [errorBanner, setErrorBanner] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Synchronize employee selection whenever modal opens or employee list updates
+  useEffect(() => {
+    if (isOpen) {
+      const activeEmps = employees.filter((e) => !e.isArchived);
+      const fallbackId = initialEmployeeId || (activeEmps.length > 0 ? activeEmps[0].id : '');
+      setSelectedEmpId((prev) => {
+        if (prev && activeEmps.some((e) => e.id === prev)) {
+          return prev;
+        }
+        return fallbackId;
+      });
+      setErrorBanner('');
+    }
+  }, [isOpen, initialEmployeeId, employees]);
+
   if (!isOpen) return null;
 
-  const currentEmployee = employees.find((e) => e.id === selectedEmpId);
+  const resolvedEmpId = selectedEmpId || initialEmployeeId || (activeEmployees.length > 0 ? activeEmployees[0].id : '');
+  const currentEmployee = employees.find((e) => e.id === resolvedEmpId);
   const existingForDate = existingRecords.find(
-    (r) => r.employeeId === selectedEmpId && (r.date === date || r.date.includes(date))
+    (r) => r.employeeId === resolvedEmpId && (r.date === date || r.date.includes(date))
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorBanner('');
 
+    const targetEmpId = selectedEmpId || resolvedEmpId;
+    const targetEmployee = currentEmployee || employees.find((e) => e.id === targetEmpId);
+
     const record: AttendanceRecord = {
       id: existingForDate ? existingForDate.id : generateId('att'),
-      employeeId: selectedEmpId,
-      employeeName: currentEmployee?.name,
+      employeeId: targetEmpId,
+      employeeName: targetEmployee?.name,
       date,
       status,
       statusBn: ATTENDANCE_STATUS_LABELS[status].bn,
@@ -130,9 +149,12 @@ export const RecordAttendanceModal = ({
               কর্মী নির্বাচন করুন <span className="text-red-500">*</span>
             </label>
             <select
-              value={selectedEmpId}
-              onChange={(e) => setSelectedEmpId(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE2D0] outline-hidden focus:border-[#16402C] bg-[#FAF7F0]/40 font-bold text-gray-900"
+              value={selectedEmpId || resolvedEmpId}
+              onChange={(e) => {
+                setSelectedEmpId(e.target.value);
+                setErrorBanner('');
+              }}
+              className="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE2D0] outline-hidden focus:border-[#16402C] bg-[#FAF7F0]/40 font-bold text-gray-900 cursor-pointer"
               required
             >
               {activeEmployees.map((emp) => (

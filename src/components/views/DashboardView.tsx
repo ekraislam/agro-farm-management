@@ -190,20 +190,24 @@ export const DashboardView = ({
           </button>
 
           {/* Secondary 2 shortcuts */}
-          <div className="grid grid-cols-2 gap-2 pt-1">
+          <div className="grid grid-cols-2 gap-2.5 pt-1">
             <button
               onClick={onOpenAddCow}
-              className="p-3 rounded-xl bg-[#FAF7F0] border border-[#E8DFC9] hover:bg-[#F2ECE1] text-[#16402C] flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer"
+              className="p-3.5 rounded-2xl bg-white border border-[#E8DFC9] hover:bg-[#FAF7F0] text-[#16402C] flex items-center justify-center gap-2.5 text-xs font-bold shadow-2xs active:scale-95 transition-all cursor-pointer"
             >
-              <Plus className="w-4 h-4 text-[#2A7A50]" />
+              <div className="w-7 h-7 rounded-lg bg-emerald-50 text-[#16402C] flex items-center justify-center border border-emerald-200/60 shrink-0">
+                <Plus className="w-4 h-4 text-[#2A7A50]" />
+              </div>
               <span>নতুন গরু যোগ</span>
             </button>
 
             <button
               onClick={onOpenAddTask}
-              className="p-3 rounded-xl bg-[#FAF7F0] border border-[#E8DFC9] hover:bg-[#F2ECE1] text-[#8C6200] flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer"
+              className="p-3.5 rounded-2xl bg-white border border-[#E8DFC9] hover:bg-[#FAF7F0] text-[#8C6200] flex items-center justify-center gap-2.5 text-xs font-bold shadow-2xs active:scale-95 transition-all cursor-pointer"
             >
-              <CalendarClock className="w-4 h-4 text-[#8C6200]" />
+              <div className="w-7 h-7 rounded-lg bg-amber-50 text-[#8C6200] flex items-center justify-center border border-amber-200/60 shrink-0">
+                <CalendarClock className="w-4 h-4 text-[#8C6200]" />
+              </div>
               <span>নতুন কাজ / অনুস্মারক</span>
             </button>
           </div>
@@ -437,32 +441,32 @@ export const DashboardView = ({
           </div>
 
           {/* Quick Action Buttons (Large, Touch-Friendly) */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 shrink-0">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 shrink-0">
             <button
               onClick={onOpenAddMilk}
-              className="p-3 bg-white text-[#16402C] hover:bg-[#FAF7F0] rounded-2xl flex flex-col items-center justify-center gap-1.5 shadow-sm transition-all active:scale-95 text-center group"
+              className="p-3.5 bg-white text-[#16402C] hover:bg-[#FAF7F0] rounded-2xl flex flex-col items-center justify-center gap-2 shadow-md transition-all active:scale-95 text-center group border border-white/40 cursor-pointer"
             >
-              <div className="p-2 rounded-xl bg-[#16402C]/10 text-[#16402C] group-hover:scale-105 transition-transform">
+              <div className="p-2.5 rounded-xl bg-linear-to-b from-emerald-50 to-emerald-100/80 text-[#2A7A50] border border-emerald-200/50 group-hover:scale-110 transition-transform">
                 <Droplets className="w-5 h-5 text-[#2A7A50]" />
               </div>
-              <span className="text-xs font-bold leading-tight">দুধের হিসাব যোগ</span>
+              <span className="text-xs font-bold leading-tight">দুধের হিসাব</span>
             </button>
 
             <button
               onClick={onOpenAddExpense}
-              className="p-3 bg-white text-[#9E2A2B] hover:bg-[#FAF7F0] rounded-2xl flex flex-col items-center justify-center gap-1.5 shadow-sm transition-all active:scale-95 text-center group"
+              className="p-3.5 bg-white text-[#9E2A2B] hover:bg-[#FAF7F0] rounded-2xl flex flex-col items-center justify-center gap-2 shadow-md transition-all active:scale-95 text-center group border border-white/40 cursor-pointer"
             >
-              <div className="p-2 rounded-xl bg-[#9E2A2B]/10 text-[#9E2A2B] group-hover:scale-105 transition-transform">
-                <Receipt className="w-5 h-5" />
+              <div className="p-2.5 rounded-xl bg-linear-to-b from-red-50 to-red-100/80 text-[#9E2A2B] border border-red-200/50 group-hover:scale-110 transition-transform">
+                <Receipt className="w-5 h-5 text-[#9E2A2B]" />
               </div>
-              <span className="text-xs font-bold leading-tight">খরচ যোগ</span>
+              <span className="text-xs font-bold leading-tight">আয় বা খরচ</span>
             </button>
 
             <button
               onClick={onOpenAddCow}
-              className="p-3 bg-white text-[#16402C] hover:bg-[#FAF7F0] rounded-2xl flex flex-col items-center justify-center gap-1.5 shadow-sm transition-all active:scale-95 text-center group"
+              className="p-3.5 bg-white text-[#16402C] hover:bg-[#FAF7F0] rounded-2xl flex flex-col items-center justify-center gap-2 shadow-md transition-all active:scale-95 text-center group border border-white/40 cursor-pointer"
             >
-              <div className="p-2 rounded-xl bg-[#16402C]/10 text-[#16402C] group-hover:scale-105 transition-transform">
+              <div className="p-2.5 rounded-xl bg-linear-to-b from-[#16402C]/10 to-[#16402C]/15 text-[#16402C] border border-[#16402C]/20 group-hover:scale-110 transition-transform">
                 <Plus className="w-5 h-5 text-[#16402C]" />
               </div>
               <span className="text-xs font-bold leading-tight">নতুন গরু যোগ</span>
@@ -470,10 +474,10 @@ export const DashboardView = ({
 
             <button
               onClick={onOpenAddTask}
-              className="p-3 bg-white text-[#8C6200] hover:bg-[#FAF7F0] rounded-2xl flex flex-col items-center justify-center gap-1.5 shadow-sm transition-all active:scale-95 text-center group"
+              className="p-3.5 bg-white text-[#8C6200] hover:bg-[#FAF7F0] rounded-2xl flex flex-col items-center justify-center gap-2 shadow-md transition-all active:scale-95 text-center group border border-white/40 cursor-pointer"
             >
-              <div className="p-2 rounded-xl bg-[#E5B842]/20 text-[#8C6200] group-hover:scale-105 transition-transform">
-                <CalendarClock className="w-5 h-5" />
+              <div className="p-2.5 rounded-xl bg-linear-to-b from-amber-50 to-amber-100/80 text-[#8C6200] border border-amber-200/50 group-hover:scale-110 transition-transform">
+                <CalendarClock className="w-5 h-5 text-[#8C6200]" />
               </div>
               <span className="text-xs font-bold leading-tight">নতুন কাজ যোগ</span>
             </button>

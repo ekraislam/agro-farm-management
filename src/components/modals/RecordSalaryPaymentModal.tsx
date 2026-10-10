@@ -1,5 +1,5 @@
 import { formatCurrency } from '../../utils/accounting';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Wallet, 
   X, 
@@ -46,7 +46,22 @@ export const RecordSalaryPaymentModal = ({
   const [errorBanner, setErrorBanner] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const currentEmployee = employees.find((e) => e.id === selectedEmpId) || activeEmployees[0];
+  useEffect(() => {
+    if (isOpen) {
+      const activeEmps = employees.filter((e) => !e.isArchived);
+      const fallbackId = initialEmployeeId || (activeEmps.length > 0 ? activeEmps[0].id : '');
+      setSelectedEmpId((prev) => {
+        if (prev && activeEmps.some((e) => e.id === prev)) {
+          return prev;
+        }
+        return fallbackId;
+      });
+      setErrorBanner('');
+    }
+  }, [isOpen, initialEmployeeId, employees]);
+
+  const resolvedEmpId = selectedEmpId || initialEmployeeId || (activeEmployees.length > 0 ? activeEmployees[0].id : '');
+  const currentEmployee = employees.find((e) => e.id === resolvedEmpId) || activeEmployees[0];
   const payrollStatus = currentEmployee 
     ? calculatePayrollStatus(currentEmployee, financialRecords, salaryPeriod)
     : null;
@@ -154,9 +169,9 @@ export const RecordSalaryPaymentModal = ({
               কর্মী নির্বাচন করুন <span className="text-red-500">*</span>
             </label>
             <select
-              value={selectedEmpId}
+              value={selectedEmpId || resolvedEmpId}
               onChange={(e) => handleEmployeeChange(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE2D0] outline-hidden focus:border-[#16402C] bg-[#FAF7F0]/40 font-bold text-gray-900"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE2D0] outline-hidden focus:border-[#16402C] bg-[#FAF7F0]/40 font-bold text-gray-900 cursor-pointer"
               required
             >
               {activeEmployees.map((emp) => (

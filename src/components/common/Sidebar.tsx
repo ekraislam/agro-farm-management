@@ -131,18 +131,24 @@ export const Sidebar = ({
               <button
                 key={item.id}
                 onClick={() => onNavigate(item.id)}
-                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-left transition-all font-medium text-sm ${
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-left transition-all font-medium text-sm group ${
                   isActive
-                    ? 'bg-[#16402C] text-white shadow-xs'
+                    ? 'bg-linear-to-r from-[#16402C] to-[#1E5739] text-white shadow-sm'
                     : 'text-gray-700 hover:bg-[#F2ECE1] hover:text-[#16402C]'
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <Icon className={`w-5 h-5 ${isActive ? 'text-[#E5B842]' : 'text-gray-500'}`} />
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all ${
+                    isActive 
+                      ? 'bg-white/15 text-[#E5B842]' 
+                      : 'bg-white border border-[#E8DFC9] text-gray-500 group-hover:text-[#16402C] group-hover:border-[#16402C]/30'
+                  }`}>
+                    <Icon className="w-4 h-4" />
+                  </div>
                   <div>
-                    <span className="block leading-tight">{item.labelBn}</span>
+                    <span className="block leading-tight font-bold">{item.labelBn}</span>
                     <span className={`text-[10px] block leading-tight ${
-                      isActive ? 'text-white/70' : 'text-gray-400'
+                      isActive ? 'text-[#E5B842]/90' : 'text-gray-400'
                     }`}>
                       {item.labelEn}
                     </span>
