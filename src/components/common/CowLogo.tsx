@@ -13,16 +13,33 @@ export const CowLogo = ({
 }: CowLogoProps) => {
   const [hasError, setHasError] = useState(false);
 
+  // Normalize size safely for numbers, named presets ('sm', 'md', etc.), or css units
+  const parsedSize = typeof size === 'number'
+    ? `${size}px`
+    : size === 'xs' ? '24px'
+    : size === 'sm' ? '32px'
+    : size === 'md' ? '40px'
+    : size === 'lg' ? '48px'
+    : size === 'xl' ? '64px'
+    : (typeof size === 'string' && /^\d+$/.test(size) ? `${size}px` : size);
+
   return (
     <div 
-      style={{ width: size, height: size }} 
+      style={{ 
+        width: parsedSize, 
+        height: parsedSize, 
+        minWidth: parsedSize, 
+        minHeight: parsedSize, 
+        maxWidth: parsedSize, 
+        maxHeight: parsedSize 
+      }} 
       className={`relative overflow-hidden shrink-0 flex items-center justify-center bg-white border border-[#E8DFC9] shadow-2xs ${rounded} ${className}`}
     >
       {!hasError ? (
         <img 
           src="/logo.png" 
           alt="খামার লোগো" 
-          className="w-full h-full object-cover select-none"
+          className="w-full h-full object-cover select-none pointer-events-none"
           onError={() => setHasError(true)}
         />
       ) : (
