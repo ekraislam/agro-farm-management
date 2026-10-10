@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { 
   Layers, 
   Droplets, 
@@ -10,7 +11,12 @@ import {
   Clock, 
   CheckCircle2, 
   Flame, 
-  Users
+  Users,
+  ChevronDown,
+  ChevronUp,
+  BarChart3,
+  AlertTriangle,
+  Circle
 } from 'lucide-react';
 import type { 
   FarmSummary, 
@@ -98,13 +104,294 @@ export const DashboardView = ({
   const recentActivities = dynamicActivities;
   const pendingReminders = reminders.filter((r) => !r.completed).slice(0, 3);
   const latestBiogas = biogasLogs[0];
+  const [showFullChartsOnMobile, setShowFullChartsOnMobile] = useState(false);
 
   return (
-    <div className="space-y-6 pb-20 md:pb-12">
-      {/* Hero Welcome & Quick Action Bar */}
-      <div className="bg-linear-to-r from-[#16402C] via-[#1B4D35] to-[#226141] rounded-3xl p-5 md:p-7 text-white shadow-md relative overflow-hidden">
-        {/* Subtle decorative background shape */}
-        <div className="absolute right-0 top-0 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+    <div className="pb-24 md:pb-12">
+      {/* ========================================================
+          MOBILE FOCUSED VIEW (< md) - বাবার জন্য সহজ ও পরিচ্ছন্ন খামার মোড
+          ======================================================== */}
+      <div className="md:hidden space-y-4">
+        {/* 1. Mobile Greeting & Date Header */}
+        <div className="bg-linear-to-r from-[#16402C] to-[#25603E] text-white p-4.5 rounded-3xl shadow-sm">
+          <div className="flex items-center justify-between text-[11px] text-[#E5B842] font-semibold mb-1">
+            <span>🌾 মুমিন এগ্রো</span>
+            <span>আজ: ১০ অক্টোবর ২০২৬</span>
+          </div>
+          <h2 className="text-xl font-bold tracking-tight">
+            আসসালামু আলাইকুম, মুমিনুল ইসলাম
+          </h2>
+          <p className="text-xs text-white/80 mt-1">
+            {summary.todayMilkLiters > 0 
+              ? `আজকের মোট দুধ উৎপাদন ${summary.todayMilkLiters} লিটার লিপিবদ্ধ হয়েছে।`
+              : 'আজকের খামার কার্যক্রম সহজে পরিচালনা করতে নিচের বাটন চাপুন।'}
+          </p>
+        </div>
+
+        {/* 2. Today's Two Big Primary Action Buttons (Thumb Zone) */}
+        <div className="space-y-2.5">
+          <p className="text-xs font-bold text-gray-700 px-1">আজকের হিসাব লিখুন:</p>
+          
+          {/* Big Milk Button */}
+          <button
+            onClick={onOpenAddMilk}
+            className="w-full p-4 rounded-2xl bg-linear-to-r from-[#16402C] via-[#1B4D35] to-[#23583C] text-white flex items-center justify-between shadow-md active:scale-98 transition-all cursor-pointer group"
+          >
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center shrink-0 border border-white/20">
+                <Droplets className="w-6 h-6 text-[#E5B842]" />
+              </div>
+              <div className="text-left">
+                <h3 className="font-bold text-base text-white leading-tight">
+                  দুধের হিসাব লিখুন
+                </h3>
+                <p className="text-xs text-[#E5B842] mt-0.5 font-medium">
+                  সকাল বা বিকালের দোয়ানো দুধ জমা দিন
+                </p>
+              </div>
+            </div>
+            <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white shrink-0 group-hover:translate-x-0.5 transition-transform">
+              <ArrowRight className="w-5 h-5 text-[#E5B842]" />
+            </div>
+          </button>
+
+          {/* Big Expense / Income Button */}
+          <button
+            onClick={onOpenAddExpense}
+            className="w-full p-4 rounded-2xl bg-white border-2 border-[#16402C]/20 hover:border-[#16402C] text-[#16402C] flex items-center justify-between shadow-xs active:scale-98 transition-all cursor-pointer group"
+          >
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-[#9E2A2B]/10 flex items-center justify-center shrink-0 border border-[#9E2A2B]/20">
+                <Receipt className="w-6 h-6 text-[#9E2A2B]" />
+              </div>
+              <div className="text-left">
+                <h3 className="font-bold text-base text-gray-900 leading-tight">
+                  আয় বা খরচ লিখুন
+                </h3>
+                <p className="text-xs text-gray-500 mt-0.5 font-medium">
+                  দুধ বিক্রির টাকা জমা বা খামারের দৈনিক খরচ
+                </p>
+              </div>
+            </div>
+            <div className="w-9 h-9 rounded-xl bg-[#FAF7F0] flex items-center justify-center text-[#16402C] shrink-0 group-hover:translate-x-0.5 transition-transform border border-[#E8DFC9]">
+              <ArrowRight className="w-5 h-5 text-[#16402C]" />
+            </div>
+          </button>
+
+          {/* Secondary 2 shortcuts */}
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <button
+              onClick={onOpenAddCow}
+              className="p-3 rounded-xl bg-[#FAF7F0] border border-[#E8DFC9] hover:bg-[#F2ECE1] text-[#16402C] flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer"
+            >
+              <Plus className="w-4 h-4 text-[#2A7A50]" />
+              <span>নতুন গরু যোগ</span>
+            </button>
+
+            <button
+              onClick={onOpenAddTask}
+              className="p-3 rounded-xl bg-[#FAF7F0] border border-[#E8DFC9] hover:bg-[#F2ECE1] text-[#8C6200] flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer"
+            >
+              <CalendarClock className="w-4 h-4 text-[#8C6200]" />
+              <span>নতুন কাজ / অনুস্মারক</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 3. Today's 3 Vital Big Stat Cards on Mobile */}
+        <div className="space-y-2 pt-2">
+          <p className="text-xs font-bold text-gray-700 px-1">আজকের খামার সংক্ষেপ:</p>
+          <div className="grid grid-cols-3 gap-2">
+            {/* Milk */}
+            <div 
+              onClick={() => onNavigate('milk')}
+              className="p-3 rounded-2xl bg-white border border-[#EAE2D0] shadow-xs text-center cursor-pointer active:bg-[#FAF7F0]"
+            >
+              <div className="w-7 h-7 rounded-lg bg-[#2A7A50]/10 text-[#2A7A50] flex items-center justify-center mx-auto mb-1">
+                <Droplets className="w-4 h-4" />
+              </div>
+              <p className="text-[11px] text-gray-500 font-medium">আজকের দুধ</p>
+              <p className="text-base font-bold text-[#16402C] mt-0.5">
+                {summary.todayMilkLiters} <span className="text-[10px] font-normal">লি.</span>
+              </p>
+            </div>
+
+            {/* Income */}
+            <div 
+              onClick={() => onNavigate('finance')}
+              className="p-3 rounded-2xl bg-white border border-[#EAE2D0] shadow-xs text-center cursor-pointer active:bg-[#FAF7F0]"
+            >
+              <div className="w-7 h-7 rounded-lg bg-[#E5B842]/20 text-[#8C6200] flex items-center justify-center mx-auto mb-1">
+                <DollarSign className="w-4 h-4" />
+              </div>
+              <p className="text-[11px] text-gray-500 font-medium">আজকের আয়</p>
+              <p className="text-base font-bold text-[#16402C] mt-0.5">
+                ৳{summary.todayIncomeTk.toLocaleString('en-US')}
+              </p>
+            </div>
+
+            {/* Total Cows */}
+            <div 
+              onClick={() => onNavigate('cows')}
+              className="p-3 rounded-2xl bg-white border border-[#EAE2D0] shadow-xs text-center cursor-pointer active:bg-[#FAF7F0]"
+            >
+              <div className="w-7 h-7 rounded-lg bg-[#16402C]/10 text-[#16402C] flex items-center justify-center mx-auto mb-1">
+                <Layers className="w-4 h-4" />
+              </div>
+              <p className="text-[11px] text-gray-500 font-medium">মোট গরু</p>
+              <p className="text-base font-bold text-[#16402C] mt-0.5">
+                {summary.totalCows} <span className="text-[10px] font-normal">টি</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* 4. Urgent Pending Tasks on Mobile (if any) */}
+        {pendingReminders.length > 0 && (
+          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 shadow-xs space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-amber-900 font-bold text-xs">
+                <AlertTriangle className="w-4 h-4 text-amber-700" />
+                <span>আজকের বাকি কাজ ({summary.pendingTasksCount}টি)</span>
+              </div>
+              <button
+                onClick={() => onNavigate('reminders')}
+                className="text-[11px] font-bold text-amber-800 hover:underline cursor-pointer"
+              >
+                সব দেখুন
+              </button>
+            </div>
+            <div className="space-y-1.5">
+              {pendingReminders.slice(0, 2).map((task) => (
+                <div
+                  key={task.id}
+                  onClick={() => onToggleTask(task.id)}
+                  className="p-2.5 rounded-xl bg-white border border-amber-200/80 flex items-center justify-between text-xs cursor-pointer active:bg-amber-100/50"
+                >
+                  <div className="flex items-center gap-2 truncate pr-2">
+                    <Circle className="w-4 h-4 text-gray-400 shrink-0" />
+                    <span className="font-semibold text-gray-800 truncate">{task.title}</span>
+                  </div>
+                  <span className="text-[10px] text-amber-800 font-bold bg-amber-100 px-2 py-0.5 rounded-md shrink-0">
+                    {task.dueDate}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 5. Recent Farm Activities on Mobile (Top 3) */}
+        <div className="p-4 rounded-2xl bg-white border border-[#EAE2D0] shadow-xs space-y-2.5">
+          <div className="flex items-center justify-between pb-2 border-b border-gray-100">
+            <span className="font-bold text-xs text-[#16402C]">সর্বশেষ খামার খাতা</span>
+            <span className="text-[11px] text-gray-400">সাম্প্রতিক কার্যক্রম</span>
+          </div>
+          {recentActivities.length === 0 ? (
+            <p className="text-xs text-gray-400 py-2 text-center">এখনো কোনো এন্ট্রি লেখা হয়নি</p>
+          ) : (
+            <div className="divide-y divide-gray-100 space-y-1">
+              {recentActivities.map((act) => {
+                const Icon = act.icon;
+                return (
+                  <div key={act.id} className="pt-2 flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className={`p-1.5 rounded-lg ${act.iconColor} shrink-0`}>
+                        <Icon className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="truncate">
+                        <p className="font-bold text-gray-800 truncate">{act.title}</p>
+                        <p className="text-[10px] text-gray-500">{act.detail}</p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] text-gray-400 font-medium shrink-0 ml-2">{act.time}</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* 6. Collapsible Deep Stats & Charts on Mobile */}
+        <div className="pt-1">
+          <button
+            type="button"
+            onClick={() => setShowFullChartsOnMobile(!showFullChartsOnMobile)}
+            className="w-full p-3.5 rounded-2xl bg-white hover:bg-[#FAF7F0] border border-[#EAE2D0] text-[#16402C] font-bold text-xs flex items-center justify-between shadow-xs transition-colors cursor-pointer"
+          >
+            <div className="flex items-center gap-2">
+              <BarChart3 className="w-4 h-4 text-[#2A7A50]" />
+              <span>
+                {showFullChartsOnMobile
+                  ? 'গ্রাফ ও বিস্তারিত পরিসংখ্যান লুকান'
+                  : '📊 বিস্তারিত চার্ট ও বায়োগ্যাস/কর্মী হিসাব দেখুন'}
+              </span>
+            </div>
+            {showFullChartsOnMobile ? (
+              <ChevronUp className="w-4 h-4 text-gray-500" />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-gray-500" />
+            )}
+          </button>
+
+          {showFullChartsOnMobile && (
+            <div className="mt-4 space-y-4 animate-in fade-in duration-200">
+              {/* Month Expense and Profit */}
+              <div className="grid grid-cols-2 gap-2.5">
+                <StatCard
+                  title="মাসের খরচ"
+                  value={`৳${summary.monthExpensesTk.toLocaleString('en-US')}`}
+                  subtitle="খাদ্য, বেতন ও ঔষধ"
+                  icon={Receipt}
+                  variant="red"
+                  onClick={() => onNavigate('finance')}
+                />
+                <StatCard
+                  title="মাসিক নিট লাভ"
+                  value={`৳${summary.estimatedMonthProfitTk.toLocaleString('en-US')}`}
+                  subtitle="হাতে থাকা নিট লাভ"
+                  icon={TrendingUp}
+                  variant="green"
+                  onClick={() => onNavigate('reports')}
+                />
+              </div>
+
+              {/* Charts */}
+              <div className="space-y-4">
+                <MilkTrendChart records={milkRecords} />
+                <IncomeExpenseChart
+                  monthIncome={summary.monthIncomeTk}
+                  monthExpenses={summary.monthExpensesTk}
+                  estimatedProfit={summary.estimatedMonthProfitTk}
+                />
+              </div>
+
+              {/* Biogas & Employees */}
+              <div className="space-y-3">
+                {latestBiogas && (
+                  <div className="p-4 bg-white rounded-2xl border border-[#EAE2D0] text-xs">
+                    <span className="font-bold text-gray-800 block mb-1">বায়োগ্যাস প্ল্যান্টের অবস্থা</span>
+                    <p className="text-gray-600">গোবর: {latestBiogas.dungInputKg} কেজি • গ্যাস: {latestBiogas.burnHoursToday} ঘণ্টা</p>
+                  </div>
+                )}
+                <div className="p-4 bg-white rounded-2xl border border-[#EAE2D0] text-xs">
+                  <span className="font-bold text-gray-800 block mb-1">কর্মচারী ও আজকের হাজিরা</span>
+                  <p className="text-gray-600">মোট কর্মী: {employees.length} জন • আজকের উপস্থিতি: {attendanceRecords.filter(a => a.status === 'present').length} জন</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ========================================================
+          DESKTOP FULL VIEW (hidden on mobile, visible on md+)
+          ======================================================== */}
+      <div className="hidden md:block space-y-6">
+        {/* Hero Welcome & Quick Action Bar */}
+        <div className="bg-linear-to-r from-[#16402C] via-[#1B4D35] to-[#226141] rounded-3xl p-5 md:p-7 text-white shadow-md relative overflow-hidden">
+          {/* Subtle decorative background shape */}
+          <div className="absolute right-0 top-0 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none" />
 
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
           <div>
@@ -478,5 +765,6 @@ export const DashboardView = ({
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 };

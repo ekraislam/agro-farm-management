@@ -118,14 +118,14 @@ export const Header = ({
             <span className="hidden sm:inline text-xs font-bold">অ্যাপ ইনস্টল</span>
           </button>
 
-          {/* Farm Owner Profile / Settings Navigation */}
+          {/* Farm Owner Profile / Settings Navigation (Desktop / Tablet) */}
           <button
             onClick={() => onNavigate('settings')}
-            className="p-2 md:px-3 md:py-2 rounded-xl bg-white border border-[#E2DAC7] hover:bg-[#FAF7F0] text-[#16402C] transition-colors flex items-center gap-1.5 shadow-2xs cursor-pointer"
+            className="hidden sm:flex p-2 md:px-3 md:py-2 rounded-xl bg-white border border-[#E2DAC7] hover:bg-[#FAF7F0] text-[#16402C] transition-colors items-center gap-1.5 shadow-2xs cursor-pointer"
             title="খামার সেটিংস ও ব্যাকআপ"
           >
             <UserCheck className="w-4 h-4 text-[#2A7A50]" />
-            <span className="hidden sm:inline text-xs font-bold truncate">
+            <span className="text-xs font-bold truncate">
               {isConfigured && user && !isDemoMode ? 'মুমিন এগ্রো (ক্লাউড)' : 'মুমিনুল ইসলাম (মালিক)'}
             </span>
           </button>
