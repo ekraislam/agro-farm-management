@@ -14,18 +14,7 @@ import type {
   FarmSummary,
   FarmProfile
 } from './types/farm';
-import { 
-  INITIAL_COWS, 
-  INITIAL_MILK_RECORDS, 
-  INITIAL_FINANCIAL_RECORDS, 
-  INITIAL_EMPLOYEES, 
-  INITIAL_BIOGAS_LOGS, 
-  INITIAL_BIOGAS_INSPECTIONS,
-  INITIAL_REMINDERS,
-  INITIAL_HEALTH_RECORDS,
-  INITIAL_ATTENDANCE_RECORDS,
-  DEMO_EMPLOYEE_IDS,
-} from './data/demoData';
+import { DEMO_EMPLOYEE_IDS } from './data/demoData';
 
 import { X, Loader2, AlertTriangle, RefreshCw } from 'lucide-react';
 import { Header } from './components/common/Header';
@@ -923,24 +912,6 @@ function FarmDashboard() {
     showToast('খামারের সমস্ত ডেটা মুছে নতুন খামার প্রস্তুত করা হয়েছে!');
   };
 
-  const handleLoadSampleData = () => {
-    if (isLiveCloud) {
-      showToast('আপনি বর্তমানে ক্লাউড মোডে আছেন।', undefined, 'info');
-      return;
-    }
-    localFarmStorage.loadDemoData();
-    setDemoCows(INITIAL_COWS);
-    setDemoMilkRecords(INITIAL_MILK_RECORDS);
-    setDemoFinancialRecords(INITIAL_FINANCIAL_RECORDS);
-    setDemoEmployees(INITIAL_EMPLOYEES);
-    setDemoBiogasLogs(INITIAL_BIOGAS_LOGS);
-    setDemoReminders(INITIAL_REMINDERS);
-    setDemoHealthRecords(INITIAL_HEALTH_RECORDS);
-    setDemoAttendance(INITIAL_ATTENDANCE_RECORDS);
-    setDemoInspections(INITIAL_BIOGAS_INSPECTIONS);
-    showToast('পরীক্ষামূলক নমুনা তথ্য সফলভাবে লোড হয়েছে!');
-  };
-
   const handleImportBackup = (jsonString: string): boolean => {
     const success = localFarmStorage.importBackup(jsonString);
     if (success) {
@@ -1242,7 +1213,6 @@ function FarmDashboard() {
                 farmProfile={farmProfile}
                 onUpdateFarmProfile={handleUpdateFarmProfile}
                 onResetDemoData={handleResetDemoData}
-                onLoadSampleData={handleLoadSampleData}
                 onShowToast={(msg) => showToast(msg)}
                 onOpenAuth={() => setIsAuthModalOpen(true)}
                 onOpenSetup={() => setIsSetupModalOpen(true)}

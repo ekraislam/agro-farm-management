@@ -7,7 +7,6 @@ import {
   Download,
   Smartphone,
   Trash2,
-  RotateCcw,
   Upload,
   User,
   ShieldCheck
@@ -20,7 +19,6 @@ interface SettingsViewProps {
   farmProfile: FarmProfile;
   onUpdateFarmProfile: (profile: FarmProfile) => Promise<void> | void;
   onResetDemoData: () => void;
-  onLoadSampleData?: () => void;
   onShowToast: (msg: string) => void;
   onOpenAuth?: () => void;
   onOpenSetup?: () => void;
@@ -32,7 +30,6 @@ export const SettingsView = ({
   farmProfile,
   onUpdateFarmProfile,
   onResetDemoData,
-  onLoadSampleData,
   onShowToast,
   onImportBackup,
   onOpenInstall,
@@ -86,19 +83,10 @@ export const SettingsView = ({
 
   const handleConfirmReset = () => {
     const confirmed = window.confirm(
-      'আপনি কি নিশ্চিত যে সকল ডেমো বা নমুনা তথ্য মুছে খামার সম্পূর্ণ খালি করতে চান?\n\nএর ফলে শুধুমাত্র আপনার নিজের এন্ট্রি করা আসল গরু, দুধ ও খরচের হিসাব সংরক্ষিত থাকবে।'
+      'আপনি কি নিশ্চিত যে খামারের সকল হিসাব ও রেকর্ড মুছে একদম খালি করতে চান?\n\n(পরামর্শ: মুছে ফেলার আগে একটি ব্যাকআপ ফাইল ডাউনলোড করে রাখা নিরাপদ)'
     );
     if (confirmed) {
       onResetDemoData();
-    }
-  };
-
-  const handleConfirmLoadDemo = () => {
-    const confirmed = window.confirm(
-      'আপনি কি পরীক্ষামূলক ডেমো ডেটা লোড করতে চান?\n\nএতে ডেমো গাভী, দুধ উৎপাদন ও আর্থিক হিসাব লোড হবে।'
-    );
-    if (confirmed && onLoadSampleData) {
-      onLoadSampleData();
     }
   };
 
@@ -152,7 +140,7 @@ export const SettingsView = ({
             <span>খামার সেটিংস ও মালিকানা পরিবর্তন</span>
           </h2>
           <p className="text-xs md:text-sm text-gray-500 mt-1">
-            মালিকের নাম, খামারের নাম পরিবর্তন এবং ডেমো ডেটা ব্যবস্থাপনা
+            মালিকের নাম, খামারের পরিচিতি ও হিসাবের নিরাপদ ব্যাকআপ ব্যবস্থাপনা
           </p>
         </div>
 
@@ -308,90 +296,61 @@ export const SettingsView = ({
         </div>
       </form>
 
-      {/* Real Data vs Demo Data Control Card */}
-      <div className="bg-white rounded-3xl border border-[#EAE2D0] p-5 md:p-6 shadow-xs space-y-4">
+      {/* Farm Data Backup & Data Protection Card */}
+      <div className="bg-white rounded-3xl border border-[#EAE2D0] p-5 md:p-6 shadow-xs space-y-5">
         <div className="flex items-center justify-between pb-3 border-b border-[#F2ECE1]">
           <div>
             <h3 className="font-bold text-base md:text-lg text-[#16402C] flex items-center gap-2">
               <ShieldCheck className="w-5 h-5 text-[#2A7A50]" />
-              <span>আসল খামার বনাম ডেমো ডেটা ব্যবস্থাপনা</span>
+              <span>খামারের ডেটা ব্যাকআপ ও সুরক্ষা</span>
             </h3>
             <p className="text-xs text-gray-500 mt-0.5">
-              প্রকল্পের ডেমো বা নমুনা তথ্য সম্পূর্ণ মুছে আপনার নিজের আসল খামারের হিসাব পরিচালনা করুন
+              আপনার কম্পিউটার বা ফোনে সম্পূর্ণ খামারের হিসাবের নিরাপদ ফাইল সংরক্ষণ ও পুনরুদ্ধার করুন
             </p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Clear Demo Data */}
-          <div className="p-4 rounded-2xl border border-red-200 bg-red-50/50 flex flex-col justify-between space-y-3">
+        {/* Backup and Restore Action Blocks */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="p-4 rounded-2xl border border-[#C5E3D0] bg-[#EAF5EE]/40 flex flex-col justify-between space-y-3">
             <div>
-              <h4 className="font-bold text-sm text-[#991B1B] flex items-center gap-2">
-                <Trash2 className="w-4 h-4 text-red-600" />
-                <span>সকল ডেমো ডেটা মুছে খামার সম্পূর্ণ খালি করুন</span>
-              </h4>
-              <p className="text-xs text-red-700/80 mt-1 leading-relaxed">
-                ডেমো কর্মী, ডেমো গরু ও কাল্পনিক দুধের হিসাব মুছে যাবে। আপনি শুরু থেকেই আপনার আসল গাভী ও আসল কর্মীদের তালিকা নিজ হাতে যুক্ত করতে পারবেন।
+              <span className="font-bold text-sm text-[#16402C] flex items-center gap-2">
+                <Download className="w-4 h-4 text-[#2A7A50]" />
+                <span>কম্পিউটার/ফোনে ব্যাকআপ সংরক্ষণ</span>
+              </span>
+              <p className="text-xs text-gray-600 mt-1 leading-relaxed">
+                গাভী, দুধ বিক্রয়, আয়-ব্যয় ও স্বাস্থ্য রেকর্ডের সম্পূর্ণ ডেটাবেজ এক ক্লিকে ডাউনলোড করে নিরাপদে সংরক্ষণ করুন।
               </p>
             </div>
-            <button
-              type="button"
-              onClick={handleConfirmReset}
-              className="w-full px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
-            >
-              <Trash2 className="w-4 h-4" />
-              <span>সকল ডেমো তথ্য মুছুন (খালি খামার)</span>
-            </button>
-          </div>
-
-          {/* Load Demo Data */}
-          <div className="p-4 rounded-2xl border border-amber-200 bg-amber-50/50 flex flex-col justify-between space-y-3">
-            <div>
-              <h4 className="font-bold text-sm text-amber-900 flex items-center gap-2">
-                <RotateCcw className="w-4 h-4 text-amber-700" />
-                <span>প্রয়োজনে নমুনা (ডেমো) ডেটা লোড করুন</span>
-              </h4>
-              <p className="text-xs text-amber-800/80 mt-1 leading-relaxed">
-                অ্যাপটি পরীক্ষা করার জন্য যদি আপনি নমুনা গাভী, দুধের উৎপাদন ও বায়োগ্যাসের কাল্পনিক হিসাব দেখতে চান, তবে এটি ব্যবহার করুন।
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={handleConfirmLoadDemo}
-              className="w-full px-4 py-2.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
-            >
-              <RotateCcw className="w-4 h-4" />
-              <span>নমুনা ডেটা লোড করুন</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Database Backup & Restore */}
-        <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="space-y-0.5">
-            <span className="font-bold text-xs text-gray-800 block">খামারের হিসাবের নিরাপদ ব্যাকআপ</span>
-            <span className="text-[11px] text-gray-500 block">কম্পিউটার বা ফোনে ব্যাকআপ ফাইল ডাউনলোড করে রাখতে পারবেন</span>
-          </div>
-
-          <div className="flex items-center gap-2 flex-wrap">
             <button
               type="button"
               onClick={handleDownloadBackup}
-              className="px-4 py-2 rounded-xl bg-[#FAF7F0] hover:bg-[#F2ECE1] text-[#16402C] font-bold text-xs border border-[#E2DAC7] flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="w-full px-4 py-2.5 rounded-xl bg-[#16402C] hover:bg-[#123323] text-white font-bold text-xs shadow-xs flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer"
             >
-              <Download className="w-3.5 h-3.5 text-[#2A7A50]" />
-              <span>ব্যাকআপ ডাউনলোড</span>
+              <Download className="w-4 h-4 text-[#E5B842]" />
+              <span>ব্যাকআপ ফাইল ডাউনলোড করুন</span>
             </button>
+          </div>
 
+          <div className="p-4 rounded-2xl border border-[#EAE2D0] bg-[#FAF7F0] flex flex-col justify-between space-y-3">
+            <div>
+              <span className="font-bold text-sm text-gray-800 flex items-center gap-2">
+                <Upload className="w-4 h-4 text-gray-600" />
+                <span>পূর্বের ব্যাকআপ থেকে পুনরুদ্ধার (Restore)</span>
+              </span>
+              <p className="text-xs text-gray-600 mt-1 leading-relaxed">
+                পূর্বে সেভ করে রাখা ব্যাকআপ ফাইল নির্বাচন করে খামারের সমস্ত পূর্বের হিসাব ফিরিয়ে আনুন।
+              </p>
+            </div>
             {onImportBackup && (
               <>
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="px-4 py-2 rounded-xl bg-white hover:bg-gray-50 text-gray-700 font-bold text-xs border border-gray-300 flex items-center gap-1.5 transition-colors cursor-pointer"
+                  className="w-full px-4 py-2.5 rounded-xl bg-white hover:bg-gray-50 text-gray-800 font-bold text-xs border border-gray-300 shadow-2xs flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer"
                 >
-                  <Upload className="w-3.5 h-3.5 text-gray-500" />
-                  <span>ব্যাকআপ রিস্টোর</span>
+                  <Upload className="w-4 h-4 text-[#16402C]" />
+                  <span>ব্যাকআপ ফাইল থেকে তথ্য আনুন</span>
                 </button>
                 <input
                   ref={fileInputRef}
@@ -403,6 +362,25 @@ export const SettingsView = ({
               </>
             )}
           </div>
+        </div>
+
+        {/* Safe Farm Reset (Without Any Demo Fiction) */}
+        <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="space-y-0.5">
+            <span className="font-bold text-xs text-gray-700 block">নতুন করে খামার শুরু করতে চান?</span>
+            <span className="text-[11px] text-gray-500 block">
+              খামারের বর্তমান সকল রেকর্ড মুছে নতুনভাবে শূন্য খামার প্রস্তুত করতে পারেন।
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleConfirmReset}
+            className="px-3.5 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-[#991B1B] font-bold text-xs border border-red-200 flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+          >
+            <Trash2 className="w-3.5 h-3.5 text-red-600" />
+            <span>খামারের সকল ডেটা খালি করুন</span>
+          </button>
         </div>
       </div>
 
