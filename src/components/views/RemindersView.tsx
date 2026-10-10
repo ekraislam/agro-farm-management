@@ -393,85 +393,85 @@ export const RemindersView = ({
       </div>
 
       {/* 5 Distinct Urgency Summary Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-3">
         <div
           onClick={() => setActiveTab('overdue')}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer ${
+          className={`p-4 rounded-2xl border transition-all cursor-pointer overflow-hidden min-w-0 ${
             activeTab === 'overdue'
               ? 'bg-red-100 border-red-300 shadow-xs'
               : 'bg-white border-[#EAE2D0] hover:border-red-200'
           }`}
         >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-red-700">দেরি হয়ে গেছে (জরুরি)</span>
-            <AlertTriangle className="w-4 h-4 text-red-600" />
+          <div className="flex items-center justify-between gap-1.5 min-w-0">
+            <span className="text-xs font-bold text-red-700 truncate">দেরি হয়েছে (জরুরি)</span>
+            <AlertTriangle className="w-4 h-4 text-red-600 shrink-0" />
           </div>
-          <span className="text-2xl font-black text-red-700 mt-1 block">{overdue.length}</span>
-          <span className="text-[10px] text-red-600 mt-0.5 block">দ্রুত ব্যবস্থা নিন</span>
+          <span className="text-2xl font-black text-red-700 mt-1 block truncate">{overdue.length}</span>
+          <span className="text-[10px] text-red-600 mt-0.5 block truncate">দ্রুত ব্যবস্থা নিন</span>
         </div>
 
         <div
           onClick={() => setActiveTab('dueToday')}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer ${
+          className={`p-4 rounded-2xl border transition-all cursor-pointer overflow-hidden min-w-0 ${
             activeTab === 'dueToday'
               ? 'bg-amber-100 border-amber-300 shadow-xs'
               : 'bg-white border-[#EAE2D0] hover:border-amber-200'
           }`}
         >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-amber-800">আজকের কাজ</span>
-            <Clock className="w-4 h-4 text-amber-600" />
+          <div className="flex items-center justify-between gap-1.5 min-w-0">
+            <span className="text-xs font-bold text-amber-800 truncate">আজকের কাজ</span>
+            <Clock className="w-4 h-4 text-amber-600 shrink-0" />
           </div>
-          <span className="text-2xl font-black text-amber-800 mt-1 block">{dueToday.length}</span>
-          <span className="text-[10px] text-amber-700 mt-0.5 block">আজই শেষ করুন</span>
+          <span className="text-2xl font-black text-amber-800 mt-1 block truncate">{dueToday.length}</span>
+          <span className="text-[10px] text-amber-700 mt-0.5 block truncate">আজই শেষ করুন</span>
         </div>
 
         <div
           onClick={() => setActiveTab('dueSoon')}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer ${
+          className={`p-4 rounded-2xl border transition-all cursor-pointer overflow-hidden min-w-0 ${
             activeTab === 'dueSoon'
               ? 'bg-emerald-100 border-emerald-300 shadow-xs'
               : 'bg-white border-[#EAE2D0] hover:border-emerald-200'
           }`}
         >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-emerald-800">আগামী ৭ দিন</span>
-            <Calendar className="w-4 h-4 text-emerald-600" />
+          <div className="flex items-center justify-between gap-1.5 min-w-0">
+            <span className="text-xs font-bold text-emerald-800 truncate">আগামী ৭ দিন</span>
+            <Calendar className="w-4 h-4 text-emerald-600 shrink-0" />
           </div>
-          <span className="text-2xl font-black text-emerald-800 mt-1 block">{dueSoon.length}</span>
-          <span className="text-[10px] text-emerald-700 mt-0.5 block">আসন্ন ৭ দিনের কাজ</span>
+          <span className="text-2xl font-black text-emerald-800 mt-1 block truncate">{dueSoon.length}</span>
+          <span className="text-[10px] text-emerald-700 mt-0.5 block truncate">আসন্ন ৭ দিনের কাজ</span>
         </div>
 
         <div
           onClick={() => setActiveTab('upcoming')}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer ${
+          className={`p-4 rounded-2xl border transition-all cursor-pointer overflow-hidden min-w-0 ${
             activeTab === 'upcoming'
               ? 'bg-blue-100 border-blue-300 shadow-xs'
               : 'bg-white border-[#EAE2D0] hover:border-blue-200'
           }`}
         >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-blue-800">ভবিষ্যতের কাজ</span>
-            <CalendarClock className="w-4 h-4 text-blue-600" />
+          <div className="flex items-center justify-between gap-1.5 min-w-0">
+            <span className="text-xs font-bold text-blue-800 truncate">ভবিষ্যতের কাজ</span>
+            <CalendarClock className="w-4 h-4 text-blue-600 shrink-0" />
           </div>
-          <span className="text-2xl font-black text-blue-800 mt-1 block">{allUpcoming.length}</span>
-          <span className="text-[10px] text-blue-700 mt-0.5 block">১৫ তারিখ সহ পরবর্তী শিডিউল</span>
+          <span className="text-2xl font-black text-blue-800 mt-1 block truncate">{allUpcoming.length}</span>
+          <span className="text-[10px] text-blue-700 mt-0.5 block truncate">১৫ তারিখ সহ পরবর্তী</span>
         </div>
 
         <div
           onClick={() => setActiveTab('completed')}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer ${
+          className={`p-4 rounded-2xl border transition-all cursor-pointer overflow-hidden min-w-0 ${
             activeTab === 'completed'
               ? 'bg-gray-100 border-gray-300 shadow-xs'
               : 'bg-white border-[#EAE2D0] hover:border-gray-300'
           }`}
         >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-gray-700">শেষ হওয়া কাজ</span>
-            <CheckCircle className="w-4 h-4 text-gray-500" />
+          <div className="flex items-center justify-between gap-1.5 min-w-0">
+            <span className="text-xs font-bold text-gray-700 truncate">শেষ হওয়া কাজ</span>
+            <CheckCircle className="w-4 h-4 text-gray-500 shrink-0" />
           </div>
-          <span className="text-2xl font-black text-gray-700 mt-1 block">{completed.length}</span>
-          <span className="text-[10px] text-gray-500 mt-0.5 block">ইতিমধ্যে সম্পন্ন হয়েছে</span>
+          <span className="text-2xl font-black text-gray-700 mt-1 block truncate">{completed.length}</span>
+          <span className="text-[10px] text-gray-500 mt-0.5 block truncate">ইতিমধ্যে সম্পন্ন হয়েছে</span>
         </div>
       </div>
 

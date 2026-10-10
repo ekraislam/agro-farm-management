@@ -13,7 +13,8 @@ import {
   Lock,
   Eye,
   EyeOff,
-  KeyRound
+  KeyRound,
+  Code2
 } from 'lucide-react';
 import { useAuth } from '../../context/useAuth';
 import type { FarmProfile } from '../../types/farm';
@@ -535,6 +536,26 @@ export const SettingsView = ({
           <p className="text-xs text-gray-600 mt-0.5 leading-relaxed">
             আপনার খামারের প্রতিটি গাভী, দুধ বিক্রয় এবং দৈনিক খরচ এই ডিভাইসে সুরক্ষিত থাকে। কোনো ইন্টারনেট সংযোগ ছাড়াও নির্বিঘ্নে খামার পরিচালনা করা যাবে।
           </p>
+        </div>
+      </div>
+
+      {/* App Info, Attribution & License */}
+      <div className="bg-white border border-[#EAE2D0] rounded-3xl p-5 md:p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3.5">
+          <div className="p-3 rounded-2xl bg-[#E5B842]/20 text-[#8C6200] shrink-0">
+            <Code2 className="w-6 h-6 text-[#8C6200]" />
+          </div>
+          <div>
+            <h4 className="font-bold text-sm md:text-base text-[#16402C]">
+              {farmName} • খামার সফটওয়্যার
+            </h4>
+            <p className="text-xs text-gray-600 mt-0.5">
+              ডিজাইন ও ডেভেলপ করেছেন <strong className="text-[#16402C] font-bold">Ohi</strong> • <span className="text-[#2A7A50] font-semibold">MIT License</span>
+            </p>
+          </div>
+        </div>
+        <div className="text-xs text-gray-600 bg-[#FAF7F0] px-3.5 py-1.5 rounded-xl border border-[#EAE2D0] shrink-0 font-medium">
+          এমআইটি লাইসেন্সের আওতাভুক্ত উন্মুক্ত কোড
         </div>
       </div>
 

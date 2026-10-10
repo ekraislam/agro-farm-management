@@ -20,6 +20,7 @@ import {
 } from './farmReports';
 import type { ReportDateRangeType } from './farmReports';
 import { consolidateFarmReminders } from './healthAccounting';
+import { toIsoDateString } from './accounting';
 
 interface BuildContextOptions {
   query: string;
@@ -350,7 +351,7 @@ export function buildFarmAdvisorContext({
         cowName: targetCow?.name,
         vaccineName: r.title,
         dueDate: r.dueDate,
-        isOverdue: r.dueDate < todayIso,
+        isOverdue: toIsoDateString(r.dueDate) < todayIso,
       };
     });
 
@@ -376,7 +377,7 @@ export function buildFarmAdvisorContext({
         taskTitle: r.title,
         dueDate: r.dueDate,
         priorityBn: r.priorityBn,
-        isOverdue: r.dueDate < todayIso,
+        isOverdue: toIsoDateString(r.dueDate) < todayIso,
       }));
 
     employeeSummary = {

@@ -43,38 +43,45 @@ export const StatCard = ({
   return (
     <div
       onClick={onClick}
-      className={`bg-white rounded-2xl p-4 md:p-5 border border-[#EBE4D5] shadow-xs transition-all duration-200 ${borderAccentStyles} ${
-        onClick ? 'cursor-pointer active:scale-[0.99]' : ''
+      className={`bg-white rounded-2xl p-3.5 sm:p-4 md:p-5 border border-[#EBE4D5] shadow-xs transition-all duration-200 overflow-hidden min-w-0 flex flex-col justify-between ${borderAccentStyles} ${
+        onClick ? 'cursor-pointer active:scale-[0.99] hover:shadow-sm' : ''
       }`}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="space-y-1">
-          <p className="text-xs md:text-sm font-medium text-gray-500 tracking-wide">
+      <div className="flex items-start justify-between gap-2.5 min-w-0">
+        <div className="space-y-1 min-w-0 flex-1">
+          <p className="text-xs md:text-sm font-semibold text-gray-500 tracking-wide truncate" title={title}>
             {title}
           </p>
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl md:text-3xl font-bold text-[#16402C] tracking-tight">
+          <div className="flex items-baseline gap-1.5 min-w-0">
+            <span 
+              className="text-lg sm:text-xl md:text-2xl font-black text-[#16402C] tracking-tight truncate leading-tight" 
+              title={String(value)}
+            >
               {value}
             </span>
             {unit && (
-              <span className="text-xs md:text-sm font-semibold text-gray-500">
+              <span className="text-xs md:text-sm font-bold text-gray-500 shrink-0">
                 {unit}
               </span>
             )}
           </div>
         </div>
 
-        <div className={`p-2.5 md:p-3 rounded-xl border shrink-0 ${iconBgStyles}`}>
-          <Icon className="w-5 h-5 md:w-6 md:h-6" />
+        <div className={`p-2 sm:p-2.5 md:p-3 rounded-xl border shrink-0 ${iconBgStyles}`}>
+          <Icon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
         </div>
       </div>
 
-      <div className="mt-3 pt-2.5 border-t border-[#F2ECE1] flex items-center justify-between text-xs md:text-sm">
-        <span className="text-gray-600 truncate">{subtitle}</span>
+      <div className="mt-2.5 sm:mt-3 pt-2 sm:pt-2.5 border-t border-[#F2ECE1] flex items-center justify-between gap-1.5 min-w-0 text-[11px] sm:text-xs">
+        <span className="text-gray-600 truncate flex-1 min-w-0 font-medium" title={subtitle}>
+          {subtitle}
+        </span>
         {trend && (
           <span
-            className={`font-medium shrink-0 ml-2 ${
-              trend.isPositive ? 'text-[#2A7A50]' : 'text-[#C53030]'
+            className={`font-bold shrink-0 px-2 py-0.5 rounded-md text-[10px] sm:text-xs border ${
+              trend.isPositive 
+                ? 'text-[#1B4D35] bg-[#EAF5EE] border-[#C5E3D0]' 
+                : 'text-[#9E2A2B] bg-[#FDF2F2] border-[#F8C8C8]'
             }`}
           >
             {trend.text}

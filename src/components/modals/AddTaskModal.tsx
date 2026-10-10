@@ -1,5 +1,5 @@
 import { useState, useEffect, type FormEvent } from 'react';
-import { X, CalendarClock, AlertCircle, Trash2 } from 'lucide-react';
+import { X, CalendarClock, AlertCircle, Trash2, Calendar } from 'lucide-react';
 import type { ReminderTask, Employee } from '../../types/farm';
 import { generateId } from '../../utils/id';
 import { toIsoDateString, formatBanglaDate } from '../../utils/accounting';
@@ -35,9 +35,16 @@ export const AddTaskModal = ({
   initialEmployeeId,
   ownerName = 'মুমিনুল ইসলাম',
 }: AddTaskModalProps) => {
-  const activeEmployees = employees.filter((e) => !e.isArchived && e.status === 'active');
   const farmOwner = `${ownerName} (মালিক)`;
   const isEditing = Boolean(initialTask);
+
+  // Allow choosing active employees, or the currently assigned employee even if inactive/archived
+  const selectableEmployees = employees.filter(
+    (e) => (!e.isArchived && e.status === 'active') || 
+           e.id === initialTask?.assignedEmployeeId || 
+           e.name === initialTask?.assignedTo
+  );
+  const activeEmployees = employees.filter((e) => !e.isArchived && e.status === 'active');
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -54,12 +61,12 @@ export const AddTaskModal = ({
   const [priority, setPriority] = useState<'high' | 'medium' | 'low'>('high');
   const [category, setCategory] = useState<ReminderTask['category']>('worker');
   const [assignedEmployeeId, setAssignedEmployeeId] = useState(
-    initialEmployeeId || (activeEmployees.length > 0 ? activeEmployees[0].id : 'owner')
+    initialEmployeeId || (selectableEmployees.length > 0 ? selectableEmployees[0].id : 'owner')
   );
   const [assignedTo, setAssignedTo] = useState(
     initialEmployeeId
-      ? (activeEmployees.find((e) => e.id === initialEmployeeId)?.name || farmOwner)
-      : (activeEmployees.length > 0 ? activeEmployees[0].name : farmOwner)
+      ? (selectableEmployees.find((e) => e.id === initialEmployeeId)?.name || farmOwner)
+      : (selectableEmployees.length > 0 ? selectableEmployees[0].name : farmOwner)
   );
 
   const [error, setError] = useState('');
@@ -71,12 +78,17 @@ export const AddTaskModal = ({
       if (initialTask) {
         setTitle(initialTask.title);
         setDescription(initialTask.description || '');
-        setDueDate(initialTask.dueDate);
+        setDueDate(formatBanglaDate(initialTask.dueDate));
         setPickerDate(toIsoDateString(initialTask.dueDate));
         setPriority(initialTask.priority);
         setCategory(initialTask.category);
+        
+        const matchedEmp = employees.find(
+          (e) => e.id === initialTask.assignedEmployeeId || e.name === initialTask.assignedTo
+        );
         const empId = initialTask.assignedEmployeeId || 
-          (initialTask.assignedTo === farmOwner ? 'owner' : (activeEmployees.find(e => e.name === initialTask.assignedTo)?.id || 'owner'));
+          (initialTask.assignedTo === farmOwner ? 'owner' : (matchedEmp?.id || (initialTask.assignedTo ? initialTask.assignedTo : 'owner')));
+        
         setAssignedEmployeeId(empId);
         setAssignedTo(initialTask.assignedTo || farmOwner);
         setError('');
@@ -114,11 +126,13 @@ export const AddTaskModal = ({
 
   const handleWorkerChange = (empId: string) => {
     setAssignedEmployeeId(empId);
-    const emp = activeEmployees.find((e) => e.id === empId);
+    if (empId === 'owner') {
+      setAssignedTo(farmOwner);
+      return;
+    }
+    const emp = employees.find((e) => e.id === empId);
     if (emp) {
       setAssignedTo(emp.name);
-    } else if (empId === 'owner') {
-      setAssignedTo(farmOwner);
     } else {
       setAssignedTo(empId);
     }
@@ -252,20 +266,7 @@ export const AddTaskModal = ({
               <label className="block text-xs font-semibold text-gray-700 mb-1">
                 কবে করতে হবে (তারিখ) *
               </label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="date"
-                  value={pickerDate}
-                  onChange={(e) => {
-                    const iso = e.target.value;
-                    setPickerDate(iso);
-                    if (iso) {
-                      setDueDate(formatBanglaDate(iso));
-                    }
-                  }}
-                  className="px-3 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm bg-white cursor-pointer shrink-0"
-                  required
-                />
+              <div className="relative flex items-center">
                 <input
                   type="text"
                   value={dueDate}
@@ -275,9 +276,30 @@ export const AddTaskModal = ({
                     setPickerDate(parsedIso);
                   }}
                   placeholder="যেমন: ১৫ অক্টোবর ২০২৬"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm font-semibold text-gray-900"
+                  className="w-full pl-3.5 pr-11 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] focus:ring-1 focus:ring-[#16402C] outline-hidden text-sm font-semibold text-gray-900 bg-white"
                   required
                 />
+                <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center">
+                  <label 
+                    className="relative p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-[#16402C] cursor-pointer transition-colors"
+                    title="ক্যালেন্ডার থেকে তারিখ নির্বাচন করুন"
+                  >
+                    <Calendar className="w-5 h-5" />
+                    <input
+                      type="date"
+                      value={pickerDate}
+                      onChange={(e) => {
+                        const iso = e.target.value;
+                        setPickerDate(iso);
+                        if (iso) {
+                          setDueDate(formatBanglaDate(iso));
+                        }
+                      }}
+                      className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                      tabIndex={-1}
+                    />
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -323,16 +345,21 @@ export const AddTaskModal = ({
                 কে এই কাজ করবেন *
               </label>
               <select
-                value={assignedEmployeeId || assignedTo}
+                value={assignedEmployeeId}
                 onChange={(e) => handleWorkerChange(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm bg-white font-medium"
               >
                 <option value="owner">{farmOwner}</option>
-                {activeEmployees.map((emp) => (
+                {selectableEmployees.map((emp) => (
                   <option key={emp.id} value={emp.id}>
                     {emp.name} ({emp.role})
                   </option>
                 ))}
+                {!['owner', ...selectableEmployees.map((e) => e.id)].includes(assignedEmployeeId) && assignedTo && assignedTo !== farmOwner && (
+                  <option value={assignedEmployeeId || assignedTo}>
+                    {assignedTo}
+                  </option>
+                )}
               </select>
             </div>
           </div>

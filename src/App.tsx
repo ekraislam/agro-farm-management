@@ -20,6 +20,7 @@ import { X, Loader2, AlertTriangle, RefreshCw } from 'lucide-react';
 import { Header } from './components/common/Header';
 import { Sidebar } from './components/common/Sidebar';
 import { BottomNav } from './components/common/BottomNav';
+import { Footer } from './components/common/Footer';
 import { Toast } from './components/common/Toast';
 import type { ToastMessage } from './components/common/Toast';
 import { ConfigStatusBanner } from './components/common/ConfigStatusBanner';
@@ -957,8 +958,15 @@ function FarmDashboard() {
     if (isLiveCloud && user) {
       const res = await farmRepository.updateTask(user.id, task);
       if (!res.success) {
-        showToast('কাজের তথ্য সংশোধন ব্যর্থ হয়েছে', res.error, 'error');
-        return { success: false, error: res.error };
+        // If task was an auto-synthesized reminder, add it as a customized explicit task
+        const addRes = await farmRepository.addTask(user.id, task);
+        if (!addRes.success) {
+          showToast('কাজের তথ্য সংশোধন ব্যর্থ হয়েছে', res.error, 'error');
+          return { success: false, error: res.error };
+        }
+        setCloudReminders([addRes.data!, ...cloudReminders]);
+        showToast('কাজের বিবরণ ও দায়িত্ব সফলভাবে হালনাগাদ করা হয়েছে!', task.title);
+        return { success: true };
       }
       setCloudReminders(cloudReminders.map((r) => (r.id === task.id ? res.data! : r)));
       showToast('কাজের বিবরণ ও দায়িত্ব সফলভাবে হালনাগাদ করা হয়েছে!', task.title);
@@ -966,7 +974,12 @@ function FarmDashboard() {
     }
 
     // Local Offline Mode
-    setDemoReminders(demoReminders.map((r) => (r.id === task.id ? task : r)));
+    const exists = demoReminders.some((r) => r.id === task.id);
+    if (exists) {
+      setDemoReminders(demoReminders.map((r) => (r.id === task.id ? task : r)));
+    } else {
+      setDemoReminders([task, ...demoReminders]);
+    }
     showToast('কাজের বিবরণ ও দায়িত্ব সফলভাবে হালনাগাদ করা হয়েছে!', task.title);
     return { success: true };
   };
@@ -1561,6 +1574,7 @@ function FarmDashboard() {
               />
             )}
           </main>
+          <Footer farmName={farmProfile.farmName} />
         </div>
       </div>
 

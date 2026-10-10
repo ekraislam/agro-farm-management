@@ -494,7 +494,7 @@ export const DashboardView = ({
           <span className="text-xs text-gray-500">আজকের হালনাগাদ তথ্য</span>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 gap-3 md:gap-4">
           {/* 1. Total Cows */}
           <StatCard
             title="মোট গরু"
