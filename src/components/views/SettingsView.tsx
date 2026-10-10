@@ -543,7 +543,7 @@ export const SettingsView = ({
         onDownloadEmergencyBackup={handleDownloadEmergencyBackup}
         onConfirm={() => {
           onResetDemoData();
-          onShowToast('খামারের সকল ডেটা খালি করা হয়েছে। সুরক্ষার জন্য একটি জরুরি ব্যাকআপ ফাইল ডাউনলোড করা হয়েছে।');
+          onShowToast('খামারের সকল ডেটা সফলভাবে খালি করা হয়েছে!');
         }}
         farmName={farmName}
       />

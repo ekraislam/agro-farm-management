@@ -3,7 +3,6 @@ import {
   Lock, 
   AlertTriangle, 
   X, 
-  ShieldCheck, 
   Trash2
 } from 'lucide-react';
 import { englishToBanglaDigits } from '../../utils/accounting';
@@ -28,6 +27,7 @@ export const SecurityPinModal = ({
   const [pin, setPin] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [shouldDownloadBackup, setShouldDownloadBackup] = useState(false);
 
   if (!isOpen) return null;
 
@@ -62,10 +62,12 @@ export const SecurityPinModal = ({
 
     setIsProcessing(true);
     try {
-      // 1. Mandatory Auto-Backup before wipe
-      onDownloadEmergencyBackup();
+      // Optional backup if checked
+      if (shouldDownloadBackup) {
+        onDownloadEmergencyBackup();
+      }
 
-      // 2. Execute wipe
+      // Execute wipe
       onConfirm();
       onClose();
     } catch {
@@ -114,13 +116,18 @@ export const SecurityPinModal = ({
             </p>
           </div>
 
-          {/* Safety Backup Guarantee */}
-          <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 flex items-start gap-2.5 text-xs">
-            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-            <p className="text-[11px] leading-relaxed text-emerald-800">
-              <strong>অটো-ব্যাকআপ সুরক্ষা:</strong> পিন কোড সঠিক হলে ডেটা মোছার ঠিক পূর্বমুহূর্তে একটি ব্যাকআপ ফাইল আপনার ফোনে স্বয়ংক্রিয় ডাউনলোড হয়ে যাবে।
-            </p>
-          </div>
+          {/* Optional Backup Checkbox (Default: OFF) */}
+          <label className="flex items-center gap-2.5 p-3 rounded-2xl bg-gray-50 border border-gray-200 text-gray-700 text-xs cursor-pointer select-none hover:bg-gray-100 transition-colors">
+            <input
+              type="checkbox"
+              checked={shouldDownloadBackup}
+              onChange={(e) => setShouldDownloadBackup(e.target.checked)}
+              className="w-4 h-4 accent-[#16402C] cursor-pointer"
+            />
+            <span className="text-[11px] font-medium text-gray-700">
+              মোছার পূর্বে ব্যাকআপ ফাইল ডাউনলোড করুন (ঐচ্ছিক)
+            </span>
+          </label>
 
           {/* 4 Digit PIN Display */}
           <div className="text-center space-y-2 pt-1">
