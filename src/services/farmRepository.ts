@@ -11,6 +11,7 @@ import type {
   AttendanceRecord,
   BiogasInspectionItem
 } from '../types/farm';
+import { toIsoDateString } from '../utils/accounting';
 
 export interface RepositoryResult<T> {
   success: boolean;
@@ -434,7 +435,7 @@ export const farmRepository = {
 
       const payload = {
         user_id: userId,
-        record_date: record.date.includes('২০২') ? new Date().toISOString().split('T')[0] : record.date,
+        record_date: toIsoDateString(record.date),
         cow_id: record.cowId || null,
         cow_name: record.cowName || null,
         entry_type: record.entryType || (record.cowId ? 'individual' : 'aggregate'),
@@ -491,7 +492,7 @@ export const farmRepository = {
       const totalAmount = isSold ? record.totalAmount : 0;
 
       const payload = {
-        record_date: record.date.includes('২০২') ? new Date().toISOString().split('T')[0] : record.date,
+        record_date: toIsoDateString(record.date),
         cow_id: record.cowId || null,
         cow_name: record.cowName || null,
         entry_type: record.entryType || (record.cowId ? 'individual' : 'aggregate'),
@@ -663,8 +664,8 @@ export const farmRepository = {
         cow_tag: record.cowTag,
         cow_name: record.cowName || null,
         event_type: record.eventType,
-        event_date: record.eventDate.includes('২০২') ? new Date().toISOString().split('T')[0] : record.eventDate,
-        next_due_date: record.nextDueDate ? (record.nextDueDate.includes('২০২') ? new Date().toISOString().split('T')[0] : record.nextDueDate) : null,
+        event_date: toIsoDateString(record.eventDate),
+        next_due_date: record.nextDueDate ? toIsoDateString(record.nextDueDate) : null,
         treatment_name: record.treatmentName,
         doctor_name: record.doctorName || null,
         cost: record.cost ?? 0,
@@ -783,8 +784,8 @@ export const farmRepository = {
         cow_tag: record.cowTag,
         cow_name: record.cowName || null,
         event_type: record.eventType,
-        event_date: record.eventDate.includes('২০২') ? new Date().toISOString().split('T')[0] : record.eventDate,
-        next_due_date: record.nextDueDate ? (record.nextDueDate.includes('২০২') ? new Date().toISOString().split('T')[0] : record.nextDueDate) : null,
+        event_date: toIsoDateString(record.eventDate),
+        next_due_date: record.nextDueDate ? toIsoDateString(record.nextDueDate) : null,
         treatment_name: record.treatmentName,
         doctor_name: record.doctorName || null,
         cost: record.cost ?? 0,
@@ -915,7 +916,7 @@ export const farmRepository = {
     try {
       const payload = {
         user_id: userId,
-        transaction_date: tx.date.includes('২০২') ? new Date().toISOString().split('T')[0] : tx.date,
+        transaction_date: toIsoDateString(tx.date),
         type: tx.type,
         category: tx.category,
         category_label_bn: tx.categoryLabelBn,
@@ -963,7 +964,7 @@ export const farmRepository = {
 
     try {
       const payload = {
-        transaction_date: tx.date.includes('২০২') ? new Date().toISOString().split('T')[0] : tx.date,
+        transaction_date: toIsoDateString(tx.date),
         type: tx.type,
         category: tx.category,
         category_label_bn: tx.categoryLabelBn,
@@ -1088,7 +1089,7 @@ export const farmRepository = {
         monthly_salary: emp.salaryMonthly,
         active_status: emp.status,
         assigned_duties: emp.assignedDuties || [],
-        joining_date: emp.joiningDate ? (emp.joiningDate.includes('২০২') ? new Date().toISOString().split('T')[0] : emp.joiningDate) : null,
+        joining_date: emp.joiningDate ? toIsoDateString(emp.joiningDate) : null,
         notes: emp.notes || null,
         is_archived: false,
       };
@@ -1136,7 +1137,7 @@ export const farmRepository = {
         monthly_salary: emp.salaryMonthly,
         active_status: emp.status,
         assigned_duties: emp.assignedDuties || [],
-        joining_date: emp.joiningDate ? (emp.joiningDate.includes('২০২') ? new Date().toISOString().split('T')[0] : emp.joiningDate) : null,
+        joining_date: emp.joiningDate ? toIsoDateString(emp.joiningDate) : null,
         notes: emp.notes || null,
         is_archived: Boolean(emp.isArchived),
         archived_at: emp.archivedAt || null,
@@ -1288,7 +1289,7 @@ export const farmRepository = {
       const payload = {
         user_id: userId,
         employee_id: record.employeeId,
-        attendance_date: record.date.includes('২০২') ? new Date().toISOString().split('T')[0] : record.date,
+        attendance_date: toIsoDateString(record.date),
         status: record.status,
         arrival_time: record.arrivalTime || null,
         departure_time: record.departureTime || null,
@@ -1347,7 +1348,7 @@ export const farmRepository = {
     try {
       const payload = {
         user_id: userId,
-        transaction_date: params.paymentDate.includes('২০২') ? new Date().toISOString().split('T')[0] : params.paymentDate,
+        transaction_date: toIsoDateString(params.paymentDate),
         type: 'expense' as const,
         category: 'salary',
         category_label_bn: 'কর্মচারীর বেতন',
@@ -1446,7 +1447,7 @@ export const farmRepository = {
         user_id: userId,
         title: task.title,
         description: task.description || null,
-        due_date: task.dueDate.includes('২০২') ? new Date().toISOString().split('T')[0] : task.dueDate,
+        due_date: toIsoDateString(task.dueDate),
         priority: task.priority,
         priority_bn: task.priorityBn,
         category: task.category,
@@ -1567,7 +1568,7 @@ export const farmRepository = {
     try {
       const payload = {
         user_id: userId,
-        log_date: log.date.includes('২০২') ? new Date().toISOString().split('T')[0] : log.date,
+        log_date: toIsoDateString(log.date),
         dung_quantity_kg: log.dungInputKg,
         water_quantity_liters: log.waterInputLiters,
         gas_pressure_psi: log.gasPressurePsi ?? 2.0,
@@ -1615,7 +1616,7 @@ export const farmRepository = {
 
     try {
       const payload = {
-        log_date: log.date.includes('২০২') ? new Date().toISOString().split('T')[0] : log.date,
+        log_date: toIsoDateString(log.date),
         dung_quantity_kg: log.dungInputKg,
         water_quantity_liters: log.waterInputLiters,
         gas_pressure_psi: log.gasPressurePsi ?? 2.0,
@@ -1733,14 +1734,14 @@ export const farmRepository = {
     try {
       const payload = {
         user_id: userId,
-        inspection_date: item.date.includes('২০২') ? new Date().toISOString().split('T')[0] : item.date,
+        inspection_date: toIsoDateString(item.date),
         item_key: item.itemKey,
         item_name_bn: item.itemNameBn,
         status: item.status,
         inspector_employee_id: item.inspectorEmployeeId || null,
         inspector_name: item.inspectorName || null,
         notes: item.notes || null,
-        next_inspection_date: item.nextInspectionDate || null,
+        next_inspection_date: item.nextInspectionDate ? toIsoDateString(item.nextInspectionDate) : null,
       };
 
       const { data, error } = await supabase.from('biogas_inspections').insert(payload).select().single();

@@ -28,25 +28,20 @@ export const CowLogo = ({
       ) : (
         <svg 
           viewBox="0 0 512 512" 
-          className="w-full h-full p-1"
+          className="w-full h-full"
           fill="none" 
           xmlns="http://www.w3.org/2000/svg"
         >
           <rect width="512" height="512" rx="128" fill="#16402C"/>
-          <circle cx="256" cy="256" r="210" fill="#1B4D35" stroke="#E5B842" strokeWidth="8"/>
-          <circle cx="256" cy="115" r="24" fill="#E5B842"/>
-          <path d="M190 230 C170 175 190 145 205 135 C195 160 190 185 200 220 Z" fill="#E5B842"/>
-          <path d="M322 230 C342 175 322 145 307 135 C317 160 322 185 312 220 Z" fill="#E5B842"/>
-          <path d="M185 230 C185 195 327 195 327 230 C332 280 340 325 330 360 C320 395 192 395 182 360 C172 325 180 280 185 230 Z" fill="#FAF7F0"/>
-          <path d="M185 230 C195 205 240 210 245 245 C250 275 220 310 185 300 Z" fill="#16402C"/>
-          <path d="M327 230 C317 205 275 210 270 245 C265 275 295 310 327 300 Z" fill="#16402C"/>
-          <ellipse cx="205" cy="270" rx="10" ry="12" fill="#16402C"/>
-          <circle cx="203" cy="267" r="3.5" fill="#FFFFFF"/>
-          <ellipse cx="307" cy="270" rx="10" ry="12" fill="#16402C"/>
-          <circle cx="305" cy="267" r="3.5" fill="#FFFFFF"/>
-          <rect x="200" y="325" width="112" height="70" rx="35" fill="#E5B842"/>
-          <ellipse cx="230" cy="355" rx="9" ry="12" fill="#16402C"/>
-          <ellipse cx="282" cy="355" rx="9" ry="12" fill="#16402C"/>
+          <circle cx="256" cy="256" r="215" stroke="#E5B842" strokeWidth="6" opacity="0.6"/>
+          <circle cx="256" cy="256" r="185" fill="#1B4D35" stroke="#E5B842" strokeWidth="10"/>
+          {/* Royal Laurel Wreath & Crown */}
+          <path d="M160 360 C130 290 140 200 200 150 C185 185 180 235 200 290 C215 330 240 360 256 370 C240 370 190 380 160 360 Z" fill="#E5B842"/>
+          <path d="M352 360 C382 290 372 200 312 150 C327 185 332 235 312 290 C297 330 272 360 256 370 C272 370 322 380 352 360 Z" fill="#E5B842"/>
+          {/* Center Royal Crown & Wheat */}
+          <circle cx="256" cy="180" r="20" fill="#E5B842"/>
+          <path d="M220 220 L256 240 L292 220 L280 270 L232 270 Z" fill="#E5B842"/>
+          <path d="M210 280 C210 320 256 345 256 345 C256 345 302 320 302 280 Z" fill="#FAF7F0" stroke="#E5B842" strokeWidth="6"/>
         </svg>
       )}
     </div>

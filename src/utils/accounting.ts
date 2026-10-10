@@ -134,13 +134,23 @@ export const toIsoDateString = (dateInput: string | Date): string => {
   }
 
   const trimmed = dateInput.trim();
-  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
-    return trimmed;
+  const enDigits = banglaToEnglishDigits(trimmed);
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(enDigits)) {
+    return enDigits;
   }
 
-  // Check for Bengali date e.g. "১০ অক্টোবর ২০২৬"
-  const enStr = banglaToEnglishDigits(trimmed);
-  const parts = enStr.split(/\s+/);
+  // Check for DD/MM/YYYY, DD-MM-YYYY, or DD.MM.YYYY
+  const dmyMatch = enDigits.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/);
+  if (dmyMatch) {
+    const d = dmyMatch[1].padStart(2, '0');
+    const m = dmyMatch[2].padStart(2, '0');
+    const y = dmyMatch[3];
+    return `${y}-${m}-${d}`;
+  }
+
+  // Check for Bengali date e.g. "১০ অক্টোবর ২০২৬" or "15 অক্টোবর 2026"
+  const parts = enDigits.split(/\s+/);
   if (parts.length >= 3) {
     const day = parseInt(parts[0], 10);
     const monthName = parts[1];
@@ -155,7 +165,7 @@ export const toIsoDateString = (dateInput: string | Date): string => {
   }
 
   // Fallback to Date parser
-  const parsed = new Date(trimmed);
+  const parsed = new Date(enDigits);
   if (!isNaN(parsed.getTime())) {
     const y = parsed.getFullYear();
     const m = String(parsed.getMonth() + 1).padStart(2, '0');

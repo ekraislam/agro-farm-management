@@ -2,6 +2,7 @@ import { useState, useEffect, type FormEvent } from 'react';
 import { X, CalendarClock, AlertCircle } from 'lucide-react';
 import type { ReminderTask, Employee } from '../../types/farm';
 import { generateId } from '../../utils/id';
+import { toIsoDateString, formatBanglaDate } from '../../utils/accounting';
 
 interface AddTaskModalProps {
   isOpen: boolean;
@@ -33,7 +34,16 @@ export const AddTaskModal = ({
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [dueDate, setDueDate] = useState('১২ অক্টোবর ২০২৬');
+  const [pickerDate, setPickerDate] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return toIsoDateString(d);
+  });
+  const [dueDate, setDueDate] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return formatBanglaDate(d);
+  });
   const [priority, setPriority] = useState<'high' | 'medium' | 'low'>('high');
   const [category, setCategory] = useState<'vaccine' | 'feed' | 'vet' | 'worker' | 'biogas' | 'other'>('worker');
   const [assignedEmployeeId, setAssignedEmployeeId] = useState(
@@ -197,13 +207,33 @@ export const AddTaskModal = ({
               <label className="block text-xs font-semibold text-gray-700 mb-1">
                 কবে করতে হবে (তারিখ) *
               </label>
-              <input
-                type="text"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm"
-                required
-              />
+              <div className="flex items-center gap-2">
+                <input
+                  type="date"
+                  value={pickerDate}
+                  onChange={(e) => {
+                    const iso = e.target.value;
+                    setPickerDate(iso);
+                    if (iso) {
+                      setDueDate(formatBanglaDate(iso));
+                    }
+                  }}
+                  className="px-3 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm bg-white cursor-pointer shrink-0"
+                  required
+                />
+                <input
+                  type="text"
+                  value={dueDate}
+                  onChange={(e) => {
+                    setDueDate(e.target.value);
+                    const parsedIso = toIsoDateString(e.target.value);
+                    setPickerDate(parsedIso);
+                  }}
+                  placeholder="যেমন: ১৫ অক্টোবর ২০২৬"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm font-semibold text-gray-900"
+                  required
+                />
+              </div>
             </div>
 
             <div>

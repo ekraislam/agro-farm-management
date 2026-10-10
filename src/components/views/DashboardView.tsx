@@ -267,7 +267,7 @@ export const DashboardView = ({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-amber-900 font-bold text-xs">
                 <AlertTriangle className="w-4 h-4 text-amber-700" />
-                <span>আজকের বাকি কাজ ({summary.pendingTasksCount}টি)</span>
+                <span>আসন্ন জরুরি কাজ ({summary.pendingTasksCount}টি)</span>
               </div>
               <button
                 onClick={() => onNavigate('reminders')}
