@@ -200,7 +200,7 @@ export const AddCowModal = ({
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1 flex items-center gap-1">
                 <Hash className="w-3.5 h-3.5 text-gray-400" />
-                ট্যাগ বা আইডি নম্বর *
+                ট্যাগ বা গরুর নম্বর *
               </label>
               <input
                 type="text"
@@ -248,7 +248,7 @@ export const AddCowModal = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">
-                জাত (Breed) *
+                গরুর জাত *
               </label>
               <select
                 value={breed}
@@ -267,7 +267,7 @@ export const AddCowModal = ({
 
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">
-                লিঙ্গ (Gender) *
+                গরুর ধরন (লিঙ্গ) *
               </label>
               <div className="grid grid-cols-2 gap-2">
                 <button
@@ -279,7 +279,7 @@ export const AddCowModal = ({
                       : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                   }`}
                 >
-                  মাদী / গাভী (স্ত্রী)
+                  গাভী / বকনা (মাদী)
                 </button>
                 <button
                   type="button"
@@ -290,7 +290,7 @@ export const AddCowModal = ({
                       : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                   }`}
                 >
-                  এঁড়ে / ষাঁড় (পুরুষ)
+                  ষাঁড় / বাছুর (মর্দা)
                 </button>
               </div>
             </div>
@@ -300,7 +300,7 @@ export const AddCowModal = ({
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1 flex items-center gap-1">
               <Activity className="w-3.5 h-3.5 text-gray-400" />
-              বর্তমান অবস্থা (Status) *
+              বর্তমান অবস্থা *
             </label>
             <select
               value={status}
@@ -309,7 +309,7 @@ export const AddCowModal = ({
             >
               <option value="milking">দুধ দিচ্ছে (দুধাল গাভী)</option>
               <option value="pregnant">গর্ভবতী (গাভীন)</option>
-              <option value="dry">দুধ দিচ্ছে না (শুকনো গাভী / ড্রাই পিরিয়ড)</option>
+              <option value="dry">দুধ বন্ধ (শুকনো গাভী)</option>
               <option value="calf">বাছুর</option>
               <option value="sick">অসুস্থ / চিকিৎসাধীন</option>
               <option value="sold">বিক্রি হয়েছে</option>
@@ -366,7 +366,7 @@ export const AddCowModal = ({
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1 flex items-center gap-1">
                   <Calendar className="w-3.5 h-3.5 text-gray-400" />
-                  সঠিক জন্মতারিখ (Date of Birth)
+                  সঠিক জন্মতারিখ
                 </label>
                 <input
                   type="date"
@@ -484,7 +484,7 @@ export const AddCowModal = ({
                 ? 'সংরক্ষণ হচ্ছে...'
                 : isEditing
                 ? 'তথ্য হালনাগাদ করুন'
-                : 'গরু যুক্ত করুন'}
+                : 'খামারে যুক্ত করুন'}
             </button>
           </div>
         </form>

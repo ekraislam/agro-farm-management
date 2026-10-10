@@ -157,7 +157,7 @@ const AddExpenseModalDialog = ({
                 }`}
               >
                 <ArrowDownRight className="w-4 h-4 text-[#9E2A2B]" />
-                খরচ (Expense)
+                খরচ (ব্যয়)
               </button>
               <button
                 type="button"
@@ -173,21 +173,21 @@ const AddExpenseModalDialog = ({
                 }`}
               >
                 <ArrowUpRight className="w-4 h-4 text-[#16402C]" />
-                আয় (Income)
+                জমা (আয়)
               </button>
             </div>
           ) : (
             <div className={`p-2.5 rounded-xl text-center text-xs font-bold ${
               type === 'income' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'
             }`}>
-              লেনদেনের ধরন: {type === 'income' ? 'আয় (Income)' : 'ব্যয় (Expense)'}
+              হিসাবের ধরন: {type === 'income' ? 'জমা (আয়)' : 'খরচ (ব্যয়)'}
             </div>
           )}
 
           {/* Title / Description */}
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1">
-              হিসাবের বিবরণ / শিরোনাম *
+              হিসাবের বিবরণ *
             </label>
             <input
               type="text"
@@ -196,7 +196,7 @@ const AddExpenseModalDialog = ({
                 setTitle(e.target.value);
                 setError('');
               }}
-              placeholder={type === 'expense' ? 'যেমন: ৫ বস্তা গমের ভুসি ক্রয়' : 'যেমন: পাইকারি দুধ বিক্রয়'}
+              placeholder={type === 'expense' ? 'যেমন: ৫ বস্তা গমের ভুসি কেনা' : 'যেমন: মিষ্টির দোকানে দুধ বিক্রি'}
               className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] focus:ring-1 focus:ring-[#16402C] outline-hidden text-sm bg-white"
               required
             />
@@ -228,7 +228,7 @@ const AddExpenseModalDialog = ({
 
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">
-                খাত / ক্যাটাগরি *
+                হিসাবের খাত *
               </label>
               <select
                 value={category}
@@ -267,16 +267,16 @@ const AddExpenseModalDialog = ({
 
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">
-                পরিশোধের মাধ্যম *
+                টাকা লেনদেনের মাধ্যম *
               </label>
               <select
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value as any)}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm bg-white"
               >
-                <option value="cash">নগদ (Cash)</option>
-                <option value="bkash">বিকাশ (bKash)</option>
-                <option value="bank">ব্যাংক (Bank Transfer)</option>
+                <option value="cash">নগদ টাকা</option>
+                <option value="bkash">বিকাশ</option>
+                <option value="bank">ব্যাংক একাউন্ট</option>
               </select>
             </div>
           </div>
@@ -284,7 +284,7 @@ const AddExpenseModalDialog = ({
           {/* Recorded By */}
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1">
-              হিসাবকারী *
+              হিসাব লিখেছেন *
             </label>
             <select
               value={recordedBy}
@@ -300,13 +300,13 @@ const AddExpenseModalDialog = ({
           {/* Notes */}
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1">
-              মন্তব্য / রসিদ বিবরণ (ঐচ্ছিক)
+              অতিরিক্ত তথ্য বা মেমো নম্বর (ঐচ্ছিক)
             </label>
             <input
               type="text"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="যেমন: দোকানের নাম, মেমো নম্বর, ইত্যাদি"
+              placeholder="যেমন: দোকান বা ব্যক্তির নাম, রসিদ নম্বর"
               className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm bg-white"
             />
           </div>

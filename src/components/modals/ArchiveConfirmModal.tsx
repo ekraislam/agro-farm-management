@@ -60,11 +60,11 @@ export const ArchiveConfirmModal = ({
         <div>
           <h3 className="text-lg font-bold text-gray-900">
             {hasHistoricalRecords
-              ? `${cow.tagNumber} (${cow.name}) আর্কাইভ করতে চান?`
+              ? `${cow.tagNumber} (${cow.name}) পুরোনো তালিকায় সরাতে চান?`
               : `${cow.tagNumber} (${cow.name}) মুছে ফেলতে চান?`}
           </h3>
           <p className="text-xs text-gray-500 mt-1">
-            খামারের গবাদিপশু ব্যবস্থাপনা ও হিসাব সংরক্ষণ সতর্কতা
+            খামারের হিসাব ও রেকর্ড সংরক্ষণের সতর্কতা
           </p>
         </div>
 
@@ -73,14 +73,14 @@ export const ArchiveConfirmModal = ({
           <div className="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-amber-900 space-y-2 text-xs">
             <div className="flex items-center gap-2 font-bold text-amber-900">
               <ShieldAlert className="w-4 h-4 text-amber-700 shrink-0" />
-              <span>ঐতিহাসিক রেকর্ড সুরক্ষা নীতি</span>
+              <span>পূর্বের হিসাবের নিরাপত্তা</span>
             </div>
             <p className="text-gray-700 leading-relaxed">
-              এই গরুর সাথে <strong>{milkRecordCount} টি দুধের রেকর্ড</strong> এবং{' '}
-              <strong>{healthRecordCount} টি স্বাস্থ্য রেকর্ড</strong> সংযুক্ত রয়েছে।
+              এই গরুর সাথে <strong>{milkRecordCount} টি দুধের হিসাব</strong> এবং{' '}
+              <strong>{healthRecordCount} টি চিকিৎসার তথ্য</strong> যুক্ত আছে।
             </p>
             <p className="text-gray-600 leading-relaxed">
-              আর্থিক স্বচ্ছতা এবং দুধ বিক্রির সঠিক অডিট নিশ্চিত করতে গরুটিকে সম্পূর্ণ মুছে ফেলা হবে না; বরং <strong>নিরাপদভাবে আর্কাইভ</strong> করা হবে। অতীতের আর্থিক আয়-ব্যয় সুরক্ষিত থাকবে।
+              খামারের সঠিক হিসাব বজায় রাখার জন্য গরুটির তথ্য স্থায়ীভাবে মুছে না ফেলে <strong>পুরোনো তালিকায় (আর্কাইভ) রাখা হবে</strong>। এতে আগের দুধ বিক্রি ও খরচের কোনো হিসাবে গরমিল হবে না।
             </p>
           </div>
         ) : (
@@ -90,7 +90,7 @@ export const ArchiveConfirmModal = ({
               <span>সতর্কতা</span>
             </div>
             <p className="text-gray-700 leading-relaxed">
-              এই গরুর সাথে কোনো দুধ বা স্বাস্থ্য ইতিহাস নেই। মুছে ফেললে তথ্যটি তালিকা থেকে সম্পূর্ণ অপসারিত হবে।
+              এই গরুর সাথে পূর্বে কোনো দুধ বা চিকিৎসার হিসাব যুক্ত নেই। মুছে ফেললে এটি তালিকা থেকে চিরতরে চলে যাবে।
             </p>
           </div>
         )}
@@ -124,9 +124,9 @@ export const ArchiveConfirmModal = ({
             )}
             <span>
               {isProcessing
-                ? 'প্রক্রিয়াধীন...'
+                ? 'কাজ চলছে...'
                 : hasHistoricalRecords
-                ? 'নিরাপদভাবে আর্কাইভ করুন'
+                ? 'পুরোনো তালিকায় রাখুন'
                 : 'স্থায়ীভাবে মুছুন'}
             </span>
           </button>

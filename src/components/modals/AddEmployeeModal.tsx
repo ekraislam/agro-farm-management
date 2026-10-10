@@ -137,10 +137,10 @@ export const AddEmployeeModal = ({
             </div>
             <div>
               <h3 className="text-lg md:text-xl font-bold text-[#16402C]">
-                {initialEmployee ? 'কর্মচারীর তথ্য সংশোধন' : 'নতুন কর্মচারী নিবন্ধন'}
+                {initialEmployee ? 'কর্মীর তথ্য পরিবর্তন' : 'নতুন কর্মী যোগ করুন'}
               </h3>
               <p className="text-xs text-gray-500 mt-0.5">
-                খামারের কর্মী, মাসিক বেতন ও দৈনিক দায়িত্ব বণ্টন
+                খামারের কর্মী, মাসিক বেতন ও কাজের দায়িত্ব
               </p>
             </div>
           </div>
@@ -165,7 +165,7 @@ export const AddEmployeeModal = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block font-bold text-gray-700 mb-1">
-                কর্মচারীর নাম <span className="text-red-500">*</span>
+                কর্মীর নাম <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -185,7 +185,7 @@ export const AddEmployeeModal = ({
 
             <div>
               <label className="block font-bold text-gray-700 mb-1">
-                পদবী / মূল ভূমিকা <span className="text-red-500">*</span>
+                কাজের পদবী বা ভূমিকা <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <Briefcase className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
@@ -227,7 +227,7 @@ export const AddEmployeeModal = ({
 
             <div>
               <label className="block font-bold text-gray-700 mb-1">
-                নির্ধারিত মাসিক বেতন (টাকা) <span className="text-red-500">*</span>
+                মাসিক বেতন (টাকা) <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <Wallet className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
@@ -264,7 +264,7 @@ export const AddEmployeeModal = ({
                   type="text"
                   value={joiningDate}
                   onChange={(e) => setJoiningDate(e.target.value)}
-                  placeholder="যেমন: ০১ জানুয়ারি ২০২৪ বা 2024-01-01"
+                  placeholder="যেমন: ০১ জানুয়ারি ২০২৪"
                   className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[#EAE2D0] outline-hidden focus:border-[#16402C] bg-[#FAF7F0]/40 font-medium"
                 />
               </div>
@@ -272,16 +272,16 @@ export const AddEmployeeModal = ({
 
             <div>
               <label className="block font-bold text-gray-700 mb-1">
-                বর্তমান অবস্থা (Status)
+                কাজের অবস্থা
               </label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as EmployeeStatus)}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE2D0] outline-hidden focus:border-[#16402C] bg-[#FAF7F0]/40 font-medium"
               >
-                <option value="active">সক্রিয় (Active) — নিয়মিত কর্মরত</option>
-                <option value="on_leave">ছুটিতে (On Leave)</option>
-                <option value="inactive">নিষ্ক্রিয় / অব্যাহতিপ্রাপ্ত (Inactive)</option>
+                <option value="active">কাজে সক্রিয় (নিয়মিত কর্মরত)</option>
+                <option value="on_leave">ছুটিতে আছেন</option>
+                <option value="inactive">সাবেক কর্মী (বর্তমানে নেই)</option>
               </select>
             </div>
           </div>
@@ -289,7 +289,7 @@ export const AddEmployeeModal = ({
           {/* Assigned Duties Selection */}
           <div className="pt-2 border-t border-[#F2ECE1]">
             <label className="block font-bold text-gray-700 mb-1.5 flex items-center justify-between">
-              <span>দৈনন্দিন নির্ধারিত দায়িত্বসমূহ:</span>
+              <span>দৈনিক কাজের দায়িত্বসমূহ:</span>
               <span className="text-[11px] font-normal text-gray-500">
                 নির্বাচিত: {assignedDuties.length}টি
               </span>
@@ -346,13 +346,13 @@ export const AddEmployeeModal = ({
           <div>
             <label className="block font-bold text-gray-700 mb-1 flex items-center gap-1.5">
               <FileText className="w-3.5 h-3.5 text-gray-400" />
-              <span>মন্তব্য / জরুরি তথ্য</span>
+              <span>মন্তব্য বা অন্যান্য তথ্য (ঐচ্ছিক)</span>
             </label>
             <textarea
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="কর্মীর পরিচয়পত্র, জরুরি যোগাযোগের ঠিকানা বা বিশেষ নোট..."
+              placeholder="কর্মীর পরিচয়পত্র, জরুরি যোগাযোগের ঠিকানা বা বিশেষ কোনো নোট..."
               className="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE2D0] outline-hidden focus:border-[#16402C] bg-[#FAF7F0]/40"
             />
           </div>
@@ -375,7 +375,7 @@ export const AddEmployeeModal = ({
               {isSubmitting ? (
                 <span>সংরক্ষণ হচ্ছে...</span>
               ) : (
-                <span>{initialEmployee ? 'তথ্য আপডেট করুন' : 'কর্মচারী সংরক্ষণ করুন'}</span>
+                <span>{initialEmployee ? 'তথ্য হালনাগাদ করুন' : 'কর্মী যোগ করুন'}</span>
               )}
             </button>
           </div>

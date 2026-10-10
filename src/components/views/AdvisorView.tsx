@@ -54,12 +54,12 @@ const DEFAULT_SUGGESTIONS = [
 const INITIAL_WELCOME_MESSAGE: AiChatMessage = {
   id: 'msg-welcome-0',
   sender: 'assistant',
-  text: 'আসসালামু আলাইকুম! আমি মুমিন এগ্রোর AI সহকারী। খামারের আয়-ব্যয়, দুধের হিসাব, গরুর রেকর্ড, কর্মীদের কাজ ও বায়োগ্যাস লগ বুঝতে সাহায্য করতে পারি। আপনার যেকোনো প্রশ্ন নিচে লিখুন অথবা সাজেস্টেড প্রশ্ন চাপুন।',
+  text: 'আসসালামু আলাইকুম! আমি মুমিন এগ্রোর স্মার্ট পরামর্শক। আপনার খামারের জমা-খরচ, দুধ দোয়ানোর হিসাব, গরুর টিকা এবং কর্মীদের কাজের হিসাব বুঝিয়ে দিতে পারি। যেকোনো প্রশ্ন নিচে লিখুন অথবা ওপরের তালিকায় চাপ দিন।',
   timestamp: '২০২৬-১০-১০T০৬:০০:০০Z',
   evidence: {
     period: 'চলতি মাস',
     relevantView: 'dashboard',
-    relevantViewLabelBn: 'ড্যাশবোর্ড ওভারভিউ',
+    relevantViewLabelBn: 'আজকের খামার সারাংশ',
   },
 };
 
@@ -198,15 +198,15 @@ export const AdvisorView = ({
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-xl md:text-2xl font-bold text-[#16402C]">
-                AI ফার্ম অ্যাডভাইজার
+                স্মার্ট খামার পরামর্শক
               </h2>
               {isDemoMode ? (
                 <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#EAF5EE] text-[#1B4D35] border border-[#C5E3D0]">
-                  স্মার্ট পরামর্শক সক্রিয়
+                  পরামর্শক সক্রিয়
                 </span>
               ) : isLiveCloud ? (
                 <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                  সংরক্ষিত ক্লাউড ডেটা সংযুক্ত
+                  সংরক্ষিত খাতা সংযুক্ত
                 </span>
               ) : (
                 <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-gray-100 text-gray-700 border border-gray-300">
@@ -215,7 +215,7 @@ export const AdvisorView = ({
               )}
             </div>
             <p className="text-xs md:text-sm text-gray-500 mt-0.5">
-              মুমিন এগ্রো (Mumin Agro) — আপনার খামারের সংরক্ষিত ডেটা ভিত্তিক নির্ভরযোগ্য বাংলা পরামর্শক
+              মুমিন এগ্রো (Mumin Agro) — আপনার খামারের আসল হিসাব অনুযায়ী সঠিক ও নির্ভরযোগ্য পরামর্শ
             </p>
           </div>
         </div>
@@ -226,7 +226,7 @@ export const AdvisorView = ({
           title="নতুন কথোপকথন শুরু করুন"
         >
           <RotateCcw className="w-4 h-4 text-[#16402C]" />
-          <span>নতুন আলোচনা</span>
+          <span>নতুন করে প্রশ্ন করুন</span>
         </button>
       </div>
 
@@ -236,14 +236,14 @@ export const AdvisorView = ({
           <div className="flex items-start gap-2.5">
             <Info className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
             <p className="leading-relaxed">
-              <strong>গোপনীয়তা ও ডেটা সুরক্ষা বিজ্ঞপ্তি:</strong> আপনার প্রশ্নের নির্ভুল উত্তরের জন্য খামারের প্রয়োজনীয় সংরক্ষিত হিসাব (যেমন: আয়-ব্যয়, দুধের লিটার) সুরক্ষিতভাবে প্রক্রিয়াকরণ করা হয়। কোনো ফোন নম্বর বা অপ্রয়োজনীয় ব্যক্তিগত তথ্য পাঠানো হয় না।
+              <strong>নিরাপত্তা নিশ্চয়তা:</strong> আপনার প্রশ্নের সঠিক উত্তরের জন্য খামারের হিসাব (যেমন: জমা-খরচ, দুধের পরিমাণ) নিরাপদে মিলিয়ে দেখা হয়। কোনো ফোন নম্বর বা গোপন ব্যক্তিগত তথ্য বাইরে যায় না।
             </p>
           </div>
           <button
             onClick={handleConsent}
             className="shrink-0 px-4 py-1.5 rounded-xl bg-amber-800 hover:bg-amber-900 text-white font-bold text-xs transition-all active:scale-95 cursor-pointer"
           >
-            সম্মত আছি
+            বুঝেছি, ঠিক আছে
           </button>
         </div>
       )}
@@ -252,7 +252,7 @@ export const AdvisorView = ({
       <div className="bg-white rounded-2xl p-4 border border-[#EAE2D0] shadow-xs">
         <div className="flex items-center gap-2 mb-2.5">
           <HelpCircle className="w-4 h-4 text-[#16402C]" />
-          <span className="text-xs font-bold text-[#16402C]">ঝটপট প্রশ্ন করুন (ক্লিক করুন):</span>
+          <span className="text-xs font-bold text-[#16402C]">সহজে জানতে চাপ দিন:</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {DEFAULT_SUGGESTIONS.map((chip, idx) => (
@@ -291,7 +291,7 @@ export const AdvisorView = ({
                   {!isUser && (
                     <div className="flex items-center gap-1.5 mb-2 pb-1.5 border-b border-[#EAE2D0]">
                       <Sparkles className="w-4 h-4 text-[#E5B842]" />
-                      <span className="font-bold text-xs text-[#16402C]">মুমিন এগ্রো AI উপদেষ্টা</span>
+                      <span className="font-bold text-xs text-[#16402C]">মুমিন এগ্রো স্মার্ট পরামর্শক</span>
                       {msg.isDemoPreview && (
                         <span className="ml-auto text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#EAF5EE] text-[#1B4D35] border border-[#C5E3D0]">
                           পরামর্শ
@@ -407,7 +407,7 @@ export const AdvisorView = ({
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 maxLength={500}
-                placeholder="যেমন: এই মাসের মোট আয় ও খরচ কত? বা দুধের হিসাব বলুন..."
+                placeholder="যেমন: এই মাসে মোট আয় ও খরচ কত? বা দুধ দোয়ানোর হিসাব বলুন..."
                 disabled={isLoading}
                 className="w-full pl-4 pr-16 py-3 bg-[#FAF7F0] border border-[#D5CBB5] rounded-2xl text-xs md:text-sm text-[#16402C] placeholder-gray-400 font-medium focus:outline-hidden focus:ring-2 focus:ring-[#16402C] focus:bg-white transition-all disabled:opacity-60"
               />
@@ -427,7 +427,7 @@ export const AdvisorView = ({
             </button>
           </form>
           <p className="text-[10px] text-gray-400 mt-1.5 text-center">
-            মুমিন এগ্রো AI খামার সহকারী — তথ্য বিশ্লেষণী পরামর্শ। চিকিৎসাজনিত প্রয়োজনে সর্বদা রেজিস্টার্ড পশু চিকিৎসকের শরণাপন্ন হোন।
+            মুমিন এগ্রো স্মার্ট খামার পরামর্শক — খামারের হিসাব বিশ্লেষণী পরামর্শ। চিকিৎসাজনিত প্রয়োজনে সর্বদা রেজিস্টার্ড পশু চিকিৎসকের শরণাপন্ন হোন।
           </p>
         </div>
       </div>

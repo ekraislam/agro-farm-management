@@ -91,9 +91,9 @@ export const CowsView = ({
               <Layers className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-xl md:text-2xl font-bold text-[#16402C]">গরুর তালিকা ও প্রোফাইল</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-[#16402C]">খামারের সকল গরু ও বাছুর</h2>
               <p className="text-xs md:text-sm text-gray-500 mt-0.5">
-                খামারের প্রতিটি গরুর স্বাস্থ্য, জাত, জীবনবৃত্তান্ত ও দুধের উৎপাদন রেকর্ড
+                প্রতিটি গরুর জাত, বয়স, স্বাস্থ্য ও দুধ দেওয়ার হিসাব
               </p>
             </div>
           </div>
@@ -121,7 +121,7 @@ export const CowsView = ({
                   : 'bg-[#FAF7F0] text-gray-600 hover:bg-[#F2ECE1]'
               }`}
             >
-              সক্রিয় গরু ({activeCows.length})
+              খামারে আছে ({activeCows.length})
             </button>
             <button
               onClick={() => setFilter('milking')}
@@ -131,7 +131,7 @@ export const CowsView = ({
                   : 'bg-[#FAF7F0] text-gray-600 hover:bg-[#F2ECE1]'
               }`}
             >
-              দুধাল ({milkingCount})
+              দুধ দিচ্ছে ({milkingCount})
             </button>
             <button
               onClick={() => setFilter('pregnant')}
@@ -151,7 +151,7 @@ export const CowsView = ({
                   : 'bg-[#FAF7F0] text-gray-600 hover:bg-[#F2ECE1]'
               }`}
             >
-              শুকনো ({dryCount})
+              দুধ বন্ধ ({dryCount})
             </button>
             <button
               onClick={() => setFilter('calf')}
@@ -184,7 +184,7 @@ export const CowsView = ({
                     : 'bg-amber-50 text-amber-900 hover:bg-amber-100 border border-amber-200'
                 }`}
               >
-                আর্কাইভ ({archivedCount})
+                পুরোনো তালিকা ({archivedCount})
               </button>
             )}
           </div>
@@ -239,11 +239,11 @@ export const CowsView = ({
                     {isMilking && <Badge variant="success">দুধাল</Badge>}
                     {isPregnant && <Badge variant="gold">গাভীন</Badge>}
                     {isCalf && <Badge variant="info">বাছুর</Badge>}
-                    {isDryCow && <Badge variant="neutral">শুকনো</Badge>}
+                    {isDryCow && <Badge variant="neutral">দুধ বন্ধ</Badge>}
                     {isSoldCow && <Badge variant="neutral">বিক্রিত</Badge>}
                     {isArchived && (
                       <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-200 text-amber-950">
-                        আর্কাইভ
+                        পুরোনো
                       </span>
                     )}
                   </div>
@@ -294,7 +294,7 @@ export const CowsView = ({
                     <span className="flex items-center gap-1">
                       <ShieldCheck className="w-3.5 h-3.5 text-[#2A7A50]" /> টিকা: {cow.lastVaccinatedDate}
                     </span>
-                    <span className="text-[10px] text-gray-400">প্রোফাইল দেখুন</span>
+                    <span className="text-[10px] text-gray-400">বিস্তারিত দেখুন</span>
                   </div>
                 )}
               </div>
@@ -332,8 +332,8 @@ export const CowsView = ({
                     onOpenEditCow(cow);
                   }}
                   className="p-2 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-900 border border-gray-200 transition-colors"
-                  title="সম্পাদনা"
-                  aria-label="সম্পাদনা"
+                  title="তথ্য সংশোধন"
+                  aria-label="তথ্য সংশোধন"
                 >
                   <Edit3 className="w-3.5 h-3.5" />
                 </button>
@@ -344,8 +344,8 @@ export const CowsView = ({
                     setConfirmArchiveCow(cow);
                   }}
                   className="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-800 border border-red-200 transition-colors"
-                  title="মুছুন বা আর্কাইভ"
-                  aria-label="মুছুন বা আর্কাইভ"
+                  title="তালিকা থেকে সরান"
+                  aria-label="তালিকা থেকে সরান"
                 >
                   {isArchived ? <Archive className="w-3.5 h-3.5" /> : <Trash2 className="w-3.5 h-3.5" />}
                 </button>

@@ -83,7 +83,7 @@ export const BiogasInspectionModal = ({
             </div>
             <div>
               <h3 className="text-lg font-bold text-[#16402C]">বায়োগ্যাস প্ল্যান্ট নিরাপত্তা পরীক্ষা</h3>
-              <p className="text-xs text-gray-500 mt-0.5">নিয়মিত পরিদর্শন ও চেকলিস্ট রক্ষণাবেক্ষণ</p>
+              <p className="text-xs text-gray-500 mt-0.5">নিরাপদে ব্যবহারের জন্য নিয়মিত পরীক্ষা ও যত্ন</p>
             </div>
           </div>
           <button
@@ -105,7 +105,7 @@ export const BiogasInspectionModal = ({
           {/* Checklist Item Selection */}
           <div>
             <label className="block font-bold text-gray-700 mb-1">
-              পরিদর্শনের খাত নির্বাচন করুন <span className="text-red-500">*</span>
+              কি পরীক্ষা করবেন? <span className="text-red-500">*</span>
             </label>
             <select
               value={itemKey}
@@ -126,7 +126,7 @@ export const BiogasInspectionModal = ({
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block font-bold text-gray-700 mb-1">
-                পরীক্ষার তারিখ <span className="text-red-500">*</span>
+                আজকের তারিখ <span className="text-red-500">*</span>
               </label>
               <input
                 type="date"
@@ -139,7 +139,7 @@ export const BiogasInspectionModal = ({
 
             <div>
               <label className="block font-bold text-gray-700 mb-1">
-                পরবর্তী পরীক্ষার তারিখ
+                পরের বার কবে পরীক্ষা করবেন
               </label>
               <input
                 type="date"
@@ -153,7 +153,7 @@ export const BiogasInspectionModal = ({
           {/* Result Status */}
           <div>
             <label className="block font-bold text-gray-700 mb-1.5">
-              পরীক্ষার ফলাফল / অবস্থা <span className="text-red-500">*</span>
+              অবস্থা কেমন পাওয়া গেল? <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-3 gap-2">
               <button
@@ -192,7 +192,7 @@ export const BiogasInspectionModal = ({
                 }`}
               >
                 <AlertOctagon className={`w-4 h-4 ${status === 'urgent' ? 'text-[#DC2626]' : 'text-gray-400'}`} />
-                <span className="text-[11px]">জরুরি পদক্ষেপ</span>
+                <span className="text-[11px]">জরুরি মেরামত দরকার</span>
               </button>
             </div>
           </div>
@@ -201,14 +201,14 @@ export const BiogasInspectionModal = ({
           <div>
             <label className="block font-bold text-gray-700 mb-1 flex items-center gap-1.5">
               <UserCheck className="w-3.5 h-3.5 text-gray-400" />
-              <span>পরিদর্শনকারী কর্মী</span>
+              <span>কে পরীক্ষা করেছেন?</span>
             </label>
             <select
               value={inspectorEmpId}
               onChange={(e) => setInspectorEmpId(e.target.value)}
               className="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE2D0] outline-hidden focus:border-[#16402C] bg-[#FAF7F0]/40 font-medium"
             >
-              <option value="">কর্মচারী নির্বাচন করুন (ঐচ্ছিক)</option>
+              <option value="">কর্মী নির্বাচন করুন (ঐচ্ছিক)</option>
               {employees.map((emp) => (
                 <option key={emp.id} value={emp.id}>
                   {emp.name} ({emp.role})
@@ -221,7 +221,7 @@ export const BiogasInspectionModal = ({
           <div>
             <label className="block font-bold text-gray-700 mb-1 flex items-center gap-1.5">
               <FileText className="w-3.5 h-3.5 text-gray-400" />
-              <span>পরীক্ষার নোট ও পর্যবেক্ষণ</span>
+              <span>মন্তব্য বা পর্যবেক্ষণ (ঐচ্ছিক)</span>
             </label>
             <input
               type="text"
@@ -253,7 +253,7 @@ export const BiogasInspectionModal = ({
               disabled={isSubmitting}
               className="flex-1 py-2.5 rounded-xl bg-[#16402C] hover:bg-[#123323] text-white font-bold shadow-xs active:scale-95 transition-all text-xs flex items-center justify-center gap-2"
             >
-              {isSubmitting ? 'সংরক্ষণ হচ্ছে...' : 'পরিদর্শন রেকর্ড নিশ্চিত'}
+              {isSubmitting ? 'সংরক্ষণ হচ্ছে...' : 'পরীক্ষার হিসাব সংরক্ষণ করুন'}
             </button>
           </div>
         </form>

@@ -40,7 +40,7 @@ export const MilkRecordsView = ({
           <div>
             <h2 className="text-xl md:text-2xl font-bold text-[#16402C]">দুধের দৈনিক হিসাব</h2>
             <p className="text-xs md:text-sm text-gray-500 mt-0.5">
-              প্রতিদিনের সকাল ও বিকালের সংগ্রহ, বিক্রয় দর এবং রাজস্ব ট্র্যাকিং
+              প্রতিদিনের সকাল ও বিকালের দুধ দোয়ানো এবং বিক্রির হিসাব
             </p>
           </div>
         </div>
@@ -86,7 +86,7 @@ export const MilkRecordsView = ({
 
         <div className="bg-[#FAF7F0] rounded-2xl p-4 border border-[#EAE2D0] flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-gray-600">মোট বিক্রয় মূল্য (রেকর্ডকৃত)</p>
+            <p className="text-xs font-semibold text-gray-600">মোট দুধ বিক্রির টাকা</p>
             <p className="text-2xl font-bold text-[#16402C] mt-1">
               ৳ {totalAmount.toLocaleString('en-US')}
             </p>
@@ -102,7 +102,7 @@ export const MilkRecordsView = ({
       <div className="bg-white rounded-3xl border border-[#EAE2D0] shadow-xs overflow-hidden">
         <div className="p-4 md:p-5 border-b border-[#F2ECE1] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <h3 className="font-bold text-base md:text-lg text-[#16402C]">
-            দুধ সংগ্রহের তালিকা
+            দৈনিক দোয়ানো দুধের খাতা
           </h3>
           <input
             type="text"
@@ -118,11 +118,11 @@ export const MilkRecordsView = ({
             <div className="w-14 h-14 bg-[#EAF5EE] text-[#16402C] rounded-2xl mx-auto flex items-center justify-center">
               <Droplets className="w-7 h-7" />
             </div>
-            <h4 className="text-lg font-bold text-[#16402C]">এখনো কোনো দুধ সংগ্রহের রেকর্ড নেই</h4>
+            <h4 className="text-lg font-bold text-[#16402C]">এখনো কোনো দুধের হিসাব লেখা হয়নি</h4>
             <p className="text-xs md:text-sm text-gray-500 max-w-md mx-auto">
               {searchTerm
                 ? 'আপনার অনুসন্ধানের সাথে মেলে এমন কোনো দুধের রেকর্ড পাওয়া যায়নি।'
-                : 'প্রতিদিনের সকাল বা বিকালের দুধ দোয়ানোর হিসাব রাখতে বোতামে চাপ দিয়ে এন্ট্রি করুন।'}
+                : 'প্রতিদিনের সকাল বা বিকালের দুধ দোয়ানোর হিসাব রাখতে উপরের বোতামে চাপ দিন।'}
             </p>
             <button
               onClick={onOpenAddMilk}

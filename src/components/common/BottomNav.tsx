@@ -50,12 +50,12 @@ export const BottomNav = ({
     icon: React.ElementType;
     badgeCount?: number;
   }[] = [
-    { id: 'employees', label: 'কর্মচারী', labelEn: 'Employees', icon: Users },
+    { id: 'employees', label: 'কর্মচারী ও বেতন', labelEn: 'Employees', icon: Users },
     { id: 'biogas', label: 'বায়োগ্যাস প্ল্যান্ট', labelEn: 'Biogas System', icon: Flame },
-    { id: 'reports', label: 'রিপোর্ট ও বিশ্লেষণ', labelEn: 'Farm Reports', icon: FileBarChart },
-    { id: 'reminders', label: 'অনুস্মারক ও কাজ', labelEn: 'Tasks & Vaccines', icon: CalendarClock, badgeCount: pendingTasksCount },
-    { id: 'advisor', label: 'AI খামার উপদেষ্টা', labelEn: 'AI Advisor', icon: Sparkles },
-    { id: 'settings', label: 'সেটিংস ও প্রোফাইল', labelEn: 'Settings', icon: Settings },
+    { id: 'reports', label: 'হিসাব বিবরণী', labelEn: 'Farm Reports', icon: FileBarChart },
+    { id: 'reminders', label: 'কাজের তালিকা ও টিকা', labelEn: 'Tasks & Vaccines', icon: CalendarClock, badgeCount: pendingTasksCount },
+    { id: 'advisor', label: 'স্মার্ট পরামর্শক', labelEn: 'Farm Advisor', icon: Sparkles },
+    { id: 'settings', label: 'খামার সেটিংস', labelEn: 'Settings', icon: Settings },
   ];
 
   const isMoreActive = moreTabs.some((t) => t.id === currentTab);
@@ -170,7 +170,7 @@ export const BottomNav = ({
                 className="p-3 rounded-2xl bg-[#9E2A2B]/10 border border-[#9E2A2B]/20 text-[#9E2A2B] flex items-center gap-2.5 text-xs font-bold"
               >
                 <Receipt className="w-4 h-4 text-[#9E2A2B]" />
-                <span>+ খরচ / আয় যোগ</span>
+                <span>+ আয় বা খরচ যোগ</span>
               </button>
             </div>
 

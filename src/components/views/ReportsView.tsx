@@ -146,21 +146,21 @@ export const ReportsView = ({
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-xl md:text-2xl font-bold text-[#16402C]">
-                খামার স্মার্ট প্রতিবেদন ও অ্যানালিটিক্স
+                খামারের সার্বিক হিসাব বিবরণী ও রিপোর্ট
               </h2>
               {isDemoMode && (
                 <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#EAF5EE] text-[#1B4D35] border border-[#C5E3D0]">
-                  খামার ডেটাবেজ (লোকাল)
+                  খামারের মূল খাতা
                 </span>
               )}
               {isLiveCloud && (
                 <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                  সংরক্ষিত ক্লাউড ডেটা
+                  অনলাইনে সংরক্ষিত খাতা
                 </span>
               )}
             </div>
             <p className="text-xs md:text-sm text-gray-500 mt-0.5">
-              মুমিন এগ্রো (Mumin Agro) — আয়-ব্যয়, দুধ উৎপাদন, স্বাস্থ্য, কর্মী হাজিরা ও বায়োগ্যাস প্ল্যান্টের সঠিক হিসাব
+              মুমিন এগ্রো (Mumin Agro) — জমা-খরচ, দুধ দোয়ানো ও বিক্রি, গরুর স্বাস্থ্য, কর্মী হাজিরা এবং বায়োগ্যাসের সঠিক হিসাব
             </p>
           </div>
         </div>
@@ -173,7 +173,7 @@ export const ReportsView = ({
             title="কম্পিউটার বা মোবাইলে খামারের সম্পূর্ণ হিসাব ডাউনলোড করুন"
           >
             <Download className="w-4 h-4 text-[#16402C]" />
-            <span>হিসাব ফাইল ডাউনলোড</span>
+            <span>এক্সেল / হিসাব ডাউনলোড</span>
           </button>
 
           <button
@@ -182,7 +182,7 @@ export const ReportsView = ({
             title="ব্রাউজারের প্রিন্ট ডায়ালগ খুলবে — এখান থেকে প্রিন্ট বা PDF হিসেবে সংরক্ষণ করা যাবে"
           >
             <Printer className="w-4 h-4 text-[#E5B842]" />
-            <span>প্রিন্ট / PDF সংরক্ষণ</span>
+            <span>প্রিন্ট বা PDF সংরক্ষণ</span>
           </button>
         </div>
       </div>
@@ -255,11 +255,11 @@ export const ReportsView = ({
       {/* Report Section Tabs (Hidden during print) */}
       <div className="flex gap-2 overflow-x-auto pb-1 no-print">
         {[
-          { id: 'financial', label: 'আর্থিক বিবরণী', icon: DollarSign, count: financialReport.summary.filteredRecords.length },
-          { id: 'milk', label: 'দুধ সংগ্রহ ও বিক্রয়', icon: Milk, count: milkReport.distinctDaysCount },
-          { id: 'health', label: 'গাভীর স্বাস্থ্য ও সেবা', icon: Stethoscope, count: healthReport.totalHealthEvents },
+          { id: 'financial', label: 'জমা ও খরচের হিসাব', icon: DollarSign, count: financialReport.summary.filteredRecords.length },
+          { id: 'milk', label: 'দুধ দোয়ানো ও বিক্রির হিসাব', icon: Milk, count: milkReport.distinctDaysCount },
+          { id: 'health', label: 'গরুর স্বাস্থ্য ও চিকিৎসা', icon: Stethoscope, count: healthReport.totalHealthEvents },
           { id: 'employees', label: 'কর্মী হাজিরা ও বেতন', icon: Users, count: employeeReport.totalActiveEmployees },
-          { id: 'biogas', label: 'বায়োগ্যাস ও তদারকি', icon: Flame, count: biogasReport.recordDaysCount },
+          { id: 'biogas', label: 'বায়োগ্যাস ও সার', icon: Flame, count: biogasReport.recordDaysCount },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -318,14 +318,14 @@ export const ReportsView = ({
         {activeTab === 'financial' && (
           <div className="space-y-6">
             <div className="flex items-center justify-between border-b border-[#F2ECE1] pb-2">
-              <h4 className="font-bold text-lg text-[#16402C]">আর্থিক লাভ-ক্ষতি ও ক্যাশফ্লো বিবরণী</h4>
+              <h4 className="font-bold text-lg text-[#16402C]">আর্থিক লাভ-ক্ষতি ও জমা-খরচের খতিয়ান</h4>
               <span className="text-xs text-gray-500">মোট লেনদেন: {financialReport.summary.filteredRecords.length} টি</span>
             </div>
 
             {/* KPI Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 avoid-page-break">
               <div className="p-4 bg-[#FAF7F0] rounded-2xl border border-[#EAE2D0] metric-card">
-                <span className="text-xs text-gray-500 block">মোট উপার্জিত আয়</span>
+                <span className="text-xs text-gray-500 block">মোট জমা (আয়)</span>
                 <span className="text-xl md:text-2xl font-black text-[#16402C] mt-1 block">
                   ৳ {financialReport.summary.totalIncome.toLocaleString('en-US')}
                 </span>
@@ -335,7 +335,7 @@ export const ReportsView = ({
               </div>
 
               <div className="p-4 bg-[#FAF7F0] rounded-2xl border border-[#EAE2D0] metric-card">
-                <span className="text-xs text-gray-500 block">মোট পরিচালন ব্যয়</span>
+                <span className="text-xs text-gray-500 block">মোট খরচ (ব্যয়)</span>
                 <span className="text-xl md:text-2xl font-black text-[#9E2A2B] mt-1 block">
                   ৳ {financialReport.summary.totalExpenses.toLocaleString('en-US')}
                 </span>
@@ -349,7 +349,7 @@ export const ReportsView = ({
                   ? 'bg-[#EAF5EE] border-[#C5E3D0]'
                   : 'bg-[#FEF2F2] border-[#FECACA]'
               }`}>
-                <span className="text-xs text-gray-600 block font-semibold">পরিচালন উদ্বৃত্ত / ঘাটতি</span>
+                <span className="text-xs text-gray-600 block font-semibold">হাতে থাকা লাভ / উদ্বৃত্ত</span>
                 <span className={`text-xl md:text-2xl font-black mt-1 block ${
                   financialReport.summary.isSurplus ? 'text-[#1B4D35]' : 'text-[#991B1B]'
                 }`}>
@@ -363,12 +363,12 @@ export const ReportsView = ({
               </div>
 
               <div className="p-4 bg-[#FEF9E7] rounded-2xl border border-[#F7E2A9] metric-card">
-                <span className="text-xs text-[#936709] block font-semibold">মুনাফার মার্জিন হার</span>
+                <span className="text-xs text-[#936709] block font-semibold">মুনাফার শতকরা হার</span>
                 <span className="text-xl md:text-2xl font-black text-[#805B00] mt-1 block">
                   {financialReport.summary.operatingMarginPct}%
                 </span>
                 <span className="text-[11px] text-[#936709] mt-0.5 block">
-                  নেট মার্জিন = (উদ্বৃত্ত ÷ আয়) × ১০০
+                  লাভের হার = (লাভ ÷ আয়) × ১০০
                 </span>
               </div>
             </div>
@@ -378,7 +378,7 @@ export const ReportsView = ({
               {/* Income Breakdown */}
               <div className="border border-[#EAE2D0] rounded-2xl p-4 space-y-3">
                 <h5 className="font-bold text-sm text-[#16402C] flex items-center justify-between pb-2 border-b border-[#F2ECE1]">
-                  <span>আয়ের খাতসমূহ (Incomes)</span>
+                  <span>আয়ের খাতসমূহ</span>
                   <span>টাকার পরিমাণ</span>
                 </h5>
                 {financialReport.summary.incomeCategoryBreakdown.length > 0 ? (
@@ -390,7 +390,7 @@ export const ReportsView = ({
                       </div>
                     ))}
                     <div className="flex justify-between pt-2 border-t border-gray-200 font-bold text-sm">
-                      <span>সর্বমোট আয়:</span>
+                      <span>সর্বমোট জমা (আয়):</span>
                       <span className="text-[#16402C]">৳ {financialReport.summary.totalIncome.toLocaleString('en-US')}</span>
                     </div>
                   </div>
@@ -402,7 +402,7 @@ export const ReportsView = ({
               {/* Expense Breakdown */}
               <div className="border border-[#EAE2D0] rounded-2xl p-4 space-y-3">
                 <h5 className="font-bold text-sm text-[#9E2A2B] flex items-center justify-between pb-2 border-b border-[#F2ECE1]">
-                  <span>ব্যয়ের খাতসমূহ (Expenses)</span>
+                  <span>খরচের খাতসমূহ</span>
                   <span>টাকার পরিমাণ</span>
                 </h5>
                 {financialReport.summary.categoryBreakdown.length > 0 ? (
@@ -414,7 +414,7 @@ export const ReportsView = ({
                       </div>
                     ))}
                     <div className="flex justify-between pt-2 border-t border-gray-200 font-bold text-sm">
-                      <span>সর্বমোট ব্যয়:</span>
+                      <span>সর্বমোট খরচ (ব্যয়):</span>
                       <span className="text-[#9E2A2B]">৳ {financialReport.summary.totalExpenses.toLocaleString('en-US')}</span>
                     </div>
                   </div>
@@ -430,7 +430,7 @@ export const ReportsView = ({
                 <div className="bg-[#FAF7F0] px-4 py-3 border-b border-[#EAE2D0] flex items-center justify-between">
                   <h5 className="font-bold text-sm text-[#16402C] flex items-center gap-2">
                     <TrendingUp className="w-4 h-4 text-[#16402C]" />
-                    <span>মাসভিত্তিক আয় ও ব্যয়ের তুলনামূলক ট্রেন্ড</span>
+                    <span>মাসভিত্তিক জমা ও খরচের তুলনামূলক হিসাব</span>
                   </h5>
                   <span className="text-xs text-gray-500">মোট {financialReport.monthlyTrend.length} মাসের উপাত্ত</span>
                 </div>
@@ -480,11 +480,11 @@ export const ReportsView = ({
             {/* Payment Method Distribution */}
             <div className="p-4 bg-[#FAF7F0] rounded-2xl border border-[#EAE2D0] avoid-page-break">
               <h5 className="font-bold text-xs text-gray-700 uppercase tracking-wider mb-3">
-                পরিশোধ মাধ্যম অনুযায়ী বণ্টন (Payment Methods)
+                টাকা দেওয়া-নেওয়ার মাধ্যম
               </h5>
               <div className="grid grid-cols-3 gap-3 text-center text-xs">
                 <div className="p-2.5 bg-white rounded-xl border border-[#EAE2D0]">
-                  <span className="font-bold text-gray-800 block">ক্যাশ / নগদ</span>
+                  <span className="font-bold text-gray-800 block">নগদ টাকা</span>
                   <span className="text-[#16402C] font-semibold block mt-1">
                     আয়: ৳ {financialReport.summary.paymentMethodBreakdown.cash.income.toLocaleString('en-US')}
                   </span>
@@ -493,7 +493,7 @@ export const ReportsView = ({
                   </span>
                 </div>
                 <div className="p-2.5 bg-white rounded-xl border border-[#EAE2D0]">
-                  <span className="font-bold text-gray-800 block">বিকাশ (bKash)</span>
+                  <span className="font-bold text-gray-800 block">বিকাশ</span>
                   <span className="text-[#16402C] font-semibold block mt-1">
                     আয়: ৳ {financialReport.summary.paymentMethodBreakdown.bkash.income.toLocaleString('en-US')}
                   </span>
@@ -502,7 +502,7 @@ export const ReportsView = ({
                   </span>
                 </div>
                 <div className="p-2.5 bg-white rounded-xl border border-[#EAE2D0]">
-                  <span className="font-bold text-gray-800 block">ব্যাংক অ্যাকাউন্ট</span>
+                  <span className="font-bold text-gray-800 block">ব্যাংক হিসাব</span>
                   <span className="text-[#16402C] font-semibold block mt-1">
                     আয়: ৳ {financialReport.summary.paymentMethodBreakdown.bank.income.toLocaleString('en-US')}
                   </span>
@@ -517,7 +517,7 @@ export const ReportsView = ({
             <div className="border border-[#EAE2D0] rounded-2xl overflow-hidden avoid-page-break">
               <div className="bg-[#FAF7F0] px-4 py-3 border-b border-[#EAE2D0]">
                 <h5 className="font-bold text-sm text-[#16402C]">
-                  বিস্তারিত লেনদেন খতিয়ান ({financialReport.summary.filteredRecords.length} টি)
+                  প্রতিটি আয় ও খরচের বিস্তারিত তালিকা ({financialReport.summary.filteredRecords.length} টি)
                 </h5>
               </div>
               <div className="overflow-x-auto">
@@ -576,14 +576,14 @@ export const ReportsView = ({
         {activeTab === 'milk' && (
           <div className="space-y-6">
             <div className="flex items-center justify-between border-b border-[#F2ECE1] pb-2">
-              <h4 className="font-bold text-lg text-[#16402C]">দুধ উৎপাদন, বিক্রয় ও ব্যবহার বিবরণী</h4>
+              <h4 className="font-bold text-lg text-[#16402C]">দুধ সংগ্রহ, বিক্রি ও বাছুরের দুধের হিসাব</h4>
               <span className="text-xs text-gray-500">মোট রেকর্ডকৃত দিন: {milkReport.distinctDaysCount} দিন</span>
             </div>
 
             {/* KPI Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 avoid-page-break">
               <div className="p-4 bg-[#FAF7F0] rounded-2xl border border-[#EAE2D0] metric-card">
-                <span className="text-xs text-gray-500 block">মোট সংগৃহীত দুধ</span>
+                <span className="text-xs text-gray-500 block">মোট দোয়ানো দুধ</span>
                 <span className="text-xl md:text-2xl font-black text-[#16402C] mt-1 block">
                   {milkReport.totalCollectedLiters} <span className="text-xs font-normal">লিটার</span>
                 </span>
@@ -593,7 +593,7 @@ export const ReportsView = ({
               </div>
 
               <div className="p-4 bg-[#FAF7F0] rounded-2xl border border-[#EAE2D0] metric-card">
-                <span className="text-xs text-gray-500 block">দৈনিক গড় সংগ্রহ</span>
+                <span className="text-xs text-gray-500 block">দৈনিক গড় দুধ দোয়ানো</span>
                 <span className="text-xl md:text-2xl font-black text-[#16402C] mt-1 block">
                   {milkReport.averageDailyCollection} <span className="text-xs font-normal">লিটার</span>
                 </span>
@@ -603,17 +603,17 @@ export const ReportsView = ({
               </div>
 
               <div className="p-4 bg-[#EAF5EE] rounded-2xl border border-[#C5E3D0] metric-card">
-                <span className="text-xs text-[#1B4D35] block font-semibold">মোট বিক্রিত দুধ ও রাজস্ব</span>
+                <span className="text-xs text-[#1B4D35] block font-semibold">মোট দুধ বিক্রি ও বিক্রির টাকা</span>
                 <span className="text-xl md:text-2xl font-black text-[#1B4D35] mt-1 block">
                   {milkReport.totalSoldLiters} <span className="text-xs font-normal">লিটার</span>
                 </span>
                 <span className="text-[11px] text-[#2A7A50] mt-0.5 block font-bold">
-                  বিক্রয় আয়: ৳ {milkReport.totalRevenueTk.toLocaleString('en-US')}
+                  মোট বিক্রির টাকা: ৳ {milkReport.totalRevenueTk.toLocaleString('en-US')}
                 </span>
               </div>
 
               <div className="p-4 bg-[#FEF9E7] rounded-2xl border border-[#F7E2A9] metric-card">
-                <span className="text-xs text-[#936709] block font-semibold">অবিক্রিত / বাছুরের খাদ্য</span>
+                <span className="text-xs text-[#936709] block font-semibold">বাছুরের দুধ ও খাওয়া</span>
                 <span className="text-xl md:text-2xl font-black text-[#805B00] mt-1 block">
                   {milkReport.totalRetainedLiters} <span className="text-xs font-normal">লিটার</span>
                 </span>
@@ -629,7 +629,7 @@ export const ReportsView = ({
                 <div className="bg-[#FAF7F0] px-4 py-3 border-b border-[#EAE2D0] flex items-center justify-between">
                   <h5 className="font-bold text-sm text-[#16402C] flex items-center gap-2">
                     <TrendingUp className="w-4 h-4 text-[#16402C]" />
-                    <span>মাসভিত্তিক দুধ সংগ্রহ ও রাজস্ব ট্রেন্ড</span>
+                    <span>মাসভিত্তিক দুধ দোয়ানো ও বিক্রির হিসাব</span>
                   </h5>
                   <span className="text-xs text-gray-500">মোট {milkReport.monthlyTrend.length} মাসের খতিয়ান</span>
                 </div>
@@ -665,7 +665,7 @@ export const ReportsView = ({
             {/* Daily Milk Breakdown Table */}
             <div className="border border-[#EAE2D0] rounded-2xl overflow-hidden avoid-page-break">
               <div className="bg-[#FAF7F0] px-4 py-3 border-b border-[#EAE2D0]">
-                <h5 className="font-bold text-sm text-[#16402C]">দৈনিক দুধ উৎপাদন ও বিক্রয় খতিয়ান</h5>
+                <h5 className="font-bold text-sm text-[#16402C]">দৈনিক দুধ দোয়ানো ও বিক্রির খাতা</h5>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs md:text-sm">
@@ -751,7 +751,7 @@ export const ReportsView = ({
         {activeTab === 'health' && (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#F2ECE1] pb-2 gap-2">
-              <h4 className="font-bold text-lg text-[#16402C]">গাভীর স্বাস্থ্য, টিকাদান ও চিকিৎসা প্রতিবেদন</h4>
+              <h4 className="font-bold text-lg text-[#16402C]">গরুর স্বাস্থ্য, টিকা ও চিকিৎসার খাতা</h4>
               <div className="flex items-center gap-2 text-xs">
                 <span className="text-gray-500">মোট সক্রিয়: {healthReport.totalActiveCows} টি</span>
                 {healthReport.totalArchivedCows > 0 && (
@@ -763,7 +763,7 @@ export const ReportsView = ({
             {/* KPI Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 avoid-page-break">
               <div className="p-4 bg-[#FAF7F0] rounded-2xl border border-[#EAE2D0] metric-card">
-                <span className="text-xs text-gray-500 block">মোট স্বাস্থ্য ইভেন্ট</span>
+                <span className="text-xs text-gray-500 block">মোট চিকিৎসা ও টিকা</span>
                 <span className="text-xl md:text-2xl font-black text-[#16402C] mt-1 block">
                   {healthReport.totalHealthEvents} <span className="text-xs font-normal">টি</span>
                 </span>
@@ -783,7 +783,7 @@ export const ReportsView = ({
               </div>
 
               <div className="p-4 bg-red-50 rounded-2xl border border-red-200 metric-card">
-                <span className="text-xs text-red-700 block font-semibold">মেয়াদোত্তীর্ণ অনুস্মারক</span>
+                <span className="text-xs text-red-700 block font-semibold">জরুরি টিকা বা কাজ (দেরি হয়েছে)</span>
                 <span className="text-xl md:text-2xl font-black text-red-700 mt-1 block">
                   {healthReport.overdueRemindersCount} <span className="text-xs font-normal">টি</span>
                 </span>
@@ -793,7 +793,7 @@ export const ReportsView = ({
               </div>
 
               <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 metric-card">
-                <span className="text-xs text-emerald-800 block font-semibold">আসন্ন স্বাস্থ্য ফলো-আপ</span>
+                <span className="text-xs text-emerald-800 block font-semibold">সামনের টিকা ও চিকিৎসা</span>
                 <span className="text-xl md:text-2xl font-black text-emerald-800 mt-1 block">
                   {healthReport.upcomingRemindersCount} <span className="text-xs font-normal">টি</span>
                 </span>
@@ -806,7 +806,7 @@ export const ReportsView = ({
             {/* Cow Status Distribution Badges */}
             <div className="p-4 bg-[#FAF7F0] rounded-2xl border border-[#EAE2D0] avoid-page-break">
               <h5 className="font-bold text-xs text-gray-700 uppercase tracking-wider mb-2">
-                গাভী ও বাছুরের বর্তমান অবস্থা বণ্টন (Herd Status)
+                খামারে বর্তমানে গরুর অবস্থা
               </h5>
               <div className="flex flex-wrap gap-2 text-xs">
                 <span className="px-3 py-1 bg-white border border-[#EAE2D0] rounded-xl text-[#16402C] font-semibold">
@@ -915,7 +915,7 @@ export const ReportsView = ({
         {activeTab === 'employees' && (
           <div className="space-y-6">
             <div className="flex items-center justify-between border-b border-[#F2ECE1] pb-2">
-              <h4 className="font-bold text-lg text-[#16402C]">কর্মী হাজিরা, দায়িত্ব ও বেতন বিবরণী</h4>
+              <h4 className="font-bold text-lg text-[#16402C]">কর্মীদের হাজিরা, কাজের দায়িত্ব ও বেতন</h4>
               <span className="text-xs text-gray-500">
                 সক্রিয়: {employeeReport.totalActiveEmployees} জন | সংরক্ষিত: {employeeReport.totalArchivedEmployees} জন
               </span>
@@ -967,7 +967,7 @@ export const ReportsView = ({
             {/* Attendance & Payroll Table */}
             <div className="border border-[#EAE2D0] rounded-2xl overflow-hidden avoid-page-break">
               <div className="bg-[#FAF7F0] px-4 py-3 border-b border-[#EAE2D0] flex items-center justify-between">
-                <h5 className="font-bold text-sm text-[#16402C]">কর্মীভিত্তিক হাজিরা, দায়িত্ব ও বেতন খতিয়ান</h5>
+                <h5 className="font-bold text-sm text-[#16402C]">প্রত্যেক কর্মীর হাজিরা ও বেতনের বিস্তারিত খাতা</h5>
                 <span className="text-xs text-gray-500">অনুপস্থিতি ও রেকর্ডবিহীন দিন সুস্পষ্টভাবে পৃথক</span>
               </div>
               <div className="overflow-x-auto">
@@ -1079,14 +1079,14 @@ export const ReportsView = ({
         {activeTab === 'biogas' && (
           <div className="space-y-6">
             <div className="flex items-center justify-between border-b border-[#F2ECE1] pb-2">
-              <h4 className="font-bold text-lg text-[#16402C]">বায়োগ্যাস প্ল্যান্ট দৈনিক ইনপুট ও নিরাপত্তা তদারকি</h4>
+              <h4 className="font-bold text-lg text-[#16402C]">বায়োগ্যাসে গোবর দেওয়া ও গ্যাস চুলার দৈনিক খাতা</h4>
               <span className="text-xs text-gray-500">মোট রেকর্ডকৃত দিন: {biogasReport.recordDaysCount} দিন</span>
             </div>
 
             {/* KPI Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 avoid-page-break">
               <div className="p-4 bg-[#FAF7F0] rounded-2xl border border-[#EAE2D0] metric-card">
-                <span className="text-xs text-gray-500 block">মোট গোবর ইনপুট</span>
+                <span className="text-xs text-gray-500 block">মোট গোবর দেওয়া হয়েছে</span>
                 <span className="text-xl md:text-2xl font-black text-[#16402C] mt-1 block">
                   {biogasReport.totalDungKg} <span className="text-xs font-normal">কেজি</span>
                 </span>
@@ -1096,7 +1096,7 @@ export const ReportsView = ({
               </div>
 
               <div className="p-4 bg-[#FAF7F0] rounded-2xl border border-[#EAE2D0] metric-card">
-                <span className="text-xs text-gray-500 block">মোট পানি ইনপুট</span>
+                <span className="text-xs text-gray-500 block">মোট পানি মেশানো হয়েছে</span>
                 <span className="text-xl md:text-2xl font-black text-[#16402C] mt-1 block">
                   {biogasReport.totalWaterLiters} <span className="text-xs font-normal">লিটার</span>
                 </span>
@@ -1106,7 +1106,7 @@ export const ReportsView = ({
               </div>
 
               <div className="p-4 bg-[#EAF5EE] rounded-2xl border border-[#C5E3D0] metric-card">
-                <span className="text-xs text-[#1B4D35] block font-semibold">চুলা চলার মোট সময়</span>
+                <span className="text-xs text-[#1B4D35] block font-semibold">চুলা জ্বলার মোট সময়</span>
                 <span className="text-xl md:text-2xl font-black text-[#1B4D35] mt-1 block">
                   {biogasReport.totalBurnHours} <span className="text-xs font-normal">ঘণ্টা</span>
                 </span>
@@ -1116,7 +1116,7 @@ export const ReportsView = ({
               </div>
 
               <div className="p-4 bg-[#FEF9E7] rounded-2xl border border-[#F7E2A9] metric-card">
-                <span className="text-xs text-[#936709] block font-semibold">মোট উৎপাদিত জৈব সার</span>
+                <span className="text-xs text-[#936709] block font-semibold">মোট পাওয়া জৈব সার (গোবরের সার)</span>
                 <span className="text-xl md:text-2xl font-black text-[#805B00] mt-1 block">
                   {biogasReport.totalSlurryBags} <span className="text-xs font-normal">বস্তা</span>
                 </span>
@@ -1129,7 +1129,7 @@ export const ReportsView = ({
             {/* Inspections Status Card */}
             <div className="p-4 bg-[#FAF7F0] rounded-2xl border border-[#EAE2D0] flex flex-col md:flex-row md:items-center justify-between gap-4 avoid-page-break">
               <div>
-                <h5 className="font-bold text-sm text-[#16402C]">অপারেশনাল ৫-দফা নিরাপত্তা পর্যবেক্ষণ</h5>
+                <h5 className="font-bold text-sm text-[#16402C]">বায়োগ্যাসের ৫-দফা নিরাপত্তা পরীক্ষা</h5>
                 <p className="text-xs text-gray-600 mt-0.5">
                   সম্পন্ন পরিদর্শন: {biogasReport.inspectionsCompletedCount}টি | সতর্কতামূলক ইস্যু সনাক্ত: {biogasReport.inspectionsIssuesCount}টি | আসন্ন তদারকি: {biogasReport.upcomingMaintenanceCount}টি
                 </p>
@@ -1181,7 +1181,7 @@ export const ReportsView = ({
             {/* Biogas Logs Table */}
             <div className="border border-[#EAE2D0] rounded-2xl overflow-hidden avoid-page-break">
               <div className="bg-[#FAF7F0] px-4 py-3 border-b border-[#EAE2D0]">
-                <h5 className="font-bold text-sm text-[#16402C]">বায়োগ্যাস প্ল্যান্টের দৈনিক লগ খতিয়ান</h5>
+                <h5 className="font-bold text-sm text-[#16402C]">বায়োগ্যাসের প্রতিদিনের কাজের খতিয়ান</h5>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs md:text-sm">

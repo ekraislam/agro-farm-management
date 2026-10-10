@@ -97,8 +97,8 @@ export const RecordAttendanceModal = ({
               <Calendar className="w-5 h-5 text-[#16402C]" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-[#16402C]">দৈনিক কর্মচারীর হাজিরা</h3>
-              <p className="text-xs text-gray-500 mt-0.5">উপস্থিতি ও কাজের সময় লিপিবদ্ধ করুন</p>
+              <h3 className="text-lg font-bold text-[#16402C]">কর্মীর দৈনিক হাজিরা</h3>
+              <p className="text-xs text-gray-500 mt-0.5">আজকের উপস্থিতি ও কাজের সময় লিখে রাখুন</p>
             </div>
           </div>
           <button
@@ -120,14 +120,14 @@ export const RecordAttendanceModal = ({
           {existingForDate && (
             <div className="p-3 bg-[#FAF7F0] border border-[#EAE2D0] rounded-2xl text-xs text-gray-700 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#E5B842] shrink-0" />
-              <span>এই তারিখে ইতিমধ্যে <strong>{existingForDate.statusBn}</strong> এন্ট্রি রয়েছে। সংরক্ষণ করলে আপডেট হবে।</span>
+              <span>এই তারিখে ইতিমধ্যে <strong>{existingForDate.statusBn}</strong> এন্ট্রি রয়েছে। সংরক্ষণ করলে হালনাগাদ হবে।</span>
             </div>
           )}
 
           {/* Employee Selection */}
           <div>
             <label className="block font-bold text-gray-700 mb-1">
-              কর্মচারী নির্বাচন করুন <span className="text-red-500">*</span>
+              কর্মী নির্বাচন করুন <span className="text-red-500">*</span>
             </label>
             <select
               value={selectedEmpId}
@@ -160,7 +160,7 @@ export const RecordAttendanceModal = ({
           {/* Attendance Status Radios */}
           <div>
             <label className="block font-bold text-gray-700 mb-2">
-              উপস্থিতির অবস্থা <span className="text-red-500">*</span>
+              আজকের অবস্থা <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-3 gap-2">
               <button
@@ -199,7 +199,7 @@ export const RecordAttendanceModal = ({
                 }`}
               >
                 <Clock className={`w-5 h-5 ${status === 'leave' ? 'text-[#D97706]' : 'text-gray-400'}`} />
-                <span className="text-xs">ছুটি (Leave)</span>
+                <span className="text-xs">ছুটি</span>
               </button>
             </div>
           </div>
@@ -209,7 +209,7 @@ export const RecordAttendanceModal = ({
             <div className="grid grid-cols-2 gap-3 p-3 bg-[#FAF7F0]/60 rounded-2xl border border-[#EAE2D0]">
               <div>
                 <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                  আগমনের সময়
+                  কাজে আসার সময়
                 </label>
                 <input
                   type="text"
@@ -222,7 +222,7 @@ export const RecordAttendanceModal = ({
 
               <div>
                 <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                  প্রস্থানের সময়
+                  ছুটির সময়
                 </label>
                 <input
                   type="text"
@@ -265,7 +265,7 @@ export const RecordAttendanceModal = ({
               disabled={isSubmitting}
               className="flex-1 py-2.5 rounded-xl bg-[#16402C] hover:bg-[#123323] text-white font-bold shadow-xs active:scale-95 transition-all text-xs flex items-center justify-center gap-2"
             >
-              {isSubmitting ? 'সংরক্ষণ হচ্ছে...' : 'হাজিরা নিশ্চিত করুন'}
+              {isSubmitting ? 'সংরক্ষণ হচ্ছে...' : 'হাজিরা সংরক্ষণ করুন'}
             </button>
           </div>
         </form>

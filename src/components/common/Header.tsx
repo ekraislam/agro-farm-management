@@ -139,7 +139,7 @@ export const Header = ({
               className="flex items-center gap-2 px-3.5 md:px-4 py-2.5 rounded-xl bg-[#16402C] hover:bg-[#123323] text-white font-semibold text-xs md:text-sm shadow-xs transition-all active:scale-95"
             >
               <Plus className="w-4 h-4 text-[#E5B842]" />
-              <span className="hidden sm:inline">নতুন এন্ট্রি</span>
+              <span className="hidden sm:inline">নতুন হিসাব</span>
               <span className="sm:hidden">যোগ</span>
             </button>
 
@@ -152,7 +152,7 @@ export const Header = ({
                 />
                 <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-[#E8DFC9] py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                   <div className="px-3 py-1.5 border-b border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
-                    দ্রুত এন্ট্রি করুন
+                    নতুন হিসাব লিখুন
                   </div>
 
                   <button
@@ -178,7 +178,7 @@ export const Header = ({
                     <div className="p-1.5 rounded-lg bg-[#9E2A2B]/10 text-[#9E2A2B]">
                       <Receipt className="w-4 h-4" />
                     </div>
-                    <span>খরচ / আয় যোগ</span>
+                    <span>আয় বা খরচ যোগ</span>
                   </button>
 
                   <button

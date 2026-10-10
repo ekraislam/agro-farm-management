@@ -73,21 +73,21 @@ export const Sidebar = ({
     },
     {
       id: 'reports',
-      labelBn: 'রিপোর্ট',
+      labelBn: 'হিসাব বিবরণী',
       labelEn: 'Reports',
       icon: FileBarChart,
     },
     {
       id: 'reminders',
-      labelBn: 'অনুস্মারক',
-      labelEn: 'Reminders',
+      labelBn: 'কাজের তালিকা',
+      labelEn: 'Tasks & Vaccine',
       icon: CalendarClock,
       badgeCount: pendingTasksCount,
     },
     {
       id: 'advisor',
-      labelBn: 'AI উপদেষ্টা',
-      labelEn: 'AI Advisor',
+      labelBn: 'স্মার্ট পরামর্শক',
+      labelEn: 'Farm Advisor',
       icon: Sparkles,
     },
     {
@@ -109,7 +109,7 @@ export const Sidebar = ({
             </div>
             <div>
               <h2 className="text-lg font-bold text-[#16402C] leading-none">মুমিন এগ্রো</h2>
-              <p className="text-xs text-gray-500 font-medium mt-1">খামার ড্যাশবোর্ড v1.0</p>
+              <p className="text-xs text-gray-500 font-medium mt-1">খামার ব্যবস্থাপনা</p>
             </div>
           </div>
         </div>
@@ -189,7 +189,7 @@ export const Sidebar = ({
             </div>
           </div>
           <div className="mt-2 pt-2 border-t border-gray-100 flex items-center justify-between text-[11px] text-[#2A7A50] font-semibold">
-            <span>২ জন কর্মী ডিউটিতে</span>
+            <span>২ জন কর্মী দায়িত্বে আছেন</span>
             <span className="w-2 h-2 rounded-full bg-[#2A7A50] animate-pulse" />
           </div>
         </div>
@@ -198,7 +198,7 @@ export const Sidebar = ({
         <div className="px-3 py-2 bg-[#FAF7F0] rounded-xl flex items-center justify-between text-xs text-gray-600">
           <div className="flex items-center gap-1.5">
             <PhoneCall className="w-3.5 h-3.5 text-[#16402C]" />
-            <span className="text-[11px]">ভেটেরিনারি ডাক্তার</span>
+            <span className="text-[11px]">পশু চিকিৎসক (ডাক্তার)</span>
           </div>
           <span className="text-[11px] font-bold text-[#16402C]">০১৭XX-XXXXXX</span>
         </div>

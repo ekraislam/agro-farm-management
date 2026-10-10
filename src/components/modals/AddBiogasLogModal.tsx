@@ -113,9 +113,9 @@ export const AddBiogasLogModal = ({
             </div>
             <div>
               <h3 className="text-lg font-bold text-[#16402C]">
-                {initialLog ? 'বায়োগ্যাস লগ সংশোধন' : 'দৈনিক বায়োগ্যাস ইনপুট ও লগ'}
+                {initialLog ? 'বায়োগ্যাস হিসাব সংশোধন' : 'দৈনিক বায়োগ্যাসে গোবর দেওয়ার হিসাব'}
               </h3>
-              <p className="text-xs text-gray-500 mt-0.5">গোবর ও পানির ইনপুট এবং চুলা চলার সময়</p>
+              <p className="text-xs text-gray-500 mt-0.5">গোবর ও পানি মেশানো এবং চুলা জ্বলার হিসাব</p>
             </div>
           </div>
           <button
@@ -137,7 +137,7 @@ export const AddBiogasLogModal = ({
           {/* Date */}
           <div>
             <label className="block font-bold text-gray-700 mb-1">
-              লগ রেকর্ডের তারিখ <span className="text-red-500">*</span>
+              তারিখ <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
@@ -153,7 +153,7 @@ export const AddBiogasLogModal = ({
             <div>
               <label className="block font-bold text-gray-700 mb-1 flex items-center gap-1">
                 <Flame className="w-3.5 h-3.5 text-[#8C6200]" />
-                <span>গোবর ইনপুট (কেজি)</span>
+                <span>গোবর দেওয়া হয়েছে (কেজি)</span>
               </label>
               <input
                 type="number"
@@ -175,7 +175,7 @@ export const AddBiogasLogModal = ({
             <div>
               <label className="block font-bold text-gray-700 mb-1 flex items-center gap-1">
                 <Droplet className="w-3.5 h-3.5 text-[#2A7A50]" />
-                <span>পানি মিশ্রণ (লিটার)</span>
+                <span>পানি মেশানো হয়েছে (লিটার)</span>
               </label>
               <input
                 type="number"
@@ -195,7 +195,7 @@ export const AddBiogasLogModal = ({
             </div>
           </div>
           <p className="text-[11px] text-gray-500 italic">
-            * পরামর্শ: সর্বোচ্চ গ্যাস উৎপাদনের জন্য গোবর ও পানির অনুপাত ১:১ রাখা উত্তম।
+            * নিয়ম: ভালো গ্যাস পাওয়ার জন্য গোবর ও পানির পরিমাণ সমান সমান (১:১) রাখবেন।
           </p>
 
           {/* Burn Hours & Slurry Produced */}
@@ -203,7 +203,7 @@ export const AddBiogasLogModal = ({
             <div>
               <label className="block font-bold text-gray-700 mb-1 flex items-center gap-1">
                 <Clock className="w-3.5 h-3.5 text-gray-500" />
-                <span>চুলা চলা (ঘণ্টা)</span>
+                <span>চুলা জ্বলার সময় (ঘণ্টা)</span>
               </label>
               <input
                 type="number"
@@ -226,7 +226,7 @@ export const AddBiogasLogModal = ({
             <div>
               <label className="block font-bold text-gray-700 mb-1 flex items-center gap-1">
                 <Sprout className="w-3.5 h-3.5 text-[#2A7A50]" />
-                <span>প্রাপ্ত স্লারি/সার (বস্তা)</span>
+                <span>উৎপাদিত জৈব সার (বস্তা)</span>
               </label>
               <input
                 type="number"
@@ -245,14 +245,14 @@ export const AddBiogasLogModal = ({
           <div>
             <label className="block font-bold text-gray-700 mb-1 flex items-center gap-1.5">
               <UserCheck className="w-3.5 h-3.5 text-gray-400" />
-              <span>দায়িত্বপ্রাপ্ত কর্মী (ঐচ্ছিক)</span>
+              <span>কে গোবর দিয়েছেন (ঐচ্ছিক)</span>
             </label>
             <select
               value={recordedByEmpId}
               onChange={(e) => setRecordedByEmpId(e.target.value)}
               className="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE2D0] outline-hidden focus:border-[#16402C] bg-[#FAF7F0]/40 font-medium"
             >
-              <option value="">কর্মচারী নির্বাচন করুন (ঐচ্ছিক)</option>
+              <option value="">কর্মী নির্বাচন করুন (ঐচ্ছিক)</option>
               {employees.map((emp) => (
                 <option key={emp.id} value={emp.id}>
                   {emp.name} ({emp.role})
@@ -265,13 +265,13 @@ export const AddBiogasLogModal = ({
           <div>
             <label className="block font-bold text-gray-700 mb-1 flex items-center gap-1.5">
               <FileText className="w-3.5 h-3.5 text-gray-400" />
-              <span>রক্ষণাবেক্ষণ ও অপারেশনাল মন্তব্য</span>
+              <span>মন্তব্য বা পর্যবেক্ষণ (ঐচ্ছিক)</span>
             </label>
             <input
               type="text"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="যেমন: গ্যাসের চাপ স্বাভাবিক, বার্নার পরিষ্কার রাখা হয়েছে"
+              placeholder="যেমন: গ্যাসের চাপ ভালো আছে, চুলা পরিষ্কার করা হয়েছে"
               className="w-full px-3.5 py-2.5 rounded-xl border border-[#EAE2D0] outline-hidden focus:border-[#16402C] bg-[#FAF7F0]/40 text-xs"
             />
           </div>
@@ -291,7 +291,7 @@ export const AddBiogasLogModal = ({
               disabled={isSubmitting}
               className="flex-1 py-2.5 rounded-xl bg-[#16402C] hover:bg-[#123323] text-white font-bold shadow-xs active:scale-95 transition-all text-xs flex items-center justify-center gap-2"
             >
-              {isSubmitting ? 'সংরক্ষণ হচ্ছে...' : 'লগ সংরক্ষণ করুন'}
+              {isSubmitting ? 'সংরক্ষণ হচ্ছে...' : 'হিসাব সংরক্ষণ করুন'}
             </button>
           </div>
         </form>

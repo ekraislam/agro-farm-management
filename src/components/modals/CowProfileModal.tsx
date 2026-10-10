@@ -72,13 +72,13 @@ export const CowProfileModal = ({
                 </span>
                 {cow.isArchived && (
                   <span className="text-[11px] font-bold bg-amber-400 text-amber-950 px-2 py-0.5 rounded-md">
-                    আর্কাইভকৃত
+                    পুরোনো তালিকায় রাখা
                   </span>
                 )}
                 {isMilking && <Badge variant="success">দুধাল গাভী</Badge>}
                 {isPregnant && <Badge variant="gold">গাভীন</Badge>}
                 {isCalf && <Badge variant="info">বাছুর</Badge>}
-                {isDry && <Badge variant="neutral">ড্রাই / শুকনো</Badge>}
+                {isDry && <Badge variant="neutral">দুধ বন্ধ</Badge>}
                 {isSick && <Badge variant="danger">অসুস্থ</Badge>}
                 {isSold && <Badge variant="neutral">বিক্রি হয়েছে</Badge>}
               </div>
@@ -97,14 +97,14 @@ export const CowProfileModal = ({
               className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 transition-colors"
             >
               <Edit3 className="w-3.5 h-3.5 text-[#E5B842]" />
-              <span>সম্পাদনা</span>
+              <span>তথ্য পরিবর্তন</span>
             </button>
             <button
               onClick={() => onRequestDeleteOrArchive(cow)}
               className="px-3 py-1.5 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-200 text-xs font-bold flex items-center gap-1.5 transition-colors"
             >
               <Trash2 className="w-3.5 h-3.5" />
-              <span>মুছুন / আর্কাইভ</span>
+              <span>মুছুন / পুরোনো তালিকায় রাখুন</span>
             </button>
             <button
               onClick={onClose}
@@ -139,7 +139,7 @@ export const CowProfileModal = ({
             }`}
           >
             <Droplets className="w-4 h-4 text-[#2A7A50]" />
-            <span>দুধের রেকর্ড ({cowMilkHistory.length})</span>
+            <span>দুধের খাতা ({cowMilkHistory.length})</span>
           </button>
 
           <button
@@ -166,13 +166,13 @@ export const CowProfileModal = ({
                   <div className="flex items-center justify-between text-xs md:text-sm">
                     <span className="text-gray-700">জাত: <strong>{cow.breed}</strong></span>
                     <span className="font-bold text-[#16402C]">
-                      {cow.gender === 'male' ? 'এঁড়ে / ষাঁড়' : 'গাভী (মাদী)'}
+                      {cow.gender === 'male' ? 'ষাঁড় / বাছুর' : 'গাভী / বকনা'}
                     </span>
                   </div>
                 </div>
 
                 <div className="p-3.5 rounded-2xl bg-[#FAF7F0] border border-[#EAE2D0]">
-                  <span className="text-[11px] font-semibold text-gray-500 block mb-1">বয়স নির্ধারণ</span>
+                  <span className="text-[11px] font-semibold text-gray-500 block mb-1">বয়সের হিসাব</span>
                   <div className="text-xs md:text-sm">
                     {cow.isAgeEstimated !== false ? (
                       <p className="font-semibold text-gray-900">
@@ -181,14 +181,14 @@ export const CowProfileModal = ({
                     ) : (
                       <p className="font-semibold text-gray-900">
                         জন্মতারিখ: {cow.dateOfBirth || 'প্রদত্ত'} <br />
-                        <span className="text-[#2A7A50] text-xs font-bold">({cow.ageYears} বছর — যাচাইকৃত)</span>
+                        <span className="text-[#2A7A50] text-xs font-bold">({cow.ageYears} বছর — সঠিক)</span>
                       </p>
                     )}
                   </div>
                 </div>
 
                 <div className="p-3.5 rounded-2xl bg-[#FAF7F0] border border-[#EAE2D0]">
-                  <span className="text-[11px] font-semibold text-gray-500 block mb-1">দুধের বর্তমান স্থিতি</span>
+                  <span className="text-[11px] font-semibold text-gray-500 block mb-1">দুধ দোয়ানোর অবস্থা</span>
                   <p className="text-xs md:text-sm text-gray-900 font-semibold">
                     {isMilking ? (
                       <span>দৈনিক গড় দুধ: <strong className="text-[#16402C]">{cow.dailyAvgMilkLiters} লিটার</strong></span>
@@ -199,7 +199,7 @@ export const CowProfileModal = ({
                 </div>
 
                 <div className="p-3.5 rounded-2xl bg-[#FAF7F0] border border-[#EAE2D0]">
-                  <span className="text-[11px] font-semibold text-gray-500 block mb-1">ক্রয় ও আর্থিক তথ্য</span>
+                  <span className="text-[11px] font-semibold text-gray-500 block mb-1">কেনা ও খরচের তথ্য</span>
                   <div className="text-xs md:text-sm text-gray-900">
                     {cow.purchasePrice ? (
                       <p className="font-semibold text-[#16402C]">
@@ -207,7 +207,7 @@ export const CowProfileModal = ({
                         {cow.purchaseDate && <span className="text-gray-500 text-xs font-normal"> ({cow.purchaseDate})</span>}
                       </p>
                     ) : (
-                      <p className="text-gray-400">খামারেই জন্ম বা ক্রয়ের তথ্য যোগ করা হয়নি</p>
+                      <p className="text-gray-400">খামারেই জন্ম অথবা কেনা মূল্যের তথ্য নেই</p>
                     )}
                   </div>
                 </div>
@@ -220,7 +220,7 @@ export const CowProfileModal = ({
                     <Activity className="w-5 h-5 text-[#936709]" />
                     <div>
                       <h4 className="text-sm font-bold text-[#936709]">সম্ভাব্য প্রসবের তারিখ</h4>
-                      <p className="text-xs text-gray-600">বাছুর প্রসবের সম্ভাব্য সময়সূচি</p>
+                      <p className="text-xs text-gray-600">বাছুর প্রসবের সম্ভাব্য সময়</p>
                     </div>
                   </div>
                   <span className="text-sm font-extrabold text-[#936709]">{cow.expectedCalvingDate}</span>
@@ -230,7 +230,7 @@ export const CowProfileModal = ({
               {/* Notes Card */}
               {cow.notes && (
                 <div className="p-4 rounded-2xl bg-white border border-[#EAE2D0] space-y-1">
-                  <h4 className="text-xs font-bold text-gray-700">নোট ও বিশেষ লক্ষণ:</h4>
+                  <h4 className="text-xs font-bold text-gray-700">নোট বা বিশেষ লক্ষণ:</h4>
                   <p className="text-xs md:text-sm text-gray-600 leading-relaxed">{cow.notes}</p>
                 </div>
               )}
@@ -246,7 +246,7 @@ export const CowProfileModal = ({
                     className="flex-1 py-2.5 px-4 rounded-xl bg-[#16402C] hover:bg-[#123323] text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors"
                   >
                     <Droplets className="w-4 h-4 text-[#E5B842]" />
-                    <span>আজকের দুধের হিসাব দিন</span>
+                    <span>আজকের দুধের হিসাব লিখুন</span>
                   </button>
                 )}
                 <button
@@ -257,7 +257,7 @@ export const CowProfileModal = ({
                   className="flex-1 py-2.5 px-4 rounded-xl bg-[#FAF7F0] hover:bg-[#EAE2D0] text-[#16402C] border border-[#EAE2D0] font-bold text-xs flex items-center justify-center gap-2 transition-colors"
                 >
                   <ShieldCheck className="w-4 h-4 text-[#2A7A50]" />
-                  <span>টিকা/চিকিৎসা যোগ করুন</span>
+                  <span>টিকা বা চিকিৎসা লিখুন</span>
                 </button>
               </div>
             </div>
@@ -269,7 +269,7 @@ export const CowProfileModal = ({
               {/* Milk Stats Summary */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 <div className="p-3 rounded-2xl bg-[#EAF5EE] border border-[#C5E3D0] text-center">
-                  <span className="text-[10px] font-bold text-[#1B4D35] block">মোট দুধ (রেকর্ডকৃত)</span>
+                  <span className="text-[10px] font-bold text-[#1B4D35] block">মোট দোয়ানো দুধ</span>
                   <strong className="text-base font-black text-[#16402C]">{cowMilkStats.totalLiters} লিটার</strong>
                 </div>
                 <div className="p-3 rounded-2xl bg-[#EAF5EE] border border-[#C5E3D0] text-center">
@@ -277,7 +277,7 @@ export const CowProfileModal = ({
                   <strong className="text-base font-black text-[#16402C]">{cowMilkStats.averageDailyLiters} লিটার</strong>
                 </div>
                 <div className="p-3 rounded-2xl bg-[#FAF7F0] border border-[#EAE2D0] text-center">
-                  <span className="text-[10px] font-bold text-gray-600 block">মোট এন্ট্রি দিন</span>
+                  <span className="text-[10px] font-bold text-gray-600 block">মোট দোয়ানোর দিন</span>
                   <strong className="text-base font-black text-gray-900">{cowMilkStats.recordCount} দিন</strong>
                 </div>
                 <div className="p-3 rounded-2xl bg-[#FAF7F0] border border-[#EAE2D0] text-center">
@@ -288,7 +288,7 @@ export const CowProfileModal = ({
 
               {/* Action: Add Milk for this cow */}
               <div className="flex items-center justify-between pt-1">
-                <h4 className="text-xs font-bold text-[#16402C]">উৎপাদনের বিস্তারিত ইতিহাস</h4>
+                <h4 className="text-xs font-bold text-[#16402C]">দুধ দোয়ানোর বিস্তারিত খাতা</h4>
                 <button
                   onClick={() => {
                     onClose();
@@ -297,7 +297,7 @@ export const CowProfileModal = ({
                   className="px-3 py-1.5 rounded-xl bg-[#16402C] hover:bg-[#123323] text-white text-xs font-bold flex items-center gap-1.5 transition-colors shadow-xs"
                 >
                   <Plus className="w-3.5 h-3.5 text-[#E5B842]" />
-                  <span>দুধের রেকর্ড যোগ</span>
+                  <span>দুধের হিসাব লিখুন</span>
                 </button>
               </div>
 
@@ -314,11 +314,11 @@ export const CowProfileModal = ({
                           <span className="font-bold text-gray-900">{rec.date}</span>
                           {rec.isSold ? (
                             <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-[#EAF5EE] text-[#1B4D35] border border-[#C5E3D0]">
-                              বিক্রিত (৳{rec.totalAmount})
+                              বিক্রি (৳{rec.totalAmount})
                             </span>
                           ) : (
                             <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-800">
-                              বাছুরের জন্য / অভ্যন্তরীণ
+                              বাছুরের খাওয়া ও নিজেরা ব্যবহার
                             </span>
                           )}
                         </div>
@@ -340,7 +340,7 @@ export const CowProfileModal = ({
                 <div className="p-8 text-center bg-[#FAF7F0] rounded-2xl border border-[#EAE2D0]">
                   <Droplets className="w-8 h-8 text-gray-300 mx-auto mb-2" />
                   <p className="text-xs text-gray-500 font-medium">
-                    এই গরুর জন্য একক কোনো দুধের রেকর্ড এখনো যোগ করা হয়নি।
+                    এই গরুর জন্য আলাদা কোনো দুধের হিসাব এখনো লেখা হয়নি।
                   </p>
                 </div>
               )}
@@ -352,8 +352,8 @@ export const CowProfileModal = ({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="text-xs font-bold text-[#16402C]">টিকা ও চিকিৎসার ধারাবাহিক তালিকা</h4>
-                  <p className="text-[11px] text-gray-500">কালানুক্রমিক স্বাস্থ্যসেবা ও পরবর্তী শিডিউল</p>
+                  <h4 className="text-xs font-bold text-[#16402C]">টিকা ও চিকিৎসার তালিকা</h4>
+                  <p className="text-[11px] text-gray-500">সব চিকিৎসা ও পরবর্তী তারিখের হিসাব</p>
                 </div>
                 <button
                   onClick={() => {
@@ -363,7 +363,7 @@ export const CowProfileModal = ({
                   className="px-3 py-1.5 rounded-xl bg-[#16402C] hover:bg-[#123323] text-white text-xs font-bold flex items-center gap-1.5 transition-colors shadow-xs"
                 >
                   <Plus className="w-3.5 h-3.5 text-[#E5B842]" />
-                  <span>নতুন সেবা যোগ</span>
+                  <span>চিকিৎসার হিসাব লিখুন</span>
                 </button>
               </div>
 
@@ -401,7 +401,7 @@ export const CowProfileModal = ({
                       {h.nextDueDate && (
                         <div className="p-2 rounded-xl bg-[#FEF9E7] border border-[#F7E2A9] flex items-center justify-between text-[11px]">
                           <span className="font-semibold text-[#936709] flex items-center gap-1">
-                            <Calendar className="w-3 h-3" /> পরবর্তী বুস্টার / ফলো-আপ:
+                            <Calendar className="w-3 h-3" /> পরবর্তী টিকা বা ডাক্তার দেখানোর তারিখ:
                           </span>
                           <strong className="text-[#936709]">{h.nextDueDate}</strong>
                         </div>
@@ -419,7 +419,7 @@ export const CowProfileModal = ({
                 <div className="p-8 text-center bg-[#FAF7F0] rounded-2xl border border-[#EAE2D0]">
                   <ShieldCheck className="w-8 h-8 text-gray-300 mx-auto mb-2" />
                   <p className="text-xs text-gray-500 font-medium">
-                    এই গরুর জন্য এখনো কোনো টিকা বা স্বাস্থ্য রেকর্ড যোগ করা হয়নি।
+                    এই গরুর জন্য এখনো কোনো টিকা বা চিকিৎসার তথ্য লেখা হয়নি।
                   </p>
                 </div>
               )}

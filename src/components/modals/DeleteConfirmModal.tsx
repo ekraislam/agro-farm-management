@@ -30,8 +30,8 @@ export const DeleteConfirmModal = ({
               <AlertTriangle className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-gray-900">লেনদেন মুছে ফেলার নিশ্চিতকরণ</h3>
-              <p className="text-xs text-red-700 mt-0.5">স্থায়ীভাবে রেকর্ডটি অপসারিত হবে</p>
+              <h3 className="text-base font-bold text-gray-900">হিসাব মুছে ফেলার সতর্কতা</h3>
+              <p className="text-xs text-red-700 mt-0.5">মুছে ফেললে এই হিসাবটি আর পাওয়া যাবে না</p>
             </div>
           </div>
           <button
@@ -46,20 +46,20 @@ export const DeleteConfirmModal = ({
         {/* Content */}
         <div className="p-5 space-y-4">
           <p className="text-sm text-gray-600">
-            আপনি কি নিশ্চিত যে নিচের এই লেনদেন রেকর্ডটি স্থায়ীভাবে মুছে ফেলতে চান?
+            আপনি কি নিশ্চিত যে নিচের এই হিসাবটি তালিকা থেকে মুছে ফেলতে চান?
           </p>
 
           <div className="p-4 rounded-2xl bg-[#FAF7F0] border border-[#EAE2D0] space-y-2">
             <div className="flex justify-between items-start">
-              <span className="text-xs font-semibold text-gray-500">শিরোনাম:</span>
+              <span className="text-xs font-semibold text-gray-500">বিবরণ:</span>
               <span className="text-sm font-bold text-gray-900 text-right">{record.title}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-xs font-semibold text-gray-500">ধরণ:</span>
+              <span className="text-xs font-semibold text-gray-500">ধরন:</span>
               <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${
                 isIncome ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
               }`}>
-                {isIncome ? 'আয় (Income)' : 'ব্যয় (Expense)'}
+                {isIncome ? 'জমা (আয়)' : 'খরচ (ব্যয়)'}
               </span>
             </div>
             <div className="flex justify-between items-center">
@@ -76,7 +76,7 @@ export const DeleteConfirmModal = ({
             </div>
             {record.relatedMilkRecordId && (
               <div className="mt-2 pt-2 border-t border-[#EAE2D0] text-[11px] text-amber-700">
-                ℹ️ এটি একটি দুধ বিক্রয়ের সাথে সংযুক্ত রেকর্ড। এটি মুছলে মোট আয়ের হিসাব সমন্বয় হবে।
+                ℹ️ এটি দুধ বিক্রির টাকার সাথে যুক্ত। মুছে ফেললে মোট জমার হিসাব কমে যাবে।
               </div>
             )}
           </div>

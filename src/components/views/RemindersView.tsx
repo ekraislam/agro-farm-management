@@ -175,10 +175,10 @@ export const RemindersView = ({
           </div>
           <div>
             <h2 className="text-xl md:text-2xl font-bold text-[#16402C]">
-              খামারের স্মার্ট অনুস্মারক ও কাজের কেন্দ্র
+              খামারের জরুরি কাজ ও টিকার তালিকা
             </h2>
             <p className="text-xs md:text-sm text-gray-500 mt-0.5">
-              টিকা শিডিউল, গাভীর চিকিৎসা, পশুখাদ্য ক্রয়, বায়োগ্যাস তদারকি ও কর্মীভিত্তিক কাজের সমন্বিত তালিকা
+              গরুর টিকা, ডাক্তারের সেবা, ঘাস-ভুসি কেনা এবং খামারের কাজের হিসাব
             </p>
           </div>
         </div>
@@ -203,11 +203,11 @@ export const RemindersView = ({
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-red-700">মেয়াদোত্তীর্ণ (Overdue)</span>
+            <span className="text-xs font-bold text-red-700">দেরি হয়ে গেছে (জরুরি)</span>
             <AlertTriangle className="w-4 h-4 text-red-600" />
           </div>
           <span className="text-2xl font-black text-red-700 mt-1 block">{overdue.length}</span>
-          <span className="text-[10px] text-red-600 mt-0.5 block">জরুরি পদক্ষেপ নিন</span>
+          <span className="text-[10px] text-red-600 mt-0.5 block">দ্রুত ব্যবস্থা নিন</span>
         </div>
 
         <div
@@ -219,11 +219,11 @@ export const RemindersView = ({
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-amber-800">আজকের কাজ (Due Today)</span>
+            <span className="text-xs font-bold text-amber-800">আজকের কাজ</span>
             <Clock className="w-4 h-4 text-amber-600" />
           </div>
           <span className="text-2xl font-black text-amber-800 mt-1 block">{dueToday.length}</span>
-          <span className="text-[10px] text-amber-700 mt-0.5 block">আজই সম্পন্ন করুন</span>
+          <span className="text-[10px] text-amber-700 mt-0.5 block">আজই শেষ করুন</span>
         </div>
 
         <div
@@ -235,7 +235,7 @@ export const RemindersView = ({
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-emerald-800">আগামী ৭ দিন (Due Soon)</span>
+            <span className="text-xs font-bold text-emerald-800">আগামী ৭ দিন</span>
             <Calendar className="w-4 h-4 text-emerald-600" />
           </div>
           <span className="text-2xl font-black text-emerald-800 mt-1 block">{dueSoon.length}</span>
@@ -251,11 +251,11 @@ export const RemindersView = ({
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-blue-800">পরবর্তী কাজ (Later)</span>
+            <span className="text-xs font-bold text-blue-800">ভবিষ্যতের কাজ</span>
             <CalendarClock className="w-4 h-4 text-blue-600" />
           </div>
           <span className="text-2xl font-black text-blue-800 mt-1 block">{upcoming.length}</span>
-          <span className="text-[10px] text-blue-700 mt-0.5 block">৭ দিন পরবর্তী শিডিউল</span>
+          <span className="text-[10px] text-blue-700 mt-0.5 block">পরবর্তী শিডিউল</span>
         </div>
 
         <div
@@ -267,7 +267,7 @@ export const RemindersView = ({
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-gray-700">সম্পন্ন কাজ (Completed)</span>
+            <span className="text-xs font-bold text-gray-700">শেষ হওয়া কাজ</span>
             <CheckCircle className="w-4 h-4 text-gray-500" />
           </div>
           <span className="text-2xl font-black text-gray-700 mt-1 block">{completed.length}</span>

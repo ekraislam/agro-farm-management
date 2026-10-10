@@ -101,9 +101,9 @@ export const FinanceView = ({
             <Receipt className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl md:text-2xl font-bold text-[#16402C]">খামারের আয় ও ব্যয় ব্যবস্থাপনা</h2>
+            <h2 className="text-xl md:text-2xl font-bold text-[#16402C]">খামারের জমা ও খরচের খাতা</h2>
             <p className="text-xs md:text-sm text-gray-500 mt-0.5">
-              পশুখাদ্য, চিকিৎসা, কর্মচারী বেতন, এবং দুধ ও জৈব সার বিক্রির নির্ভুল হিসাব
+              দুধ ও সার বিক্রি থেকে জমা এবং খাবার, ঔষধ ও কর্মীদের বেতনের খরচ
             </p>
           </div>
         </div>
@@ -113,7 +113,7 @@ export const FinanceView = ({
           className="self-start sm:self-auto px-5 py-3 rounded-2xl bg-[#16402C] hover:bg-[#123323] text-white font-bold text-sm shadow-xs flex items-center gap-2 transition-all active:scale-95"
         >
           <Plus className="w-5 h-5 text-[#E5B842]" />
-          <span>নতুন লেনদেন যোগ করুন</span>
+          <span>আয় বা খরচ যোগ করুন</span>
         </button>
       </div>
 
@@ -180,7 +180,7 @@ export const FinanceView = ({
                   : 'bg-[#FAF7F0] text-gray-600 hover:bg-[#F2ECE1]'
               }`}
             >
-              কাস্টম তারিখ
+              নির্দিষ্ট তারিখ
             </button>
           </div>
         </div>
@@ -223,12 +223,12 @@ export const FinanceView = ({
         {/* Total Income */}
         <div className="bg-[#FAF7F0] rounded-2xl p-4 border border-[#EAE2D0] flex items-center justify-between shadow-xs">
           <div>
-            <p className="text-xs font-semibold text-gray-600">মোট অর্জিত আয়</p>
+            <p className="text-xs font-semibold text-gray-600">মোট জমা (আয়)</p>
             <p className="text-2xl font-bold text-[#16402C] mt-1">
               ৳ {summary.totalIncome.toLocaleString('en-US')}
             </p>
             <p className="text-[11px] text-[#2A7A50] mt-0.5 font-medium">
-              দুধ ও অন্যান্য প্রাপ্তি ({summary.incomeRecordsCount}টি এন্ট্রি)
+              দুধ ও অন্যান্য বিক্রি ({summary.incomeRecordsCount}টি হিসাব)
             </p>
           </div>
           <div className="p-3 rounded-xl bg-[#EAF5EE] text-[#1B4D35] border border-[#C5E3D0]">
@@ -239,12 +239,12 @@ export const FinanceView = ({
         {/* Total Expenses */}
         <div className="bg-[#FAF7F0] rounded-2xl p-4 border border-[#EAE2D0] flex items-center justify-between shadow-xs">
           <div>
-            <p className="text-xs font-semibold text-gray-600">মোট পরিশোধিত ব্যয়</p>
+            <p className="text-xs font-semibold text-gray-600">মোট খরচ (ব্যয়)</p>
             <p className="text-2xl font-bold text-[#9E2A2B] mt-1">
               ৳ {summary.totalExpenses.toLocaleString('en-US')}
             </p>
             <p className="text-[11px] text-[#9E2A2B] mt-0.5 font-medium">
-              খাদ্য, বেতন, চিকিৎসা ({summary.expenseRecordsCount}টি এন্ট্রি)
+              খাবার, বেতন ও চিকিৎসা ({summary.expenseRecordsCount}টি হিসাব)
             </p>
           </div>
           <div className="p-3 rounded-xl bg-[#FDF2F2] text-[#9E2A2B] border border-[#F8C8C8]">
@@ -255,7 +255,7 @@ export const FinanceView = ({
         {/* Net Operating Result */}
         <div className="bg-[#FAF7F0] rounded-2xl p-4 border border-[#EAE2D0] flex items-center justify-between shadow-xs">
           <div>
-            <p className="text-xs font-semibold text-gray-600">নিট পরিচালন ফলাফল</p>
+            <p className="text-xs font-semibold text-gray-600">হাতে থাকা নিট লাভ / উদ্বৃত্ত</p>
             <p className={`text-2xl font-bold mt-1 ${
               summary.isSurplus ? 'text-[#16402C]' : 'text-[#9E2A2B]'
             }`}>
@@ -281,7 +281,7 @@ export const FinanceView = ({
       <div className="p-3 bg-amber-50/70 border border-amber-200/80 rounded-2xl flex items-start gap-2.5 text-amber-900 text-xs">
         <HelpCircle className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
         <p>
-          <strong>হিসাবরক্ষণ জ্ঞাতব্য:</strong> {summary.disclaimerBn}
+          <strong>হিসাবের তথ্য:</strong> {summary.disclaimerBn}
         </p>
       </div>
 
@@ -340,12 +340,12 @@ export const FinanceView = ({
               <div className="p-1.5 rounded-lg bg-[#16402C]/10 text-[#16402C]">
                 <CreditCard className="w-4 h-4" />
               </div>
-              <h3 className="font-bold text-base text-[#16402C]">লেনদেন মাধ্যমের সারসংক্ষেপ</h3>
+              <h3 className="font-bold text-base text-[#16402C]">টাকা আদান-প্রদানের মাধ্যম</h3>
             </div>
 
             <div className="grid grid-cols-3 gap-2 mt-3 pt-1">
               <div className="p-2.5 rounded-xl bg-[#FAF7F0] border border-[#EAE2D0] text-center">
-                <span className="text-xs font-bold text-gray-700 block">নগদ (Cash)</span>
+                <span className="text-xs font-bold text-gray-700 block">নগদ টাকা (Cash)</span>
                 <span className="text-xs text-[#16402C] font-extrabold block mt-1">
                   +৳ {summary.paymentMethodBreakdown.cash.income.toLocaleString('en-US')}
                 </span>
@@ -365,7 +365,7 @@ export const FinanceView = ({
               </div>
 
               <div className="p-2.5 rounded-xl bg-[#FAF7F0] border border-[#EAE2D0] text-center">
-                <span className="text-xs font-bold text-gray-700 block">ব্যাংক (Bank)</span>
+                <span className="text-xs font-bold text-gray-700 block">ব্যাংক একাউন্ট</span>
                 <span className="text-xs text-[#16402C] font-extrabold block mt-1">
                   +৳ {summary.paymentMethodBreakdown.bank.income.toLocaleString('en-US')}
                 </span>
@@ -395,7 +395,7 @@ export const FinanceView = ({
         {/* Type Filter Buttons */}
         <div className="flex items-center gap-1.5 w-full md:w-auto justify-end">
           <span className="text-xs font-bold text-gray-500 mr-1 flex items-center gap-1">
-            <Filter className="w-3.5 h-3.5" /> ধরন:
+            <Filter className="w-3.5 h-3.5" /> হিসাবের ধরন:
           </span>
           <button
             onClick={() => setTypeFilter('all')}
@@ -415,7 +415,7 @@ export const FinanceView = ({
                 : 'bg-[#FAF7F0] text-gray-600 hover:bg-[#F2ECE1]'
             }`}
           >
-            শুধু আয় ({summary.incomeRecordsCount})
+            শুধু জমা ({summary.incomeRecordsCount})
           </button>
           <button
             onClick={() => setTypeFilter('expense')}
@@ -437,11 +437,11 @@ export const FinanceView = ({
             <div className="w-12 h-12 rounded-2xl bg-[#FAF7F0] text-gray-400 flex items-center justify-center mx-auto">
               <Receipt className="w-6 h-6" />
             </div>
-            <h4 className="text-sm font-bold text-gray-800">কোনো লেনদেন পাওয়া যায়নি</h4>
+            <h4 className="text-sm font-bold text-gray-800">কোনো হিসাব পাওয়া যায়নি</h4>
             <p className="text-xs text-gray-500 max-w-sm mx-auto">
               {searchQuery
                 ? 'আপনার খোঁজের সাথে মেলে এমন কোনো রেকর্ড নেই।'
-                : 'নির্বাচিত মেয়াদে কোনো আর্থিক লেনদেন লিপিবদ্ধ করা হয়নি। নতুন হিসাব যোগ করতে উপরের বোতাম চাপুন।'}
+                : 'নির্বাচিত সময়ে কোনো আয় বা খরচের হিসাব পাওয়া যায়নি। নতুন হিসাব লিখতে উপরের বোতামে চাপ দিন।'}
             </p>
           </div>
         ) : (

@@ -180,9 +180,9 @@ export const DashboardView = ({
       <div>
         <div className="flex items-center justify-between mb-3 px-1">
           <h3 className="font-bold text-base md:text-lg text-[#16402C]">
-            খামারের সার্বিক সারাংশ
+            আজকের খামারের অবস্থা
           </h3>
-          <span className="text-xs text-gray-500">আজকের রিয়েল-টাইম তথ্য</span>
+          <span className="text-xs text-gray-500">আজকের হালনাগাদ তথ্য</span>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
@@ -206,7 +206,7 @@ export const DashboardView = ({
             title="আজকের দুধ"
             value={summary.todayMilkLiters}
             unit="লিটার"
-            subtitle={summary.todayMilkLiters > 0 ? 'দৈনিক মোট উৎপাদন' : 'আজকের দুধের হিসাব দিন'}
+            subtitle={summary.todayMilkLiters > 0 ? 'দৈনিক মোট সংগ্রহ' : 'আজকের দুধের হিসাব দিন'}
             icon={Droplets}
             variant="cream"
             trend={summary.todayMilkLiters > 0 ? { text: 'আজকের সংগৃহীত', isPositive: true } : undefined}
@@ -217,7 +217,7 @@ export const DashboardView = ({
           <StatCard
             title="আজকের আয়"
             value={`৳${summary.todayIncomeTk.toLocaleString('en-US')}`}
-            subtitle="দুধ বিক্রি ও ক্যাশ আদায়"
+            subtitle="দুধ বিক্রি থেকে জমা"
             icon={DollarSign}
             variant="gold"
             trend={summary.todayIncomeTk > 0 ? { text: 'নগদ জমা', isPositive: true } : undefined}
@@ -238,10 +238,10 @@ export const DashboardView = ({
           <StatCard
             title="মাসিক নিট লাভ"
             value={`৳${summary.estimatedMonthProfitTk.toLocaleString('en-US')}`}
-            subtitle="আনুমানিক উদ্বৃত্ত আয়"
+            subtitle="হাতে থাকা নিট লাভ"
             icon={TrendingUp}
             variant="green"
-            trend={summary.estimatedMonthProfitTk > 0 ? { text: 'উদ্বৃত্ত', isPositive: true } : undefined}
+            trend={summary.estimatedMonthProfitTk > 0 ? { text: 'লাভজনক', isPositive: true } : undefined}
             onClick={() => onNavigate('reports')}
           />
 
@@ -250,10 +250,10 @@ export const DashboardView = ({
             title="বাকি কাজ"
             value={summary.pendingTasksCount}
             unit="টি"
-            subtitle="টিকা ও নিয়মিত কার্যক্রম"
+            subtitle="টিকা ও খামারের কাজ"
             icon={CalendarClock}
             variant="blue"
-            trend={summary.pendingTasksCount > 0 ? { text: 'মনোযোগ দিন', isPositive: false } : undefined}
+            trend={summary.pendingTasksCount > 0 ? { text: 'জরুরি', isPositive: false } : undefined}
             onClick={() => onNavigate('reminders')}
           />
         </div>
@@ -279,13 +279,13 @@ export const DashboardView = ({
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h4 className="font-bold text-base text-[#16402C]">বায়োগ্যাস প্ল্যান্ট অবস্থা</h4>
+                  <h4 className="font-bold text-base text-[#16402C]">বায়োগ্যাস প্ল্যান্টের অবস্থা</h4>
                   <span className="text-xs bg-[#EAF5EE] text-[#1B4D35] px-2.5 py-0.5 rounded-full font-bold border border-[#C5E3D0]">
                     {latestBiogas.statusBn}
                   </span>
                 </div>
                 <p className="text-xs text-gray-600 mt-1">
-                  আজকের গোবর ইনপুট: <strong>{latestBiogas.dungInputKg} কেজি</strong> • দৈনিক গ্যাস সরবরাহ: <strong>{latestBiogas.burnHoursToday} ঘণ্টা</strong> • সার: <strong>{latestBiogas.slurryProducedBags} বস্তা</strong>
+                  আজকে গোবর দেওয়া হয়েছে: <strong>{latestBiogas.dungInputKg} কেজি</strong> • দৈনিক গ্যাস জ্বলেছে: <strong>{latestBiogas.burnHoursToday} ঘণ্টা</strong> • জৈব সার: <strong>{latestBiogas.slurryProducedBags} বস্তা</strong>
                 </p>
               </div>
             </div>
@@ -302,12 +302,12 @@ export const DashboardView = ({
           </div>
         ) : (
           <div className="bg-white rounded-2xl p-5 border border-[#EBE4D5] shadow-xs flex items-center justify-between gap-4 text-xs text-gray-500">
-            <span>কোনো বায়োগ্যাস লগ নেই</span>
+            <span>আজকের বায়োগ্যাস হিসাব দেওয়া হয়নি</span>
             <button
               onClick={() => onNavigate('biogas')}
               className="text-[#16402C] font-bold hover:underline"
             >
-              লগ যোগ করুন
+              হিসাব লিখুন
             </button>
           </div>
         )}
@@ -320,13 +320,13 @@ export const DashboardView = ({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h4 className="font-bold text-base text-[#16402C]">কর্মচারী ও দৈনিক উপস্থিতি</h4>
+                <h4 className="font-bold text-base text-[#16402C]">খামারের কর্মী ও আজকের হাজিরা</h4>
                 <span className="text-xs bg-[#EAF5EE] text-[#1B4D35] px-2.5 py-0.5 rounded-full font-bold border border-[#C5E3D0]">
-                  {employees.filter((e) => !e.isArchived && e.status === 'active').length} জন সক্রিয়
+                  {employees.filter((e) => !e.isArchived && e.status === 'active').length} জন কর্মরত
                 </span>
               </div>
               <p className="text-xs text-gray-600 mt-1">
-                আজকের উপস্থিতি রেকর্ড: <strong>{attendanceRecords.filter((a) => a.status === 'present').length} জন উপস্থিত</strong> • মোট নিবন্ধিত কর্মী: <strong>{employees.length} জন</strong>
+                আজকের হাজিরা: <strong>{attendanceRecords.filter((a) => a.status === 'present').length} জন উপস্থিত</strong> • মোট কর্মী: <strong>{employees.length} জন</strong>
               </p>
             </div>
           </div>
@@ -336,7 +336,7 @@ export const DashboardView = ({
               onClick={() => onNavigate('employees')}
               className="px-3.5 py-1.5 bg-[#FAF7F0] hover:bg-[#F2ECE1] text-[#16402C] font-semibold text-xs rounded-xl border border-[#E8DFC9] flex items-center gap-1.5 transition-colors"
             >
-              <span>কর্মচারী ব্যবস্থাপনা</span>
+              <span>কর্মীদের তালিকা ও হাজিরা</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -352,7 +352,7 @@ export const DashboardView = ({
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-[#16402C]" />
                 <h4 className="font-bold text-base md:text-lg text-[#16402C]">
-                  সাম্প্রতিক খামার কার্যক্রম
+                  সাম্প্রতিক কার্যক্রমের খাতা
                 </h4>
               </div>
               <span className="text-xs text-gray-400">সর্বশেষ আপডেট</span>
@@ -392,7 +392,7 @@ export const DashboardView = ({
               onClick={() => onNavigate('milk')}
               className="w-full py-2.5 rounded-xl bg-[#FAF7F0] hover:bg-[#F2ECE1] text-[#16402C] text-xs md:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors"
             >
-              <span>সকল দুধ ও আর্থিক কার্যক্রম দেখুন</span>
+              <span>সকল দুধ ও আয়-ব্যয়ের হিসাব দেখুন</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -405,7 +405,7 @@ export const DashboardView = ({
               <div className="flex items-center gap-2">
                 <CalendarClock className="w-4 h-4 text-[#C53030]" />
                 <h4 className="font-bold text-base md:text-lg text-[#16402C]">
-                  আসন্ন কাজ ও স্বাস্থ্য অনুস্মারক
+                  আসন্ন জরুরি কাজ ও টিকা
                 </h4>
               </div>
               <span className="text-xs font-bold bg-[#FDF2F2] text-[#9E2A2B] px-2 py-0.5 rounded-full border border-[#F8C8C8]">
@@ -471,7 +471,7 @@ export const DashboardView = ({
               onClick={() => onNavigate('reminders')}
               className="py-2.5 px-4 rounded-xl text-[#16402C] hover:underline text-xs md:text-sm font-semibold flex items-center gap-1"
             >
-              <span>সকল অনুস্মারক দেখুন</span>
+              <span>সকল কাজের তালিকা দেখুন</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

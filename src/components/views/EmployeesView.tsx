@@ -89,9 +89,9 @@ export const EmployeesView = ({
             <Users className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl md:text-2xl font-bold text-[#16402C]">খামারের কর্মচারী ও দায়িত্ব</h2>
+            <h2 className="text-xl md:text-2xl font-bold text-[#16402C]">খামারের কর্মী ও কাজের দায়িত্ব</h2>
             <p className="text-xs md:text-sm text-gray-500 mt-0.5">
-              কর্মচারী প্রোফাইল, দৈনিক হাজিরা, দায়িত্ব বণ্টন এবং নিরাপদ মাসিক বেতন খতিয়ান
+              গোয়ালা ও কর্মীদের হাজিরা, কাজের দায়িত্ব এবং মাসিক বেতনের খাতা
             </p>
           </div>
         </div>
@@ -102,7 +102,7 @@ export const EmployeesView = ({
             className="px-4 py-2.5 rounded-2xl bg-[#FAF7F0] hover:bg-[#F2ECE1] text-[#16402C] font-bold text-xs md:text-sm border border-[#EAE2D0] shadow-xs flex items-center gap-2 active:scale-95 transition-all"
           >
             <Calendar className="w-4 h-4 text-[#2A7A50]" />
-            <span>আজকের হাজিরা দিন</span>
+            <span>আজকের হাজিরা তুলুন</span>
           </button>
 
           <button
@@ -110,7 +110,7 @@ export const EmployeesView = ({
             className="px-5 py-2.5 rounded-2xl bg-[#16402C] hover:bg-[#123323] text-white font-bold text-xs md:text-sm shadow-xs flex items-center gap-2 active:scale-95 transition-all"
           >
             <UserPlus className="w-4 h-4 text-[#E5B842]" />
-            <span>নতুন কর্মচারী নিবন্ধন</span>
+            <span>নতুন কর্মী যোগ করুন</span>
           </button>
         </div>
       </div>
@@ -118,7 +118,7 @@ export const EmployeesView = ({
       {/* Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         <div className="bg-white rounded-2xl p-4 border border-[#EAE2D0] shadow-2xs">
-          <span className="text-xs font-semibold text-gray-500 block">মোট সক্রিয় কর্মী</span>
+          <span className="text-xs font-semibold text-gray-500 block">খামারের কর্মী</span>
           <div className="flex items-baseline gap-1.5 mt-1">
             <span className="text-2xl font-bold text-[#16402C]">{activeEmployees.length}</span>
             <span className="text-xs text-gray-500">জন</span>
@@ -138,7 +138,7 @@ export const EmployeesView = ({
         </div>
 
         <div className="bg-white rounded-2xl p-4 border border-[#EAE2D0] shadow-2xs">
-          <span className="text-xs font-semibold text-gray-500 block">মাসিক বেতন বাজেট</span>
+          <span className="text-xs font-semibold text-gray-500 block">মাসের মোট বেতন</span>
           <div className="flex items-baseline gap-1.5 mt-1">
             <span className="text-2xl font-bold text-gray-900">
               ৳ {totalSalaryBudget.toLocaleString('en-US')}
@@ -148,7 +148,7 @@ export const EmployeesView = ({
         </div>
 
         <div className="bg-white rounded-2xl p-4 border border-[#EAE2D0] shadow-2xs">
-          <span className="text-xs font-semibold text-gray-500 block">কর্মী দায়িত্ব ও কাজ</span>
+          <span className="text-xs font-semibold text-gray-500 block">কর্মীদের বাকি কাজ</span>
           <div className="flex items-baseline gap-1.5 mt-1">
             <span className="text-2xl font-bold text-[#16402C]">
               {tasks.filter((t) => !t.completed && (t.assignedEmployeeId || t.assignedTo)).length}
@@ -168,7 +168,7 @@ export const EmployeesView = ({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="নাম বা পদবী দিয়ে অনুসন্ধান..."
+            placeholder="নাম বা পদবী দিয়ে খুঁজুন..."
             className="w-full pl-10 pr-4 py-2 rounded-xl border border-[#EAE2D0] bg-[#FAF7F0]/40 text-xs md:text-sm outline-hidden focus:border-[#16402C]"
           />
         </div>
@@ -177,10 +177,10 @@ export const EmployeesView = ({
         <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 text-xs">
           {[
             { id: 'all', label: 'সকল কর্মী' },
-            { id: 'active', label: 'সক্রিয়' },
-            { id: 'on_leave', label: 'ছুটিতে' },
-            { id: 'inactive', label: 'নিষ্ক্রিয়' },
-            { id: 'archived', label: 'আর্কাইভকৃত' },
+            { id: 'active', label: 'কাজে আছেন' },
+            { id: 'on_leave', label: 'ছুটিতে আছেন' },
+            { id: 'inactive', label: 'অনুপস্থিত' },
+            { id: 'archived', label: 'সাবেক কর্মী' },
           ].map((tab) => (
             <button
               key={tab.id}

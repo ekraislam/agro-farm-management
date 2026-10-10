@@ -75,7 +75,7 @@ export const BiogasView = ({
           <div>
             <h2 className="text-xl md:text-2xl font-bold text-[#16402C]">বায়োগ্যাস প্ল্যান্ট ও জৈব সার</h2>
             <p className="text-xs md:text-sm text-gray-500 mt-0.5">
-              গোবর ইনপুট, রান্নার গ্যাস সরবরাহ, জৈব স্লারি উৎপাদন ও নিরাপত্তা পর্যবেক্ষণ
+              গোবর ও পানি দেওয়া, রান্নার গ্যাস, জৈব সার ও নিরাপত্তা পরীক্ষা
             </p>
           </div>
         </div>
@@ -86,7 +86,7 @@ export const BiogasView = ({
             className="px-4 py-2.5 rounded-2xl bg-[#FAF7F0] hover:bg-[#F2ECE1] text-[#16402C] font-bold text-xs md:text-sm border border-[#EAE2D0] shadow-xs flex items-center gap-2 active:scale-95 transition-all"
           >
             <ShieldCheck className="w-4 h-4 text-[#2A7A50]" />
-            <span>নিরাপত্তা পরিদর্শন</span>
+            <span>নিরাপত্তা পরীক্ষা</span>
           </button>
 
           <button
@@ -94,7 +94,7 @@ export const BiogasView = ({
             className="px-5 py-2.5 rounded-2xl bg-[#16402C] hover:bg-[#123323] text-white font-bold text-xs md:text-sm shadow-xs flex items-center gap-2 active:scale-95 transition-all"
           >
             <Plus className="w-5 h-5 text-[#E5B842]" />
-            <span>দৈনিক ইনপুট যোগ</span>
+            <span>গোবর দেওয়ার হিসাব লিখুন</span>
           </button>
         </div>
       </div>
@@ -132,12 +132,12 @@ export const BiogasView = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         <div className="bg-[#FAF7F0] rounded-2xl p-4 border border-[#EAE2D0] flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-gray-600">মোট গোবর ইনপুট</p>
+            <p className="text-xs font-semibold text-gray-600">মোট গোবর দেওয়া হয়েছে</p>
             <p className="text-2xl font-bold text-[#16402C] mt-1">
               {totals.totalDungKg} <span className="text-sm font-normal">কেজি</span>
             </p>
             <p className="text-[11px] text-gray-500 mt-0.5">
-              দৈনিক গড়: <strong>{totals.avgDailyDungKg} কেজি</strong> ({totals.recordDaysCount} দিন রেকর্ড)
+              দৈনিক গড়: <strong>{totals.avgDailyDungKg} কেজি</strong> ({totals.recordDaysCount} দিনের হিসাব)
             </p>
           </div>
           <div className="p-3 rounded-xl bg-white border border-[#E2DAC7] text-[#936709] shrink-0">
@@ -147,7 +147,7 @@ export const BiogasView = ({
 
         <div className="bg-[#FAF7F0] rounded-2xl p-4 border border-[#EAE2D0] flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-gray-600">গ্যাস সরবরাহ / চুলা চলা</p>
+            <p className="text-xs font-semibold text-gray-600">গ্যাস পাওয়া গেছে / চুলা চলেছে</p>
             <p className="text-2xl font-bold text-[#16402C] mt-1">
               {totals.totalBurnHours} <span className="text-sm font-normal">ঘণ্টা</span>
             </p>
@@ -162,7 +162,7 @@ export const BiogasView = ({
 
         <div className="bg-[#FAF7F0] rounded-2xl p-4 border border-[#EAE2D0] flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-gray-600">মোট পানি মিশ্রণ</p>
+            <p className="text-xs font-semibold text-gray-600">মোট পানি মেশানো হয়েছে</p>
             <p className="text-2xl font-bold text-[#16402C] mt-1">
               {totals.totalWaterLiters} <span className="text-sm font-normal">লিটার</span>
             </p>
@@ -177,7 +177,7 @@ export const BiogasView = ({
 
         <div className="bg-[#FAF7F0] rounded-2xl p-4 border border-[#EAE2D0] flex items-center justify-between">
           <div>
-            <p className="text-xs font-semibold text-gray-600">উৎপাদিত জৈব সার (স্লারি)</p>
+            <p className="text-xs font-semibold text-gray-600">উৎপাদিত জৈব সার (গোবরের সার)</p>
             <p className="text-2xl font-bold text-[#16402C] mt-1">
               {totals.totalSlurryBags} <span className="text-sm font-normal">বস্তা</span>
             </p>
@@ -197,7 +197,7 @@ export const BiogasView = ({
           <div className="flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-[#16402C]" />
             <h3 className="font-bold text-base md:text-lg text-[#16402C]">
-              বায়োগ্যাস ইনপুট ট্রেন্ড ও চুলা চলার ইতিহাস
+              বায়োগ্যাসে গোবর দেওয়ার ও চুলা জ্বলার ইতিহাস
             </h3>
           </div>
           <span className="text-xs text-gray-500 font-medium">বিগত রেকর্ডসমূহ</span>
@@ -246,7 +246,7 @@ export const BiogasView = ({
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-[#2A7A50]" />
             <h3 className="font-bold text-base md:text-lg text-[#16402C]">
-              বায়োগ্যাস প্ল্যান্টের নিরাপত্তা ও নিয়মিত যত্ন চেকলিস্ট
+              বায়োগ্যাস চুলার নিরাপত্তা ও নিয়মিত যত্ন নেওয়ার তালিকা
             </h3>
           </div>
 
@@ -255,7 +255,7 @@ export const BiogasView = ({
             className="px-3.5 py-1.5 rounded-xl bg-[#FAF7F0] hover:bg-[#F2ECE1] text-[#16402C] font-bold text-xs flex items-center gap-1.5 border border-[#EAE2D0] self-start sm:self-auto"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>নতুন পরিদর্শন যোগ</span>
+            <span>নিরাপত্তা পরীক্ষা যোগ করুন</span>
           </button>
         </div>
 
@@ -327,9 +327,9 @@ export const BiogasView = ({
         <div className="p-4 md:p-5 border-b border-[#F2ECE1] flex items-center justify-between">
           <div>
             <h3 className="font-bold text-base md:text-lg text-[#16402C]">
-              বায়োগ্যাস দৈনিক লগ রেকর্ড তালিকা
+              বায়োগ্যাসে প্রতিদিনের হিসাবের তালিকা
             </h3>
-            <p className="text-xs text-gray-500 mt-0.5">গোবর ও পানির ইনপুট এবং গ্যাস চুলা চলার খতিয়ান</p>
+            <p className="text-xs text-gray-500 mt-0.5">গোবর ও পানি দেওয়া এবং চুলা জ্বলার দৈনিক খাতা</p>
           </div>
 
           <button
@@ -337,7 +337,7 @@ export const BiogasView = ({
             className="px-4 py-2 rounded-xl bg-[#16402C] hover:bg-[#123323] text-white font-bold text-xs flex items-center gap-1.5 shadow-xs"
           >
             <Plus className="w-4 h-4 text-[#E5B842]" />
-            <span>নতুন এন্ট্রি</span>
+            <span>নতুন হিসাব লিখুন</span>
           </button>
         </div>
 
@@ -347,13 +347,13 @@ export const BiogasView = ({
               <thead className="bg-[#FAF7F0] border-b border-[#EAE2D0] text-gray-700 text-xs uppercase font-bold">
                 <tr>
                   <th className="py-3.5 px-4">তারিখ</th>
-                  <th className="py-3.5 px-4">গোবর ইনপুট</th>
-                  <th className="py-3.5 px-4">পানি মিশ্রণ</th>
-                  <th className="py-3.5 px-4">চুলা চলা</th>
-                  <th className="py-3.5 px-4">সার উৎপাদন</th>
-                  <th className="py-3.5 px-4">দায়িত্বপ্রাপ্ত</th>
+                  <th className="py-3.5 px-4">গোবর দেওয়া</th>
+                  <th className="py-3.5 px-4">পানি মেশানো</th>
+                  <th className="py-3.5 px-4">চুলা চলেছে</th>
+                  <th className="py-3.5 px-4">জৈব সার</th>
+                  <th className="py-3.5 px-4">দায়িত্বে ছিলেন</th>
                   <th className="py-3.5 px-4">মন্তব্য</th>
-                  <th className="py-3.5 px-4 text-right">অ্যাকশন</th>
+                  <th className="py-3.5 px-4 text-right">কাজ</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#F4EFE2]">
@@ -408,13 +408,13 @@ export const BiogasView = ({
         ) : (
           <div className="py-12 text-center text-gray-500">
             <Flame className="w-10 h-10 text-gray-300 mx-auto mb-2" />
-            <p className="text-sm font-semibold">নির্বাচিত সময়কালে কোনো বায়োগ্যাস রেকর্ড নেই।</p>
+            <p className="text-sm font-semibold">এই সময়কালে বায়োগ্যাসের কোনো হিসাব পাওয়া যায়নি।</p>
             <button
               onClick={handleOpenAdd}
               className="mt-3 px-4 py-2 rounded-xl bg-[#16402C] text-white text-xs font-bold inline-flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4 text-[#E5B842]" />
-              <span>প্রথম লগ এন্ট্রি করুন</span>
+              <span>প্রথম হিসাবটি লিখুন</span>
             </button>
           </div>
         )}

@@ -74,25 +74,25 @@ export const EmployeeProfileModal = ({
                 <h2 className="text-xl md:text-2xl font-bold text-gray-900">{employee.name}</h2>
                 {employee.isArchived ? (
                   <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600 border border-gray-300">
-                    আর্কাইভকৃত
+                    সাবেক কর্মী (তালিকায় নেই)
                   </span>
                 ) : employee.status === 'active' ? (
                   <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#EAF5EE] text-[#1B4D35] border border-[#C5E3D0]">
-                    সক্রিয় কর্মী
+                    কাজে সক্রিয়
                   </span>
                 ) : employee.status === 'on_leave' ? (
                   <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#FFFBEB] text-[#92400E] border border-[#FDE68A]">
-                    ছুটিতে
+                    ছুটিতে আছেন
                   </span>
                 ) : (
                   <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#FEF2F2] text-[#991B1B] border border-[#FECACA]">
-                    নিষ্ক্রিয়
+                    সাবেক কর্মী
                   </span>
                 )}
               </div>
               <p className="text-xs md:text-sm font-semibold text-[#16402C] mt-0.5">{employee.role}</p>
               <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
-                <span>যোগদান: {employee.joiningDate || 'উদ্ধৃত নেই'}</span>
+                <span>যোগদান: {employee.joiningDate || 'তারিখ নেই'}</span>
                 <span>•</span>
                 <span>মাসিক বেতন: ৳ {employee.salaryMonthly.toLocaleString('en-US')}</span>
               </div>
@@ -137,7 +137,7 @@ export const EmployeeProfileModal = ({
               {/* Quick Info Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-[#FAF7F0] p-4 rounded-2xl border border-[#EAE2D0]">
                 <div>
-                  <span className="text-gray-500 text-xs block mb-1">যোগাযোগের মোবাইল নম্বর:</span>
+                  <span className="text-gray-500 text-xs block mb-1">মোবাইল নম্বর:</span>
                   {employee.phone ? (
                     <a
                       href={`tel:${employee.phone}`}
@@ -152,7 +152,7 @@ export const EmployeeProfileModal = ({
                 </div>
 
                 <div>
-                  <span className="text-gray-500 text-xs block mb-1">মাসিক নির্ধারিত বেতন:</span>
+                  <span className="text-gray-500 text-xs block mb-1">মাসিক বেতন:</span>
                   <div className="font-bold text-gray-900 text-sm flex items-center gap-1.5">
                     <Wallet className="w-4 h-4 text-[#2A7A50]" />
                     <span>৳ {employee.salaryMonthly.toLocaleString('en-US')}</span>
@@ -163,7 +163,7 @@ export const EmployeeProfileModal = ({
               {/* Duties Checklist */}
               <div>
                 <h4 className="font-bold text-gray-800 text-xs uppercase tracking-wider mb-2">
-                  দৈনন্দিন নির্ধারিত দায়িত্বসমূহ:
+                  দৈনিক কাজের দায়িত্বসমূহ:
                 </h4>
                 {employee.assignedDuties && employee.assignedDuties.length > 0 ? (
                   <ul className="space-y-2">
@@ -203,7 +203,7 @@ export const EmployeeProfileModal = ({
                   className="px-4 py-2.5 rounded-xl bg-[#FAF7F0] hover:bg-[#F2ECE1] text-[#16402C] font-bold text-xs flex items-center gap-2 border border-[#EAE2D0] transition-colors"
                 >
                   <Edit3 className="w-4 h-4" />
-                  <span>তথ্য সংশোধন</span>
+                  <span>তথ্য পরিবর্তন</span>
                 </button>
 
                 <button
@@ -214,7 +214,7 @@ export const EmployeeProfileModal = ({
                   className="px-4 py-2.5 rounded-xl bg-[#FEF2F2] hover:bg-[#FEE2E2] text-[#991B1B] font-bold text-xs flex items-center gap-2 border border-[#FECACA] transition-colors"
                 >
                   <Archive className="w-4 h-4" />
-                  <span>{employee.isArchived ? 'স্থায়ীভাবে মুছুন' : 'কর্মী আর্কাইভ / অব্যাহতি'}</span>
+                  <span>{employee.isArchived ? 'স্থায়ীভাবে মুছুন' : 'কর্মী পুরোনো তালিকায় রাখুন'}</span>
                 </button>
               </div>
             </div>
@@ -274,7 +274,7 @@ export const EmployeeProfileModal = ({
               {/* Attendance Log List */}
               <div className="space-y-2">
                 <h4 className="font-bold text-gray-800 text-xs uppercase tracking-wider">
-                  দৈনিক হাজিরা লগ:
+                  দৈনিক হাজিরার খাতা:
                 </h4>
                 {empAttendance.length > 0 ? (
                   <div className="divide-y divide-[#F2ECE1] border border-[#EAE2D0] rounded-2xl overflow-hidden bg-white">
@@ -317,7 +317,7 @@ export const EmployeeProfileModal = ({
                   </div>
                 ) : (
                   <div className="text-center py-8 bg-[#FAF7F0]/50 rounded-2xl border border-[#EAE2D0] text-gray-500">
-                    <p className="text-sm">এই কর্মীর কোনো হাজিরা রেকর্ড পাওয়া যায়নি।</p>
+                    <p className="text-sm">এই কর্মীর কোনো হাজিরার হিসাব লেখা হয়নি।</p>
                   </div>
                 )}
               </div>
@@ -396,7 +396,7 @@ export const EmployeeProfileModal = ({
               {/* Transactions History */}
               <div className="space-y-2">
                 <h4 className="font-bold text-gray-800 text-xs uppercase tracking-wider">
-                  বেতন পরিশোধের রশিদ ও লেনদেন ইতিহাস:
+                  বেতন দেওয়ার ইতিহাস:
                 </h4>
                 {payrollStatus.payments.length > 0 ? (
                   <div className="divide-y divide-[#F2ECE1] border border-[#EAE2D0] rounded-2xl overflow-hidden bg-white">
@@ -405,14 +405,14 @@ export const EmployeeProfileModal = ({
                         <div>
                           <p className="font-bold text-gray-900">{tx.title}</p>
                           <span className="text-xs text-gray-500">
-                            তারিখ: {tx.date} • মাধ্যম: {tx.paymentMethod === 'cash' ? 'নগদ' : tx.paymentMethod === 'bkash' ? 'বিকাশ' : 'ব্যাংক'}
+                            তারিখ: {tx.date} • মাধ্যম: {tx.paymentMethod === 'cash' ? 'নগদ টাকা' : tx.paymentMethod === 'bkash' ? 'বিকাশ' : 'ব্যাংক'}
                           </span>
                         </div>
                         <div className="text-right">
                           <span className="font-bold text-[#C53030] text-sm block">
                             - ৳ {tx.amount.toLocaleString('en-US')}
                           </span>
-                          <span className="text-[11px] text-gray-400">ব্যয় ভুক্তি</span>
+                          <span className="text-[11px] text-gray-400">খরচ</span>
                         </div>
                       </div>
                     ))}
@@ -420,7 +420,7 @@ export const EmployeeProfileModal = ({
                 ) : (
                   <div className="p-6 bg-[#FAF7F0]/40 rounded-2xl border border-[#EAE2D0] text-center text-gray-500">
                     <AlertCircle className="w-6 h-6 text-gray-400 mx-auto mb-1" />
-                    <p className="text-xs">এই মাসের জন্য এখনো কোনো বেতন পরিশোধ রেকর্ড করা হয়নি।</p>
+                    <p className="text-xs">এই মাসের কোনো বেতন পরিশোধের হিসাব লেখা হয়নি।</p>
                   </div>
                 )}
               </div>
@@ -475,7 +475,7 @@ export const EmployeeProfileModal = ({
                 </div>
               ) : (
                 <div className="p-8 bg-[#FAF7F0]/40 rounded-2xl border border-[#EAE2D0] text-center text-gray-500">
-                  <p className="text-sm">এই কর্মীর নামে বর্তমানে কোনো বিশেষ কাজ বরাদ্দ নেই।</p>
+                  <p className="text-sm">এই কর্মীর নামে বর্তমানে কোনো জরুরি কাজ নেই।</p>
                 </div>
               )}
             </div>

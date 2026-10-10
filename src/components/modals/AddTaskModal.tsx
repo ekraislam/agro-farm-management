@@ -110,8 +110,8 @@ export const AddTaskModal = ({
               <CalendarClock className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-lg md:text-xl font-bold">নতুন কাজ বা অনুস্মারক যোগ করুন</h2>
-              <p className="text-xs text-white/80 mt-0.5">খামারের দৈনন্দিন রুটিন ও স্বাস্থ্য পরীক্ষা ট্র্যাকিং</p>
+              <h2 className="text-lg md:text-xl font-bold">নতুন জরুরি কাজ যোগ করুন</h2>
+              <p className="text-xs text-white/80 mt-0.5">খামারের দৈনন্দিন কাজকর্ম ও তদারকির তালিকা</p>
             </div>
           </div>
           <button
@@ -134,7 +134,7 @@ export const AddTaskModal = ({
           {/* Quick Task Template Pills */}
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-              দ্রুত কাজের টেমপ্লেট নির্বাচন করুন (ঐচ্ছিক):
+              কাজের তালিকা থেকে বেছে নিন (ঐচ্ছিক):
             </label>
             <div className="flex flex-wrap gap-1.5">
               {QUICK_TASK_TEMPLATES.map((tmpl, idx) => (
@@ -153,7 +153,7 @@ export const AddTaskModal = ({
           {/* Title */}
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1">
-              কাজের শিরোনাম *
+              কাজের নাম বা বিষয় *
             </label>
             <input
               type="text"
@@ -162,7 +162,7 @@ export const AddTaskModal = ({
                 setTitle(e.target.value);
                 setError('');
               }}
-              placeholder="যেমন: খুরারোগের দ্বিতীয় ডোজ টিকা, ভুসি ক্রয়"
+              placeholder="যেমন: খুরারোগের দ্বিতীয় ডোজ টিকা, ভুসি কেনা"
               className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] focus:ring-1 focus:ring-[#16402C] outline-hidden text-sm"
               required
             />
@@ -172,7 +172,7 @@ export const AddTaskModal = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">
-                শেষ সময় / তারিখ *
+                কবে করতে হবে (তারিখ) *
               </label>
               <input
                 type="text"
@@ -185,18 +185,18 @@ export const AddTaskModal = ({
 
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">
-                বিভাগ / ক্যাটাগরি *
+                কাজের ধরন *
               </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value as any)}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm bg-white"
               >
-                <option value="worker">শ্রমিক দায়িত্ব ও পরিচ্ছন্নতা</option>
-                <option value="biogas">বায়োগ্যাস প্ল্যান্ট কাজ (Biogas)</option>
-                <option value="feed">পশুখাদ্য ক্রয় ও সংগ্রহ (Feed)</option>
-                <option value="vaccine">টিকা ও ইনজেকশন (Vaccine)</option>
-                <option value="vet">ডাক্তার ভিজিট ও চেকআপ (Vet)</option>
+                <option value="worker">গোয়ালঘর ও খামার কাজ</option>
+                <option value="biogas">বায়োগ্যাস প্ল্যান্টের কাজ</option>
+                <option value="feed">খাবার ও ভুসি কেনা</option>
+                <option value="vaccine">টিকা ও কৃমিনাশক</option>
+                <option value="vet">ডাক্তার দেখানো ও চিকিৎসা</option>
                 <option value="other">অন্যান্য কাজ</option>
               </select>
             </div>
@@ -206,22 +206,22 @@ export const AddTaskModal = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">
-                অগ্রাধিকার (Priority) *
+                কাজের গুরুত্ব *
               </label>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as 'high' | 'medium' | 'low')}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm bg-white"
               >
-                <option value="high">জরুরি (High Priority)</option>
-                <option value="medium">মাঝারি (Medium)</option>
-                <option value="low">সাধারণ (Low)</option>
+                <option value="high">খুব জরুরি (আজই করণীয়)</option>
+                <option value="medium">মাঝারি (কয়েকদিনের মধ্যে)</option>
+                <option value="low">সাধারণ (সময়মতো করলেই হবে)</option>
               </select>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">
-                দায়িত্বপ্রাপ্ত কর্মী *
+                কে এই কাজ করবেন *
               </label>
               <select
                 value={assignedEmployeeId || assignedTo}
@@ -248,13 +248,13 @@ export const AddTaskModal = ({
           {/* Description */}
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1">
-              বিস্তারিত বিবরণ (ঐচ্ছিক)
+              অতিরিক্ত তথ্য বা নোট (ঐচ্ছিক)
             </label>
             <textarea
               rows={2}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="কাজের বিস্তারিত নির্দেশ বা নোট..."
+              placeholder="কাজের বিস্তারিত কোনো নির্দেশ থাকলে লিখুন..."
               className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm resize-none"
             />
           </div>
@@ -278,7 +278,7 @@ export const AddTaskModal = ({
               ) : (
                 <CalendarClock className="w-4 h-4 text-[#E5B842]" />
               )}
-              {isSubmitting ? 'সংরক্ষণ হচ্ছে...' : 'কাজ সংরক্ষণ করুন'}
+              {isSubmitting ? 'সংরক্ষণ হচ্ছে...' : 'কাজের তালিকায় যোগ করুন'}
             </button>
           </div>
         </form>

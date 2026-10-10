@@ -120,8 +120,8 @@ export const AddHealthRecordModal = ({
               <ShieldPlus className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-lg md:text-xl font-bold">টিকা ও চিকিৎসা রেকর্ড যোগ করুন</h2>
-              <p className="text-xs text-white/80 mt-0.5">গরুর স্বাস্থ্যসেবা, ঔষধ ও ভবিষ্যৎ ফলো-আপ শিডিউল</p>
+              <h2 className="text-lg md:text-xl font-bold">টিকা ও চিকিৎসার হিসাব যোগ করুন</h2>
+              <p className="text-xs text-white/80 mt-0.5">গরুর চিকিৎসা, টিকা ও ঔষধের হিসাব</p>
             </div>
           </div>
           <button
@@ -171,11 +171,11 @@ export const AddHealthRecordModal = ({
                 onChange={(e) => setEventType(e.target.value as HealthEventType)}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm bg-white"
               >
-                <option value="vaccination">টিকা প্রদান (Vaccination)</option>
-                <option value="deworming">কৃমিনাশক প্রয়োগ (Deworming)</option>
-                <option value="vet_consultation">পশুচিকিৎসক পরামর্শ (Vet Consultation)</option>
-                <option value="treatment">অসুস্থতা ও চিকিৎসা (Treatment)</option>
-                <option value="other">অন্যান্য স্বাস্থ্যসেবা</option>
+                <option value="vaccination">টিকা প্রদান</option>
+                <option value="deworming">কৃমিনাশক ওষুধ</option>
+                <option value="vet_consultation">ডাক্তারের পরামর্শ</option>
+                <option value="treatment">অসুস্থতা ও সাধারণ চিকিৎসা</option>
+                <option value="other">অন্যান্য সেবা</option>
               </select>
             </div>
           </div>
@@ -189,7 +189,7 @@ export const AddHealthRecordModal = ({
               type="text"
               value={treatmentName}
               onChange={(e) => setTreatmentName(e.target.value)}
-              placeholder="যেমন: খুরারোগের টিকা (FMD), অ্যানথ্রাক্স, ক্যালসিয়াম ইনজেকশন"
+              placeholder="যেমন: খুরারোগের টিকা, অ্যানথ্রাক্স, কৃমিনাশক ট্যাবলেট"
               className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] focus:ring-1 focus:ring-[#16402C] outline-hidden text-sm"
               required
             />
@@ -205,7 +205,7 @@ export const AddHealthRecordModal = ({
               type="text"
               value={doctorName}
               onChange={(e) => setDoctorName(e.target.value)}
-              placeholder="যেমন: ডা. আনিসুর রহমান (ইউএলও) বা স্থানীয় অভিজ্ঞ পল্লী চিকিৎসক"
+              placeholder="যেমন: ডা. আনিসুর রহমান (প্রাণিসম্পদ কর্মকর্তা)"
               className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm bg-white"
             />
           </div>
@@ -230,7 +230,7 @@ export const AddHealthRecordModal = ({
             <div>
               <label className="block text-xs font-bold text-[#936709] mb-1 flex items-center gap-1">
                 <Calendar className="w-3.5 h-3.5 text-[#936709]" />
-                পরবর্তী বুস্টার বা ফলো-আপ (ঐচ্ছিক)
+                পরবর্তী টিকা বা ডাক্তার দেখানোর তারিখ (ঐচ্ছিক)
               </label>
               <input
                 type="text"
@@ -240,7 +240,7 @@ export const AddHealthRecordModal = ({
                 className="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-[#16402C] text-sm bg-white"
               />
               <span className="text-[10px] text-gray-500 mt-0.5 block">
-                তারিখ দিলে রিমাইন্ডার তালিকায় স্বয়ংক্রিয়ভাবে যোগ হবে
+                তারিখ দিলে জরুরি কাজের তালিকায় স্বয়ংক্রিয়ভাবে যোগ হবে
               </span>
             </div>
           </div>
@@ -277,10 +277,10 @@ export const AddHealthRecordModal = ({
                       htmlFor="health-expense-toggle"
                       className="text-xs font-bold text-[#16402C] block cursor-pointer"
                     >
-                      খামারের খরচের খাতায় (Expense) হিসাব যোগ করবেন?
+                      খামারের খরচের খাতায় এই হিসাব যোগ করবেন?
                     </label>
                     <p className="text-[10px] text-gray-600 mt-0.5">
-                      সম্মতি দিলে ৳{costNumber.toLocaleString('en-US')} টাকা খামারের আর্থিক খরচে অন্তর্ভুক্ত হবে
+                      টিক দিলে ৳{costNumber.toLocaleString('en-US')} টাকা খরচের খাতায় যোগ হবে
                     </p>
                   </div>
                   <input
@@ -294,7 +294,7 @@ export const AddHealthRecordModal = ({
                 {createExpense && (
                   <p className="text-[11px] text-[#2A7A50] font-medium flex items-center gap-1">
                     <UserCheck className="w-3.5 h-3.5" />
-                    আর্থিক লেনদেনে 'ঔষধ ও চিকিৎসা' ক্যাটাগরিতে ৳{costNumber.toLocaleString('en-US')} যুক্ত হবে।
+                    খরচের খাতায় 'পশুচিকিৎসা ও ঔষধ' বাবদ ৳{costNumber.toLocaleString('en-US')} যোগ হবে।
                   </p>
                 )}
               </div>
@@ -310,7 +310,7 @@ export const AddHealthRecordModal = ({
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="যেমন: ডোজের পরিমাণ, প্রয়োগের ধরন (মাংসপেশিতে/চামড়ার নিচে) ইত্যাদি"
+              placeholder="যেমন: কয় বেলা ওষুধ খাওয়াতে হবে, বিশেষ কোনো নির্দেশনা ইত্যাদি"
               className="w-full px-3.5 py-2 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm resize-none"
             />
           </div>
@@ -334,7 +334,7 @@ export const AddHealthRecordModal = ({
               ) : (
                 <ShieldPlus className="w-4 h-4 text-[#E5B842]" />
               )}
-              {isSubmitting ? 'সংরক্ষণ হচ্ছে...' : 'রেকর্ড সংরক্ষণ করুন'}
+              {isSubmitting ? 'সংরক্ষণ হচ্ছে...' : 'হিসাব সংরক্ষণ করুন'}
             </button>
           </div>
         </form>

@@ -127,7 +127,7 @@ export const RecordSalaryPaymentModal = ({
               <Wallet className="w-5 h-5 text-[#16402C]" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-[#16402C]">কর্মচারীর বেতন পরিশোধ</h3>
+              <h3 className="text-lg font-bold text-[#16402C]">কর্মীর বেতন পরিশোধ</h3>
               <p className="text-xs text-gray-500 mt-0.5">খামারের খরচের খাতায় যুক্ত হবে</p>
             </div>
           </div>
@@ -150,7 +150,7 @@ export const RecordSalaryPaymentModal = ({
           {/* Employee Selection */}
           <div>
             <label className="block font-bold text-gray-700 mb-1">
-              কর্মচারী নির্বাচন করুন <span className="text-red-500">*</span>
+              কর্মী নির্বাচন করুন <span className="text-red-500">*</span>
             </label>
             <select
               value={selectedEmpId}
@@ -221,7 +221,7 @@ export const RecordSalaryPaymentModal = ({
           {/* Payment Amount */}
           <div>
             <label className="block font-bold text-gray-700 mb-1">
-              প্রদেয় বেতনের পরিমাণ (টাকা) <span className="text-red-500">*</span>
+              পরিশোধের টাকার পরিমাণ <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <span className="absolute left-3.5 top-2.5 font-bold text-gray-500 text-base">৳</span>
@@ -240,11 +240,11 @@ export const RecordSalaryPaymentModal = ({
           {/* Payment Method */}
           <div>
             <label className="block font-bold text-gray-700 mb-1.5">
-              পেমেন্ট মাধ্যম <span className="text-red-500">*</span>
+              টাকা দেওয়ার মাধ্যম <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-3 gap-2">
               {[
-                { id: 'cash', label: 'নগদ ক্যাশ' },
+                { id: 'cash', label: 'নগদ টাকা' },
                 { id: 'bkash', label: 'বিকাশ' },
                 { id: 'bank', label: 'ব্যাংক' },
               ].map((m) => (
@@ -268,13 +268,13 @@ export const RecordSalaryPaymentModal = ({
           <div>
             <label className="block font-bold text-gray-700 mb-1 flex items-center gap-1.5">
               <FileText className="w-3.5 h-3.5 text-gray-400" />
-              <span>মন্তব্য / বিবরণ</span>
+              <span>মন্তব্য (ঐচ্ছিক)</span>
             </label>
             <input
               type="text"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="যেমন: চলতি মাসের অগ্রিম বা নিয়মিত বেতন পরিশোধ"
+              placeholder="যেমন: চলতি মাসের নিয়মিত বেতন পরিশোধ"
               className="w-full px-3.5 py-2 rounded-xl border border-[#EAE2D0] outline-hidden focus:border-[#16402C] bg-[#FAF7F0]/40 text-xs"
             />
           </div>
@@ -283,7 +283,7 @@ export const RecordSalaryPaymentModal = ({
           <div className="p-3 bg-[#EAF5EE] border border-[#C5E3D0] rounded-2xl flex items-start gap-2 text-xs text-[#1B4D35]">
             <Info className="w-4 h-4 text-[#2A7A50] shrink-0 mt-0.5" />
             <span>
-              এই লেনদেনটি নিশ্চিত করলে সরাসরি খামারের <strong>আয়-ব্যয় (Finance)</strong> পাতায় কর্মচারীর বেতন বাবদ ৳ {Number(amount || 0).toLocaleString('en-US')} খরচ হিসেবে অন্তর্ভুক্ত হবে।
+              এই লেনদেনটি নিশ্চিত করলে সরাসরি খামারের <strong>জমা ও খরচের খাতায়</strong> কর্মীর বেতন বাবদ ৳ {Number(amount || 0).toLocaleString('en-US')} খরচ হিসেবে যোগ হবে।
             </span>
           </div>
 
@@ -303,7 +303,7 @@ export const RecordSalaryPaymentModal = ({
               className="flex-1 py-2.5 rounded-xl bg-[#16402C] hover:bg-[#123323] text-white font-bold shadow-xs active:scale-95 transition-all text-xs flex items-center justify-center gap-2"
             >
               <CheckCircle2 className="w-4 h-4 text-[#E5B842]" />
-              {isSubmitting ? 'প্রসেসিং হচ্ছে...' : 'বেতন পরিশোধ নিশ্চিত'}
+              {isSubmitting ? 'প্রসেসিং হচ্ছে...' : 'বেতন পরিশোধ সংরক্ষণ করুন'}
             </button>
           </div>
         </form>

@@ -137,8 +137,8 @@ export const AddMilkModal = ({
               <Droplets className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-lg md:text-xl font-bold">দুধের নতুন হিসাব যোগ করুন</h2>
-              <p className="text-xs text-white/80 mt-0.5">দৈনিক সকাল ও বিকালের দুধের উৎপাদন ও বিক্রয় রেকর্ড</p>
+              <h2 className="text-lg md:text-xl font-bold">দুধের নতুন হিসাব লিখুন</h2>
+              <p className="text-xs text-white/80 mt-0.5">দৈনিক সকাল ও বিকালের দুধ দোয়ানো এবং বিক্রির হিসাব</p>
             </div>
           </div>
           <button
@@ -248,7 +248,7 @@ export const AddMilkModal = ({
               />
             </div>
             <div className="col-span-2 pt-2 border-t border-[#EAE2D0] flex justify-between items-center text-xs font-bold text-[#16402C]">
-              <span>মোট সংগৃহীত দুধ:</span>
+              <span>মোট দোয়ানো দুধ:</span>
               <span className="text-sm font-extrabold">{totalLiters} লিটার</span>
             </div>
           </div>
@@ -258,10 +258,10 @@ export const AddMilkModal = ({
             <div className="flex items-center justify-between">
               <div>
                 <label className="text-sm font-bold text-gray-900 block cursor-pointer" htmlFor="is-sold-toggle">
-                  সংগৃহীত দুধ কি বিক্রয় হয়েছে?
+                  দোয়ানো দুধ কি বিক্রি করা হয়েছে?
                 </label>
                 <p className="text-[11px] text-gray-500 mt-0.5">
-                  বিক্রয় হলে বাণিজ্যিক আয় যোগ হবে, অন্যথায় শুধু উৎপাদন হিসেব রাখা হবে
+                  দুধ বিক্রি করলে আয়ের খাতায় জমা হবে, বিক্রি না করলে শুধু খামারের হিসাব থাকবে
                 </p>
               </div>
               <input
@@ -282,7 +282,7 @@ export const AddMilkModal = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1">
-                      বিক্রিত দুধ (লিটার) *
+                      বিক্রি করা দুধ (লিটার) *
                     </label>
                     <input
                       type="number"
@@ -298,13 +298,13 @@ export const AddMilkModal = ({
                       placeholder={String(totalLiters)}
                     />
                     <span className="text-[10px] text-gray-400 mt-0.5 block">
-                      সর্বোচ্চ {totalLiters} লিটার (বাকিটা বাছুরের জন্য)
+                      সর্বোচ্চ {totalLiters} লিটার (বাকিটা বাছুর ও পরিবারের জন্য)
                     </span>
                   </div>
 
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1">
-                      বিক্রয় দর প্রতি লিটার (টাকা) *
+                      প্রতি লিটার দর (টাকা) *
                     </label>
                     <div className="relative">
                       <span className="absolute left-3 top-2.5 text-gray-500 font-bold text-sm">৳</span>
@@ -322,7 +322,7 @@ export const AddMilkModal = ({
                 {/* Payment Method */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    টাকা পরিশোধের মাধ্যম
+                    টাকা পাওয়ার মাধ্যম
                   </label>
                   <div className="grid grid-cols-3 gap-2">
                     {(['cash', 'bkash', 'bank'] as const).map((method) => (
@@ -336,7 +336,7 @@ export const AddMilkModal = ({
                             : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
                         }`}
                       >
-                        {method === 'cash' ? 'নগদ' : method === 'bkash' ? 'বিকাশ' : 'ব্যাংক'}
+                        {method === 'cash' ? 'নগদ টাকা' : method === 'bkash' ? 'বিকাশ' : 'ব্যাংক'}
                       </button>
                     ))}
                   </div>
@@ -346,15 +346,15 @@ export const AddMilkModal = ({
                 <div className="bg-[#EAF5EE] border border-[#C5E3D0] p-3 rounded-xl flex items-center justify-between">
                   <div>
                     <span className="text-xs text-gray-600 block">
-                      বিক্রিত: <strong>{effectiveSoldLiters}</strong> লিটার @ ৳{priceNum}
+                      বিক্রি: <strong>{effectiveSoldLiters}</strong> লিটার (দর ৳{priceNum})
                     </span>
                     <span className="text-sm font-bold text-[#16402C]">
-                      মোট বিক্রয় মূল্য: ৳ {totalAmount.toLocaleString('en-US')}
+                      মোট বিক্রির টাকা: ৳ {totalAmount.toLocaleString('en-US')}
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5 text-xs text-[#2A7A50] font-semibold">
                     <Check className="w-4 h-4" />
-                    <span>আয়ে যুক্ত হবে</span>
+                    <span>জমার খাতায় যুক্ত হবে</span>
                   </div>
                 </div>
               </div>
@@ -362,7 +362,7 @@ export const AddMilkModal = ({
               <div className="p-3 bg-amber-50/80 border border-amber-200 rounded-xl flex items-start gap-2.5 text-amber-900 text-xs">
                 <Info className="w-4 h-4 shrink-0 mt-0.5 text-amber-600" />
                 <p>
-                  <strong>বাণিজ্যিক বিক্রয় নেই:</strong> সংগৃহীত {totalLiters} লিটার দুধ বাছুরের খাদ্য বা নিজস্ব ব্যবহারে রাখা হয়েছে। খামারের আয়ে কোনো কাল্পনিক রাজস্ব যোগ হবে না।
+                  <strong>দুধ বিক্রি হয়নি:</strong> সংগৃহীত {totalLiters} লিটার দুধ বাছুরকে খাওয়ানো হয়েছে বা পরিবারের প্রয়োজনে রাখা হয়েছে। জমার খাতায় কোনো টাকা যোগ হবে না।
                 </p>
               </div>
             )}
@@ -377,7 +377,7 @@ export const AddMilkModal = ({
               type="text"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="যেমন: মিষ্টি দোকানে সরবরাহ, পরিবারের জন্য রাখা ইত্যাদি"
+              placeholder="যেমন: বাজারে বিক্রি, মিষ্টির দোকানে দেওয়া ইত্যাদি"
               className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-[#16402C] outline-hidden text-sm"
             />
           </div>
