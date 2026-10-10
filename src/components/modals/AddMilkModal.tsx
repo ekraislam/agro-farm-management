@@ -11,6 +11,11 @@ interface AddMilkModalProps {
     record: MilkRecord,
     paymentMethod?: 'cash' | 'bkash' | 'bank'
   ) => Promise<{ success: boolean; error?: string } | void> | void;
+  onUpdateRecord?: (
+    record: MilkRecord,
+    paymentMethod?: 'cash' | 'bkash' | 'bank'
+  ) => Promise<{ success: boolean; error?: string } | void> | void;
+  initialRecord?: MilkRecord | null;
   cows: Cow[];
   initialCowId?: string;
   employees?: Employee[];
@@ -22,6 +27,8 @@ export const AddMilkModal = ({
   isOpen,
   onClose,
   onAddRecord,
+  onUpdateRecord,
+  initialRecord,
   cows,
   initialCowId,
   employees = [],
@@ -30,6 +37,7 @@ export const AddMilkModal = ({
 }: AddMilkModalProps) => {
   const activeEmployees = employees.filter((e) => !e.isArchived && e.status === 'active');
   const defaultRecorder = `${ownerName} (মালিক)`;
+  const isEditMode = Boolean(initialRecord);
 
   const [date, setDate] = useState('১০ অক্টোবর ২০২৬');
   const [selectedCowId, setSelectedCowId] = useState('all');
@@ -47,6 +55,23 @@ export const AddMilkModal = ({
 
   useEffect(() => {
     if (!isOpen) return;
+
+    if (initialRecord) {
+      setDate(initialRecord.date);
+      setSelectedCowId(initialRecord.cowId || 'all');
+      setMorningLiters(initialRecord.morningLiters > 0 ? String(initialRecord.morningLiters) : '');
+      setEveningLiters(initialRecord.eveningLiters > 0 ? String(initialRecord.eveningLiters) : '');
+      const sold = initialRecord.isSold ?? true;
+      setIsSold(sold);
+      const sLiters = initialRecord.soldLiters !== undefined ? initialRecord.soldLiters : initialRecord.totalLiters;
+      setSoldLiters(sLiters > 0 ? String(sLiters) : '');
+      setIsCustomSold(Boolean(sLiters && sLiters !== initialRecord.totalLiters));
+      setPricePerLiter(String(initialRecord.pricePerLiter || defaultMilkRate || 80));
+      setRecordedBy(initialRecord.recordedBy || defaultRecorder);
+      setNotes(initialRecord.note || '');
+      setError('');
+      return;
+    }
 
     if (initialCowId && initialCowId !== 'all') {
       setSelectedCowId(initialCowId);
@@ -68,9 +93,10 @@ export const AddMilkModal = ({
     setSoldLiters('');
     setIsCustomSold(false);
     setPricePerLiter(String(defaultMilkRate || 80));
-    setRecordedBy(`${ownerName} (মালিক)`);
+    setRecordedBy(defaultRecorder);
+    setNotes('');
     setError('');
-  }, [isOpen, initialCowId, cows, ownerName, defaultMilkRate]);
+  }, [isOpen, initialRecord, initialCowId, cows, ownerName, defaultMilkRate, defaultRecorder]);
 
   // Derived liter calculations
   const morningNum = parseFloat(morningLiters) || 0;
@@ -123,8 +149,9 @@ export const AddMilkModal = ({
     const selectedCow = cows.find((c) => c.id === selectedCowId);
     const isIndividual = selectedCowId !== 'all';
 
-    const newRecord: MilkRecord = {
-      id: generateId('mr'),
+    const recordPayload: MilkRecord = {
+      ...(initialRecord || {}),
+      id: initialRecord?.id || generateId('mr'),
       date,
       morningLiters: morningNum,
       eveningLiters: eveningNum,
@@ -142,10 +169,12 @@ export const AddMilkModal = ({
 
     setIsSubmitting(true);
     try {
-      const result = await onAddRecord(newRecord, paymentMethod);
+      const result = isEditMode && onUpdateRecord
+        ? await onUpdateRecord(recordPayload, paymentMethod)
+        : await onAddRecord(recordPayload, paymentMethod);
       setIsSubmitting(false);
       if (result && !result.success) {
-        setError(result.error || 'দুধের হিসাব ক্লাউডে সংরক্ষণ করা সম্ভব হয়নি।');
+        setError(result.error || 'দুধের হিসাব সংরক্ষণ করা সম্ভব হয়নি।');
         return;
       }
       onClose();
@@ -165,8 +194,14 @@ export const AddMilkModal = ({
               <Droplets className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-lg md:text-xl font-bold">দুধের নতুন হিসাব লিখুন</h2>
-              <p className="text-xs text-white/80 mt-0.5">দৈনিক সকাল ও বিকালের দুধ দোয়ানো এবং বিক্রির হিসাব</p>
+              <h2 className="text-lg md:text-xl font-bold">
+                {isEditMode ? 'দুধের হিসাব সংশোধন করুন' : 'দুধের নতুন হিসাব লিখুন'}
+              </h2>
+              <p className="text-xs text-white/80 mt-0.5">
+                {isEditMode
+                  ? `${initialRecord?.date} তারিখের দুধ সংগ্রহ ও বিক্রয়ের তথ্য পরিবর্তন`
+                  : 'দৈনিক সকাল ও বিকালের দুধ দোয়ানো এবং বিক্রির হিসাব'}
+              </p>
             </div>
           </div>
           <button
@@ -488,7 +523,11 @@ export const AddMilkModal = ({
               ) : (
                 <Droplets className="w-4 h-4 text-[#E5B842]" />
               )}
-              {isSubmitting ? 'সংরক্ষণ হচ্ছে...' : 'হিসাব সংরক্ষণ করুন'}
+              {isSubmitting
+                ? 'সংরক্ষণ হচ্ছে...'
+                : isEditMode
+                ? 'হিসাব সংশোধন সম্পন্ন করুন'
+                : 'হিসাব সংরক্ষণ করুন'}
             </button>
           </div>
         </form>

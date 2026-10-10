@@ -4,18 +4,24 @@ import {
   Droplets, 
   Plus, 
   TrendingUp, 
-  DollarSign
+  DollarSign,
+  Pencil,
+  Trash2
 } from 'lucide-react';
 import type { MilkRecord } from '../../types/farm';
 
 interface MilkRecordsViewProps {
   records: MilkRecord[];
   onOpenAddMilk: () => void;
+  onEditRecord?: (record: MilkRecord) => void;
+  onDeleteRecord?: (recordId: string) => void;
 }
 
 export const MilkRecordsView = ({
   records,
   onOpenAddMilk,
+  onEditRecord,
+  onDeleteRecord,
 }: MilkRecordsViewProps) => {
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -148,6 +154,7 @@ export const MilkRecordsView = ({
                     <th className="py-3.5 px-4">মোট টাকা</th>
                     <th className="py-3.5 px-4">হিসাবকারী</th>
                     <th className="py-3.5 px-4">মন্তব্য</th>
+                    <th className="py-3.5 px-4 text-right">অ্যাকশন</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#F4EFE2]">
@@ -176,6 +183,34 @@ export const MilkRecordsView = ({
                       </td>
                       <td className="py-3.5 px-4 text-gray-500 text-xs max-w-xs truncate">
                         {r.note || '-'}
+                      </td>
+                      <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-1.5">
+                          {onEditRecord && (
+                            <button
+                              onClick={() => onEditRecord(r)}
+                              className="p-1.5 rounded-lg text-emerald-800 hover:bg-emerald-50 transition-colors cursor-pointer"
+                              title="দুধের হিসাব সংশোধন করুন"
+                              aria-label="দুধের হিসাব সংশোধন"
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </button>
+                          )}
+                          {onDeleteRecord && (
+                            <button
+                              onClick={() => {
+                                if (window.confirm(`${r.date} তারিখের ${r.totalLiters} লিটার দুধের হিসাব কি নিশ্চিত মুছে ফেলতে চান?`)) {
+                                  onDeleteRecord(r.id);
+                                }
+                              }}
+                              className="p-1.5 rounded-lg text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                              title="রেকর্ড মুছে ফেলুন"
+                              aria-label="দুধের রেকর্ড মুছুন"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -209,7 +244,33 @@ export const MilkRecordsView = ({
                     <span className="text-gray-600">
                       মোট মূল্য: <strong className="text-[#16402C] font-bold">৳{formatCurrency(r.totalAmount)}</strong> (৳{r.pricePerLiter}/লি)
                     </span>
-                    <span className="text-gray-500 text-[11px]">{r.recordedBy}</span>
+                    <span className="text-gray-500 text-[11px] truncate max-w-[120px]">{r.recordedBy}</span>
+                  </div>
+
+                  {/* Mobile Action Buttons */}
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#F4EFE2]">
+                    {onEditRecord && (
+                      <button
+                        onClick={() => onEditRecord(r)}
+                        className="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                        <span>সংশোধন</span>
+                      </button>
+                    )}
+                    {onDeleteRecord && (
+                      <button
+                        onClick={() => {
+                          if (window.confirm(`${r.date} তারিখের ${r.totalLiters} লিটার দুধের হিসাব কি নিশ্চিত মুছে ফেলতে চান?`)) {
+                            onDeleteRecord(r.id);
+                          }
+                        }}
+                        className="px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 font-semibold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>মুছুন</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}

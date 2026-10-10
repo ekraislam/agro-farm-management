@@ -1,5 +1,5 @@
 import { formatCurrency } from './utils/accounting';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import type { 
   NavigationTab, 
   Cow, 
@@ -61,7 +61,7 @@ function FarmDashboard() {
   const isLiveCloud = Boolean(isConfigured && user && !isDemoMode);
 
   const [currentTab, setCurrentTab] = useState<NavigationTab>('dashboard');
-  const { isInstalled, isModalOpen, setIsModalOpen, triggerInstall, deferredPrompt } = usePWAInstall();
+  const { isInstalled, isModalOpen, setIsModalOpen, deferredPrompt } = usePWAInstall();
 
   // Persistent Local Farm Storage (persists automatically across page reloads and browser restarts)
   const [demoCows, setDemoCows] = useState<Cow[]>(() => localFarmStorage.getCows());
@@ -94,6 +94,7 @@ function FarmDashboard() {
 
   // Modals state
   const [isAddMilkOpen, setIsAddMilkOpen] = useState(false);
+  const [editingMilkRecord, setEditingMilkRecord] = useState<MilkRecord | null>(null);
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<FinancialRecord | null>(null);
   const [isAddCowOpen, setIsAddCowOpen] = useState(false);
@@ -253,6 +254,180 @@ function FarmDashboard() {
     document.title = `${titleName} — স্মার্ট খামার ব্যবস্থাপনা`;
   }, [farmProfile.farmName]);
 
+  // Reference tracker for open modals/drawers ensuring popstate listener has latest states
+  const modalStateRef = useRef({
+    isAddMilkOpen,
+    isAddExpenseOpen,
+    isAddCowOpen,
+    isAddHealthOpen,
+    isAddTaskOpen,
+    isAddEmployeeOpen,
+    isRecordAttendanceOpen,
+    isRecordSalaryPaymentOpen,
+    isAuthModalOpen,
+    isSetupModalOpen,
+    isModalOpen,
+    isMobileMenuOpen,
+  });
+
+  useEffect(() => {
+    modalStateRef.current = {
+      isAddMilkOpen,
+      isAddExpenseOpen,
+      isAddCowOpen,
+      isAddHealthOpen,
+      isAddTaskOpen,
+      isAddEmployeeOpen,
+      isRecordAttendanceOpen,
+      isRecordSalaryPaymentOpen,
+      isAuthModalOpen,
+      isSetupModalOpen,
+      isModalOpen,
+      isMobileMenuOpen,
+    };
+  }, [
+    isAddMilkOpen,
+    isAddExpenseOpen,
+    isAddCowOpen,
+    isAddHealthOpen,
+    isAddTaskOpen,
+    isAddEmployeeOpen,
+    isRecordAttendanceOpen,
+    isRecordSalaryPaymentOpen,
+    isAuthModalOpen,
+    isSetupModalOpen,
+    isModalOpen,
+    isMobileMenuOpen,
+  ]);
+
+  // Unified modal open/close helpers with history stack integration
+  const openModal = useCallback((setter: () => void) => {
+    setter();
+    if (typeof window !== 'undefined' && !window.location.hash.includes('modal')) {
+      window.history.pushState({ tab: currentTab, isModal: true }, '', '#modal');
+    }
+  }, [currentTab]);
+
+  const closeModal = useCallback((closer: () => void) => {
+    closer();
+    if (typeof window !== 'undefined' && window.location.hash.includes('modal')) {
+      window.history.back();
+    }
+  }, []);
+
+  // Centralized tab navigation with history push
+  const navigateToTab = useCallback((tab: NavigationTab) => {
+    setIsMobileMenuOpen(false);
+    if (tab === currentTab && (typeof window === 'undefined' || !window.location.hash.includes('modal'))) {
+      return;
+    }
+    if (typeof window !== 'undefined') {
+      const targetHash = tab === 'dashboard' ? '' : `#tab=${tab}`;
+      window.history.pushState({ tab }, '', targetHash || window.location.pathname);
+    }
+    setCurrentTab(tab);
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [currentTab]);
+
+  // Mobile Hardware & Browser Back-Button Stack Integration (popstate)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const validTabs: NavigationTab[] = [
+      'dashboard', 'cows', 'milk', 'finance', 'employees',
+      'biogas', 'reports', 'reminders', 'advisor', 'settings'
+    ];
+
+    // Initial restoration from URL hash (e.g. reload on #tab=milk)
+    const initialHash = window.location.hash;
+    const tabMatch = initialHash.match(/^#tab=([a-z]+)$/);
+    if (tabMatch && validTabs.includes(tabMatch[1] as NavigationTab)) {
+      setCurrentTab(tabMatch[1] as NavigationTab);
+      window.history.replaceState({ tab: tabMatch[1] }, '', initialHash);
+    } else {
+      window.history.replaceState({ tab: 'dashboard' }, '', window.location.pathname);
+    }
+
+    const handlePopState = (e: PopStateEvent) => {
+      const {
+        isAddMilkOpen: milkOpen,
+        isAddExpenseOpen: expOpen,
+        isAddCowOpen: cowOpen,
+        isAddHealthOpen: healthOpen,
+        isAddTaskOpen: taskOpen,
+        isAddEmployeeOpen: empOpen,
+        isRecordAttendanceOpen: attOpen,
+        isRecordSalaryPaymentOpen: salOpen,
+        isAuthModalOpen: authOpen,
+        isSetupModalOpen: setupOpen,
+        isModalOpen: instOpen,
+        isMobileMenuOpen: menuOpen,
+      } = modalStateRef.current;
+
+      const anyModalOrMenuOpen =
+        milkOpen ||
+        expOpen ||
+        cowOpen ||
+        healthOpen ||
+        taskOpen ||
+        empOpen ||
+        attOpen ||
+        salOpen ||
+        authOpen ||
+        setupOpen ||
+        instOpen ||
+        menuOpen;
+
+      // Layer 1: If any modal or drawer was open, back button closes it without leaving the page!
+      if (anyModalOrMenuOpen) {
+        setIsAddMilkOpen(false);
+        setEditingMilkRecord(null);
+        setSelectedCowForRecord(null);
+        setIsAddExpenseOpen(false);
+        setEditingTransaction(null);
+        setIsAddCowOpen(false);
+        setEditingCow(null);
+        setIsAddHealthOpen(false);
+        setIsAddTaskOpen(false);
+        setSelectedEmployeeForTask(undefined);
+        setIsAddEmployeeOpen(false);
+        setEditingEmployee(null);
+        setIsRecordAttendanceOpen(false);
+        setSelectedEmployeeForAttendance(undefined);
+        setIsRecordSalaryPaymentOpen(false);
+        setSelectedEmployeeForSalary(undefined);
+        setIsAuthModalOpen(false);
+        setIsSetupModalOpen(false);
+        setIsModalOpen(false);
+        setIsMobileMenuOpen(false);
+        return;
+      }
+
+      // Layer 2: Navigate back to the previous section in history
+      const targetTab = e.state?.tab as NavigationTab | undefined;
+      if (targetTab && validTabs.includes(targetTab)) {
+        setCurrentTab(targetTab);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+
+      const hashMatch = window.location.hash.match(/^#tab=([a-z]+)$/);
+      if (hashMatch && validTabs.includes(hashMatch[1] as NavigationTab)) {
+        setCurrentTab(hashMatch[1] as NavigationTab);
+      } else {
+        setCurrentTab('dashboard');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [setIsModalOpen]);
+
   // Dynamic summary computation (preserving active non-archived cows)
   const activeCows = cows.filter((c) => !c.isArchived);
   const milkingCows = activeCows.filter((c) => c.status === 'milking').length;
@@ -379,6 +554,100 @@ function FarmDashboard() {
         `${record.totalLiters} লিটার দুধ সংগৃহীত`
       );
     }
+    return { success: true };
+  };
+
+  const handleUpdateMilkRecord = async (
+    record: MilkRecord,
+    paymentMethod: 'cash' | 'bkash' | 'bank' = 'cash'
+  ): Promise<{ success: boolean; error?: string }> => {
+    const isSold = record.isSold ?? true;
+    const soldLiters = isSold ? (record.soldLiters ?? record.totalLiters) : 0;
+
+    if (isLiveCloud && user) {
+      const milkRes = await farmRepository.updateMilkRecord(user.id, record);
+      if (!milkRes.success) {
+        showToast('দুধের হিসাব সংশোধন ব্যর্থ হয়েছে', milkRes.error, 'error');
+        return { success: false, error: milkRes.error };
+      }
+
+      setCloudMilkRecords((prev) => prev.map((m) => (m.id === record.id ? milkRes.data! : m)));
+
+      // Refresh cloud financial records so synced transaction reflects latest numbers
+      const freshFin = await farmRepository.getFinancialTransactions(user.id);
+      if (freshFin.success && freshFin.data) {
+        setCloudFinancialRecords(freshFin.data);
+      }
+
+      showToast(
+        'দুধের হিসাব সফলভাবে হালনাগাদ করা হয়েছে!',
+        `${record.totalLiters} লিটার মোট, ${soldLiters} লিটার বিক্রয় (৳ ${formatCurrency(record.totalAmount)})`
+      );
+      return { success: true };
+    }
+
+    // Local Offline Mode
+    setDemoMilkRecords((prev) => prev.map((m) => (m.id === record.id ? record : m)));
+
+    // Synchronize linked financial transaction
+    if (isSold && record.totalAmount > 0) {
+      const existingFin = demoFinancialRecords.find((f) => f.relatedMilkRecordId === record.id);
+      if (existingFin) {
+        const updatedFin: FinancialRecord = {
+          ...existingFin,
+          date: record.date,
+          amount: record.totalAmount,
+          title: `দুধ বিক্রয় (${soldLiters} লিটার)`,
+          notes: record.note,
+          paymentMethod,
+        };
+        setDemoFinancialRecords((prev) => prev.map((f) => (f.id === existingFin.id ? updatedFin : f)));
+      } else {
+        const newFin: FinancialRecord = {
+          id: generateId('fin'),
+          date: record.date,
+          type: 'income',
+          category: 'milk_sale',
+          categoryLabelBn: 'দুধ বিক্রি',
+          title: `দুধ বিক্রয় (${soldLiters} লিটার)`,
+          amount: record.totalAmount,
+          paymentMethod,
+          recordedBy: record.recordedBy,
+          notes: record.note,
+          relatedMilkRecordId: record.id,
+        };
+        setDemoFinancialRecords((prev) => [newFin, ...prev]);
+      }
+    } else {
+      // If no longer sold or 0 amount, remove linked financial record to avoid ghost income
+      setDemoFinancialRecords((prev) => prev.filter((f) => f.relatedMilkRecordId !== record.id));
+    }
+
+    showToast(
+      'দুধের হিসাব সফলভাবে সংশোধন করা হয়েছে!',
+      `${record.totalLiters} লিটার মোট, ${soldLiters} লিটার বিক্রয় (৳ ${formatCurrency(record.totalAmount)})`
+    );
+    return { success: true };
+  };
+
+  const handleDeleteMilkRecord = async (recordId: string): Promise<{ success: boolean; error?: string }> => {
+    if (isLiveCloud && user) {
+      const res = await farmRepository.deleteMilkRecord(user.id, recordId);
+      if (!res.success) {
+        showToast('দুধের রেকর্ড মুছে ফেলা সম্ভব হয়নি', res.error, 'error');
+        return { success: false, error: res.error };
+      }
+
+      setCloudMilkRecords((prev) => prev.filter((m) => m.id !== recordId));
+      setCloudFinancialRecords((prev) => prev.filter((f) => f.relatedMilkRecordId !== recordId));
+      showToast('দুধের রেকর্ড সফলভাবে মুছে ফেলা হয়েছে!');
+      return { success: true };
+    }
+
+    // Local Offline Mode
+    setDemoMilkRecords((prev) => prev.filter((m) => m.id !== recordId));
+    setDemoFinancialRecords((prev) => prev.filter((f) => f.relatedMilkRecordId !== recordId));
+    showToast('দুধের রেকর্ড সফলভাবে মুছে ফেলা হয়েছে!');
     return { success: true };
   };
 
@@ -1012,12 +1281,9 @@ function FarmDashboard() {
         <div className="hidden md:block">
           <Sidebar
             currentTab={currentTab}
-            onNavigate={(tab) => {
-              setCurrentTab(tab);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
+            onNavigate={navigateToTab}
             pendingTasksCount={pendingTasksCount}
-            onOpenInstall={triggerInstall}
+            onOpenInstall={() => openModal(() => setIsModalOpen(true))}
             ownerName={displayOwnerName}
             activeEmployeesCount={activeEmployeesCount}
             farmName={farmProfile.farmName}
@@ -1029,25 +1295,29 @@ function FarmDashboard() {
           {/* Header */}
           <Header
             currentTab={currentTab}
-            onNavigate={(tab) => {
-              setCurrentTab(tab);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
+            onNavigate={navigateToTab}
             onOpenAddMilk={() => {
+              setEditingMilkRecord(null);
               setSelectedCowForRecord(null);
-              setIsAddMilkOpen(true);
+              openModal(() => setIsAddMilkOpen(true));
             }}
-            onOpenAddExpense={() => setIsAddExpenseOpen(true)}
+            onOpenAddExpense={() => {
+              setEditingTransaction(null);
+              openModal(() => setIsAddExpenseOpen(true));
+            }}
             onOpenAddCow={() => {
               setEditingCow(null);
-              setIsAddCowOpen(true);
+              openModal(() => setIsAddCowOpen(true));
             }}
-            onOpenAddTask={() => setIsAddTaskOpen(true)}
+            onOpenAddTask={() => {
+              setSelectedEmployeeForTask(undefined);
+              openModal(() => setIsAddTaskOpen(true));
+            }}
             pendingTasksCount={pendingTasksCount}
-            onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
-            onOpenInstall={triggerInstall}
-            onOpenAuth={() => setIsAuthModalOpen(true)}
-            onOpenSetup={() => setIsSetupModalOpen(true)}
+            onOpenMobileMenu={() => openModal(() => setIsMobileMenuOpen(true))}
+            onOpenInstall={() => openModal(() => setIsModalOpen(true))}
+            onOpenAuth={() => openModal(() => setIsAuthModalOpen(true))}
+            onOpenSetup={() => openModal(() => setIsSetupModalOpen(true))}
             ownerName={displayOwnerName}
             farmName={farmProfile.farmName}
           />
@@ -1064,22 +1334,23 @@ function FarmDashboard() {
                 employees={employees}
                 attendanceRecords={attendanceRecords}
                 isLiveCloud={isLiveCloud}
-                onNavigate={(tab: NavigationTab) => {
-                  setCurrentTab(tab);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
+                onNavigate={navigateToTab}
                 onOpenAddMilk={() => {
+                  setEditingMilkRecord(null);
                   setSelectedCowForRecord(null);
-                  setIsAddMilkOpen(true);
+                  openModal(() => setIsAddMilkOpen(true));
                 }}
-                onOpenAddExpense={() => setIsAddExpenseOpen(true)}
+                onOpenAddExpense={() => {
+                  setEditingTransaction(null);
+                  openModal(() => setIsAddExpenseOpen(true));
+                }}
                 onOpenAddCow={() => {
                   setEditingCow(null);
-                  setIsAddCowOpen(true);
+                  openModal(() => setIsAddCowOpen(true));
                 }}
                 onOpenAddTask={() => {
                   setSelectedEmployeeForTask(undefined);
-                  setIsAddTaskOpen(true);
+                  openModal(() => setIsAddTaskOpen(true));
                 }}
                 onToggleTask={handleToggleTask}
                 ownerName={displayOwnerName}
@@ -1094,19 +1365,20 @@ function FarmDashboard() {
                 healthRecords={healthRecords}
                 onOpenAddCow={() => {
                   setEditingCow(null);
-                  setIsAddCowOpen(true);
+                  openModal(() => setIsAddCowOpen(true));
                 }}
                 onOpenEditCow={(cow) => {
                   setEditingCow(cow);
-                  setIsAddCowOpen(true);
+                  openModal(() => setIsAddCowOpen(true));
                 }}
                 onOpenAddMilk={(cow) => {
+                  setEditingMilkRecord(null);
                   setSelectedCowForRecord(cow || null);
-                  setIsAddMilkOpen(true);
+                  openModal(() => setIsAddMilkOpen(true));
                 }}
                 onOpenAddHealth={(cow) => {
                   setSelectedCowForRecord(cow || null);
-                  setIsAddHealthOpen(true);
+                  openModal(() => setIsAddHealthOpen(true));
                 }}
                 onDeleteOrArchiveCow={handleDeleteOrArchiveCow}
               />
@@ -1116,9 +1388,16 @@ function FarmDashboard() {
               <MilkRecordsView
                 records={milkRecords}
                 onOpenAddMilk={() => {
+                  setEditingMilkRecord(null);
                   setSelectedCowForRecord(null);
-                  setIsAddMilkOpen(true);
+                  openModal(() => setIsAddMilkOpen(true));
                 }}
+                onEditRecord={(record) => {
+                  setEditingMilkRecord(record);
+                  setSelectedCowForRecord(null);
+                  openModal(() => setIsAddMilkOpen(true));
+                }}
+                onDeleteRecord={handleDeleteMilkRecord}
               />
             )}
 
@@ -1127,11 +1406,11 @@ function FarmDashboard() {
                 records={financialRecords}
                 onOpenAddExpense={() => {
                   setEditingTransaction(null);
-                  setIsAddExpenseOpen(true);
+                  openModal(() => setIsAddExpenseOpen(true));
                 }}
                 onEditTransaction={(item) => {
                   setEditingTransaction(item);
-                  setIsAddExpenseOpen(true);
+                  openModal(() => setIsAddExpenseOpen(true));
                 }}
                 onDeleteTransaction={handleDeleteTransaction}
               />
@@ -1145,23 +1424,23 @@ function FarmDashboard() {
                 tasks={reminders}
                 onOpenAddEmployee={() => {
                   setEditingEmployee(null);
-                  setIsAddEmployeeOpen(true);
+                  openModal(() => setIsAddEmployeeOpen(true));
                 }}
                 onOpenEditEmployee={(emp) => {
                   setEditingEmployee(emp);
-                  setIsAddEmployeeOpen(true);
+                  openModal(() => setIsAddEmployeeOpen(true));
                 }}
                 onOpenRecordAttendance={(empId) => {
                   setSelectedEmployeeForAttendance(empId);
-                  setIsRecordAttendanceOpen(true);
+                  openModal(() => setIsRecordAttendanceOpen(true));
                 }}
                 onOpenRecordSalaryPayment={(empId) => {
                   setSelectedEmployeeForSalary(empId);
-                  setIsRecordSalaryPaymentOpen(true);
+                  openModal(() => setIsRecordSalaryPaymentOpen(true));
                 }}
                 onOpenAddTask={(empId) => {
                   setSelectedEmployeeForTask(empId);
-                  setIsAddTaskOpen(true);
+                  openModal(() => setIsAddTaskOpen(true));
                 }}
                 onDeleteOrArchiveEmployee={handleDeleteOrArchiveEmployee}
                 onToggleTask={handleToggleTask}
@@ -1224,10 +1503,7 @@ function FarmDashboard() {
                 biogasLogs={biogasLogs}
                 biogasInspections={biogasInspections}
                 reminders={consolidatedReminders}
-                onNavigate={(tab) => {
-                  setCurrentTab(tab);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
+                onNavigate={navigateToTab}
                 farmName={farmProfile.farmName}
                 ownerName={displayOwnerName}
               />
@@ -1239,10 +1515,10 @@ function FarmDashboard() {
                 onUpdateFarmProfile={handleUpdateFarmProfile}
                 onResetDemoData={handleResetDemoData}
                 onShowToast={(msg) => showToast(msg)}
-                onOpenAuth={() => setIsAuthModalOpen(true)}
-                onOpenSetup={() => setIsSetupModalOpen(true)}
+                onOpenAuth={() => openModal(() => setIsAuthModalOpen(true))}
+                onOpenSetup={() => openModal(() => setIsSetupModalOpen(true))}
                 onImportBackup={handleImportBackup}
-                onOpenInstall={triggerInstall}
+                onOpenInstall={() => openModal(() => setIsModalOpen(true))}
               />
             )}
           </main>
@@ -1252,26 +1528,32 @@ function FarmDashboard() {
       {/* Mobile Bottom Navigation */}
       <BottomNav
         currentTab={currentTab}
-        onNavigate={(tab) => {
-          setCurrentTab(tab);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onNavigate={navigateToTab}
         pendingTasksCount={pendingTasksCount}
         onOpenAddMilk={() => {
+          setEditingMilkRecord(null);
           setSelectedCowForRecord(null);
-          setIsAddMilkOpen(true);
+          openModal(() => setIsAddMilkOpen(true));
         }}
-        onOpenAddExpense={() => setIsAddExpenseOpen(true)}
+        onOpenAddExpense={() => {
+          setEditingTransaction(null);
+          openModal(() => setIsAddExpenseOpen(true));
+        }}
       />
 
       {/* Modals */}
       <AddMilkModal
         isOpen={isAddMilkOpen}
         onClose={() => {
-          setIsAddMilkOpen(false);
-          setSelectedCowForRecord(null);
+          closeModal(() => {
+            setIsAddMilkOpen(false);
+            setEditingMilkRecord(null);
+            setSelectedCowForRecord(null);
+          });
         }}
         onAddRecord={handleAddMilkRecord}
+        onUpdateRecord={handleUpdateMilkRecord}
+        initialRecord={editingMilkRecord}
         cows={cows}
         initialCowId={selectedCowForRecord?.id}
         employees={employees}
@@ -1282,8 +1564,10 @@ function FarmDashboard() {
       <AddExpenseModal
         isOpen={isAddExpenseOpen}
         onClose={() => {
-          setIsAddExpenseOpen(false);
-          setEditingTransaction(null);
+          closeModal(() => {
+            setIsAddExpenseOpen(false);
+            setEditingTransaction(null);
+          });
         }}
         onAddTransaction={handleAddTransaction}
         onUpdateTransaction={handleUpdateTransaction}
@@ -1295,8 +1579,10 @@ function FarmDashboard() {
       <AddCowModal
         isOpen={isAddCowOpen}
         onClose={() => {
-          setIsAddCowOpen(false);
-          setEditingCow(null);
+          closeModal(() => {
+            setIsAddCowOpen(false);
+            setEditingCow(null);
+          });
         }}
         onSaveCow={handleSaveCow}
         existingCows={cows}
@@ -1306,8 +1592,10 @@ function FarmDashboard() {
       <AddHealthRecordModal
         isOpen={isAddHealthOpen}
         onClose={() => {
-          setIsAddHealthOpen(false);
-          setSelectedCowForRecord(null);
+          closeModal(() => {
+            setIsAddHealthOpen(false);
+            setSelectedCowForRecord(null);
+          });
         }}
         cows={cows}
         initialCowId={selectedCowForRecord?.id}
@@ -1317,8 +1605,10 @@ function FarmDashboard() {
       <AddTaskModal
         isOpen={isAddTaskOpen}
         onClose={() => {
-          setIsAddTaskOpen(false);
-          setSelectedEmployeeForTask(undefined);
+          closeModal(() => {
+            setIsAddTaskOpen(false);
+            setSelectedEmployeeForTask(undefined);
+          });
         }}
         onAddTask={handleAddTask}
         employees={employees}
@@ -1329,8 +1619,10 @@ function FarmDashboard() {
       <AddEmployeeModal
         isOpen={isAddEmployeeOpen}
         onClose={() => {
-          setIsAddEmployeeOpen(false);
-          setEditingEmployee(null);
+          closeModal(() => {
+            setIsAddEmployeeOpen(false);
+            setEditingEmployee(null);
+          });
         }}
         onSave={handleSaveEmployee}
         initialEmployee={editingEmployee}
@@ -1340,8 +1632,10 @@ function FarmDashboard() {
       <RecordAttendanceModal
         isOpen={isRecordAttendanceOpen}
         onClose={() => {
-          setIsRecordAttendanceOpen(false);
-          setSelectedEmployeeForAttendance(undefined);
+          closeModal(() => {
+            setIsRecordAttendanceOpen(false);
+            setSelectedEmployeeForAttendance(undefined);
+          });
         }}
         employees={employees}
         existingRecords={attendanceRecords}
@@ -1352,8 +1646,10 @@ function FarmDashboard() {
       <RecordSalaryPaymentModal
         isOpen={isRecordSalaryPaymentOpen}
         onClose={() => {
-          setIsRecordSalaryPaymentOpen(false);
-          setSelectedEmployeeForSalary(undefined);
+          closeModal(() => {
+            setIsRecordSalaryPaymentOpen(false);
+            setSelectedEmployeeForSalary(undefined);
+          });
         }}
         employees={employees}
         financialRecords={financialRecords}
@@ -1363,7 +1659,9 @@ function FarmDashboard() {
 
       <FarmPinModal
         isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
+        onClose={() => {
+          closeModal(() => setIsAuthModalOpen(false));
+        }}
         onOpenSetupGuide={() => {
           setIsAuthModalOpen(false);
           setIsSetupModalOpen(true);
@@ -1372,12 +1670,16 @@ function FarmDashboard() {
 
       <SupabaseSetupModal
         isOpen={isSetupModalOpen}
-        onClose={() => setIsSetupModalOpen(false)}
+        onClose={() => {
+          closeModal(() => setIsSetupModalOpen(false));
+        }}
       />
 
       <InstallAppModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          closeModal(() => setIsModalOpen(false));
+        }}
         deferredPrompt={deferredPrompt}
         isInstalled={isInstalled}
         ownerName={displayOwnerName}
@@ -1389,13 +1691,17 @@ function FarmDashboard() {
         <div className="md:hidden fixed inset-0 z-50 flex">
           <div
             className="fixed inset-0 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200"
-            onClick={() => setIsMobileMenuOpen(false)}
+            onClick={() => {
+              closeModal(() => setIsMobileMenuOpen(false));
+            }}
           />
           <div className="relative w-72 max-w-[80vw] bg-[#FAF7F0] h-full shadow-2xl flex flex-col z-10 animate-in slide-in-from-left duration-200 overflow-hidden">
             <div className="p-4 flex items-center justify-between border-b border-[#EAE2D0]">
               <span className="font-bold text-sm text-[#16402C]">মেনু ও বিভাগসমূহ</span>
               <button
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={() => {
+                  closeModal(() => setIsMobileMenuOpen(false));
+                }}
                 className="p-1.5 rounded-xl bg-white border border-[#E2DAC7] text-gray-600 hover:text-gray-900"
               >
                 <X className="w-5 h-5" />
@@ -1404,15 +1710,11 @@ function FarmDashboard() {
             <div className="flex-1 overflow-y-auto">
               <Sidebar
                 currentTab={currentTab}
-                onNavigate={(tab) => {
-                  setCurrentTab(tab);
-                  setIsMobileMenuOpen(false);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
+                onNavigate={navigateToTab}
                 pendingTasksCount={pendingTasksCount}
                 onOpenInstall={() => {
                   setIsMobileMenuOpen(false);
-                  triggerInstall();
+                  openModal(() => setIsModalOpen(true));
                 }}
                 ownerName={displayOwnerName}
                 activeEmployeesCount={activeEmployeesCount}

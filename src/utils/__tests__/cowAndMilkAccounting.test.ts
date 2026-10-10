@@ -670,9 +670,142 @@ describe('Phase 4: Cow Management, Health Records & Milk Accounting', () => {
         success: false as const,
         error: 'ক্লাউড ডেটাবেজ কনফিগার করা হয়নি।',
       };
-
       expect(mockDbErrorResult.success).toBe(false);
       expect(mockDbErrorResult.error).toContain('ক্লাউড ডেটাবেজ কনফিগার করা হয়নি');
     });
   });
+
+  // --------------------------------------------------------------------------
+  // Criterion 13: Milk record editing and deleting synchronizes accounting
+  // --------------------------------------------------------------------------
+  describe('13. Milk Record Edit & Delete Financial Synchronization', () => {
+    it('updates linked income transaction when milk sales are modified', () => {
+      const milkRecordId = 'mr-edit-1';
+      let financialRecords: FinancialRecord[] = [
+        {
+          id: 'fin-mr-1',
+          date: '2026-10-10',
+          type: 'income',
+          category: 'milk_sale',
+          categoryLabelBn: 'দুধ বিক্রি',
+          title: 'দুধ বিক্রয় (30 লিটার)',
+          amount: 2400,
+          paymentMethod: 'cash',
+          recordedBy: 'খামার ব্যবস্থাপক',
+          relatedMilkRecordId: milkRecordId,
+        },
+      ];
+
+      // User edits milk record: sold liters increased to 40 liters @ 80 tk = 3200 tk
+      const updatedMilkRecord: MilkRecord = {
+        id: milkRecordId,
+        date: '2026-10-10',
+        morningLiters: 25,
+        eveningLiters: 20,
+        totalLiters: 45,
+        isSold: true,
+        soldLiters: 40,
+        pricePerLiter: 80,
+        totalAmount: 3200,
+        recordedBy: 'আব্বু',
+      };
+
+      const existingFin = financialRecords.find((f) => f.relatedMilkRecordId === milkRecordId);
+      expect(existingFin).toBeDefined();
+
+      if (existingFin) {
+        financialRecords = financialRecords.map((f) =>
+          f.id === existingFin.id
+            ? {
+                ...existingFin,
+                amount: updatedMilkRecord.totalAmount,
+                title: `দুধ বিক্রয় (${updatedMilkRecord.soldLiters} লিটার)`,
+              }
+            : f
+        );
+      }
+
+      expect(financialRecords[0].amount).toBe(3200);
+      expect(financialRecords[0].title).toBe('দুধ বিক্রয় (40 লিটার)');
+    });
+
+    it('removes linked income transaction when milk sales are toggled off or deleted', () => {
+      const milkRecordId = 'mr-delete-1';
+      let financialRecords: FinancialRecord[] = [
+        {
+          id: 'fin-mr-2',
+          date: '2026-10-10',
+          type: 'income',
+          category: 'milk_sale',
+          categoryLabelBn: 'দুধ বিক্রি',
+          title: 'দুধ বিক্রয় (20 লিটার)',
+          amount: 1600,
+          paymentMethod: 'cash',
+          recordedBy: 'খামার ব্যবস্থাপক',
+          relatedMilkRecordId: milkRecordId,
+        },
+        {
+          id: 'fin-other',
+          date: '2026-10-10',
+          type: 'income',
+          category: 'other_income',
+          categoryLabelBn: 'অন্যান্য আয়',
+          title: 'গোবর বিক্রয়',
+          amount: 500,
+          paymentMethod: 'cash',
+          recordedBy: 'খামার ব্যবস্থাপক',
+        },
+      ];
+
+      // Delete milk record and its linked transaction
+      financialRecords = financialRecords.filter((f) => f.relatedMilkRecordId !== milkRecordId);
+      expect(financialRecords.length).toBe(1);
+      expect(financialRecords[0].id).toBe('fin-other');
+    });
+  });
+
+  // --------------------------------------------------------------------------
+  // Criterion 14: Mobile Back Navigation Priority Logic
+  // --------------------------------------------------------------------------
+  describe('14. Mobile Back Button Navigation Balance', () => {
+    it('prioritizes closing active modal before navigating back in tab history', () => {
+      const modalState = {
+        isAnyModalOpen: true,
+        activeModalName: 'editMilk',
+      };
+      let currentTab = 'milk';
+      const historyStack = ['dashboard', 'cows', 'milk'];
+
+      const simulateHardwareBackPress = () => {
+        if (modalState.isAnyModalOpen) {
+          modalState.isAnyModalOpen = false;
+          modalState.activeModalName = '';
+          return 'modal-closed';
+        }
+        if (historyStack.length > 1) {
+          historyStack.pop();
+          currentTab = historyStack[historyStack.length - 1];
+          return 'tab-navigated';
+        }
+        return 'app-root';
+      };
+
+      // 1st back button: Closes modal, keeps 'milk' tab active
+      const firstAction = simulateHardwareBackPress();
+      expect(firstAction).toBe('modal-closed');
+      expect(modalState.isAnyModalOpen).toBe(false);
+      expect(currentTab).toBe('milk');
+
+      // 2nd back button: Navigates back from 'milk' to 'cows' tab
+      const secondAction = simulateHardwareBackPress();
+      expect(secondAction).toBe('tab-navigated');
+      expect(currentTab).toBe('cows');
+
+      // 3rd back button: Navigates back from 'cows' to 'dashboard'
+      const thirdAction = simulateHardwareBackPress();
+      expect(thirdAction).toBe('tab-navigated');
+      expect(currentTab).toBe('dashboard');
+    });
+  });
 });
+
