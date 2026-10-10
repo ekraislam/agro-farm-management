@@ -10,22 +10,25 @@ import {
   CalendarClock, 
   Sparkles,
   Settings,
-  PhoneCall,
+  Download,
   UserCheck
 } from 'lucide-react';
 import type { NavigationTab } from '../../types/farm';
 import { useAuth } from '../../context/useAuth';
+import { CowLogo } from './CowLogo';
 
 interface SidebarProps {
   currentTab: NavigationTab;
   onNavigate: (tab: NavigationTab) => void;
   pendingTasksCount: number;
+  onOpenInstall?: () => void;
 }
 
 export const Sidebar = ({
   currentTab,
   onNavigate,
   pendingTasksCount,
+  onOpenInstall,
 }: SidebarProps) => {
   const { user, isConfigured, isDemoMode } = useAuth();
   const navItems: {
@@ -102,11 +105,9 @@ export const Sidebar = ({
     <aside className="w-64 bg-[#FAF7F0] border-r border-[#EAE2D0] flex flex-col justify-between h-screen sticky top-0 shrink-0">
       {/* Top Branding */}
       <div>
-        <div className="p-6 border-b border-[#EAE2D0]">
+        <div className="p-5 border-b border-[#EAE2D0]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-[#16402C] to-[#2A7A50] text-[#E5B842] flex items-center justify-center font-bold text-lg shadow-xs">
-              মু
-            </div>
+            <CowLogo size={42} rounded="rounded-2xl" />
             <div>
               <h2 className="text-lg font-bold text-[#16402C] leading-none">মুমিন এগ্রো</h2>
               <p className="text-xs text-gray-500 font-medium mt-1">খামার ব্যবস্থাপনা</p>
@@ -159,7 +160,7 @@ export const Sidebar = ({
         </nav>
       </div>
 
-      {/* Farm Owner Info Box & Emergency Card */}
+      {/* Farm Owner Info Box & App Install Action */}
       <div className="p-4 border-t border-[#EAE2D0] space-y-2">
         <div className="p-3 bg-white rounded-2xl border border-[#E8DFC9] shadow-xs">
           <div className="flex items-center gap-2.5">
@@ -194,14 +195,20 @@ export const Sidebar = ({
           </div>
         </div>
 
-        {/* Vet Emergency quick contact */}
-        <div className="px-3 py-2 bg-[#FAF7F0] rounded-xl flex items-center justify-between text-xs text-gray-600">
-          <div className="flex items-center gap-1.5">
-            <PhoneCall className="w-3.5 h-3.5 text-[#16402C]" />
-            <span className="text-[11px]">পশু চিকিৎসক (ডাক্তার)</span>
+        {/* App Install Button */}
+        <button
+          type="button"
+          onClick={onOpenInstall}
+          className="w-full px-3.5 py-2.5 bg-linear-to-r from-[#16402C] to-[#25603E] hover:from-[#123323] hover:to-[#1B4D35] text-white rounded-xl flex items-center justify-between text-xs shadow-2xs transition-all active:scale-98 cursor-pointer group"
+        >
+          <div className="flex items-center gap-2 font-bold">
+            <Download className="w-4 h-4 text-[#E5B842] group-hover:translate-y-0.5 transition-transform" />
+            <span>অ্যাপ ইনস্টল করুন</span>
           </div>
-          <span className="text-[11px] font-bold text-[#16402C]">০১৭XX-XXXXXX</span>
-        </div>
+          <span className="text-[10px] bg-[#E5B842] text-[#16402C] px-1.5 py-0.5 rounded-md font-extrabold">
+            অফলাইন
+          </span>
+        </button>
       </div>
     </aside>
   );

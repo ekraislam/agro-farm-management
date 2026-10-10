@@ -3,7 +3,9 @@ import {
   Settings, 
   Save, 
   LogOut, 
-  CheckCircle2 
+  CheckCircle2,
+  Download,
+  Smartphone
 } from 'lucide-react';
 import { useAuth } from '../../context/useAuth';
 
@@ -14,10 +16,12 @@ interface SettingsViewProps {
   onOpenAuth?: () => void;
   onOpenSetup?: () => void;
   onImportBackup?: (jsonString: string) => boolean;
+  onOpenInstall?: () => void;
 }
 
 export const SettingsView = ({
   onShowToast,
+  onOpenInstall,
 }: SettingsViewProps) => {
   const { user, isConfigured, isDemoMode, signOut } = useAuth();
 
@@ -174,6 +178,33 @@ export const SettingsView = ({
           </button>
         </div>
       </form>
+
+      {/* Install Farm App Card */}
+      {onOpenInstall && (
+        <div className="bg-linear-to-r from-[#16402C] to-[#25603E] text-white rounded-3xl p-5 md:p-6 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-2xl bg-white/10 text-[#E5B842] shrink-0">
+              <Smartphone className="w-7 h-7" />
+            </div>
+            <div>
+              <h4 className="font-bold text-base md:text-lg text-white flex items-center gap-2">
+                <span>মোবাইল বা কম্পিউটারে অ্যাপ ইনস্টল করুন</span>
+              </h4>
+              <p className="text-xs text-white/80 mt-1 leading-relaxed max-w-xl">
+                কোনো ইন্টারনেট সংযোগ ছাড়াও আপনার ডিভাইসের হোম স্ক্রিন থেকে সরাসরি মুমিন এগ্রো খামার পরিচালনা করতে পারবেন।
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onOpenInstall}
+            className="px-5 py-2.5 rounded-xl bg-[#E5B842] hover:bg-[#D4A32D] text-[#16402C] font-bold text-xs md:text-sm shadow-xs flex items-center justify-center gap-2 transition-all active:scale-95 shrink-0 cursor-pointer"
+          >
+            <Download className="w-4 h-4" />
+            <span>অ্যাপ ইনস্টল করুন</span>
+          </button>
+        </div>
+      )}
 
       {/* Safe Data Guarantee Card */}
       <div className="bg-white border border-[#EAE2D0] rounded-3xl p-5 md:p-6 shadow-xs flex items-center gap-4">

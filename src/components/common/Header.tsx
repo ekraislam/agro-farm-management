@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { 
-  Sprout, 
   Plus, 
   Droplets, 
   Receipt, 
@@ -8,10 +7,12 @@ import {
   CalendarClock, 
   Bell, 
   Menu,
-  UserCheck
+  UserCheck,
+  Download
 } from 'lucide-react';
 import type { NavigationTab } from '../../types/farm';
 import { useAuth } from '../../context/useAuth';
+import { CowLogo } from './CowLogo';
 
 interface HeaderProps {
   currentTab: NavigationTab;
@@ -22,6 +23,7 @@ interface HeaderProps {
   onOpenAddTask: () => void;
   pendingTasksCount: number;
   onOpenMobileMenu: () => void;
+  onOpenInstall?: () => void;
   onOpenAuth?: () => void;
   onOpenSetup?: () => void;
 }
@@ -34,6 +36,7 @@ export const Header = ({
   onOpenAddTask,
   pendingTasksCount,
   onOpenMobileMenu,
+  onOpenInstall,
 }: HeaderProps) => {
   const { user, isConfigured, isDemoMode } = useAuth();
   const [showQuickMenu, setShowQuickMenu] = useState(false);
@@ -60,9 +63,7 @@ export const Header = ({
             onClick={() => onNavigate('dashboard')}
             className="flex items-center gap-2.5 cursor-pointer select-none group"
           >
-            <div className="w-10 h-10 md:w-11 md:h-11 rounded-2xl bg-linear-to-br from-[#16402C] to-[#2A7A50] text-[#E5B842] flex items-center justify-center shadow-xs border border-[#16402C]/20 group-hover:scale-102 transition-transform">
-              <Sprout className="w-6 h-6" />
-            </div>
+            <CowLogo size={42} rounded="rounded-2xl" className="group-hover:scale-105 transition-transform" />
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-lg md:text-xl font-bold text-[#16402C] tracking-tight leading-none font-sans">
@@ -105,6 +106,17 @@ export const Header = ({
               সক্রিয়
             </span>
           )}
+
+          {/* Install App Button */}
+          <button
+            type="button"
+            onClick={onOpenInstall}
+            className="p-2 md:px-3 md:py-2 rounded-xl bg-[#2A7A50]/10 hover:bg-[#2A7A50]/20 text-[#16402C] border border-[#2A7A50]/30 transition-colors flex items-center gap-1.5 shadow-2xs cursor-pointer group"
+            title="খামার অ্যাপ ইনস্টল করুন"
+          >
+            <Download className="w-4 h-4 text-[#2A7A50] group-hover:translate-y-0.5 transition-transform" />
+            <span className="hidden sm:inline text-xs font-bold">অ্যাপ ইনস্টল</span>
+          </button>
 
           {/* Farm Owner Profile / Settings Navigation */}
           <button

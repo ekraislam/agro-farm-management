@@ -42,6 +42,8 @@ import { RecordAttendanceModal } from './components/modals/RecordAttendanceModal
 import { RecordSalaryPaymentModal } from './components/modals/RecordSalaryPaymentModal';
 import { FarmPinModal } from './components/auth/FarmPinModal';
 import { SupabaseSetupModal } from './components/modals/SupabaseSetupModal';
+import { InstallAppModal } from './components/modals/InstallAppModal';
+import { usePWAInstall } from './hooks/usePWAInstall';
 
 import { DashboardView } from './components/views/DashboardView';
 import { CowsView } from './components/views/CowsView';
@@ -67,6 +69,7 @@ function FarmDashboard() {
   const isLiveCloud = Boolean(isConfigured && user && !isDemoMode);
 
   const [currentTab, setCurrentTab] = useState<NavigationTab>('dashboard');
+  const { isInstalled, isModalOpen, setIsModalOpen, triggerInstall, deferredPrompt } = usePWAInstall();
 
   // Persistent Local Farm Storage (persists automatically across page reloads and browser restarts)
   const [demoCows, setDemoCows] = useState<Cow[]>(() => localFarmStorage.getCows());
@@ -991,6 +994,7 @@ function FarmDashboard() {
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             pendingTasksCount={pendingTasksCount}
+            onOpenInstall={triggerInstall}
           />
         </div>
 
@@ -1015,6 +1019,7 @@ function FarmDashboard() {
             onOpenAddTask={() => setIsAddTaskOpen(true)}
             pendingTasksCount={pendingTasksCount}
             onOpenMobileMenu={() => setIsMobileMenuOpen(true)}
+            onOpenInstall={triggerInstall}
             onOpenAuth={() => setIsAuthModalOpen(true)}
             onOpenSetup={() => setIsSetupModalOpen(true)}
           />
@@ -1201,6 +1206,7 @@ function FarmDashboard() {
                 onOpenAuth={() => setIsAuthModalOpen(true)}
                 onOpenSetup={() => setIsSetupModalOpen(true)}
                 onImportBackup={handleImportBackup}
+                onOpenInstall={triggerInstall}
               />
             )}
           </main>
@@ -1327,6 +1333,13 @@ function FarmDashboard() {
         onClose={() => setIsSetupModalOpen(false)}
       />
 
+      <InstallAppModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        deferredPrompt={deferredPrompt}
+        isInstalled={isInstalled}
+      />
+
       {/* Mobile Menu Drawer */}
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
@@ -1353,6 +1366,10 @@ function FarmDashboard() {
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 pendingTasksCount={pendingTasksCount}
+                onOpenInstall={() => {
+                  setIsMobileMenuOpen(false);
+                  triggerInstall();
+                }}
               />
             </div>
           </div>
