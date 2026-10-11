@@ -13,7 +13,20 @@ function registerProductionServiceWorker() {
     navigator.serviceWorker
       .register('/sw.js', { scope: '/' })
       .then((reg) => {
-        // Check for updates periodically
+        if (reg.waiting) {
+          reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                newWorker.postMessage({ type: 'SKIP_WAITING' });
+              }
+            });
+          }
+        });
+
         setInterval(() => {
           reg.update().catch(() => {});
         }, 5 * 60 * 1000);
@@ -24,10 +37,9 @@ function registerProductionServiceWorker() {
   };
 
   if (document.readyState === 'complete') {
-    // Slight defer to never compete with critical first paint
-    setTimeout(doRegister, 1000);
+    doRegister();
   } else {
-    window.addEventListener('load', () => setTimeout(doRegister, 1000), { once: true });
+    window.addEventListener('load', doRegister, { once: true });
   }
 }
 
