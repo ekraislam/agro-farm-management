@@ -11,18 +11,23 @@ root.render(
   </StrictMode>,
 )
 
-// Hide the loading splash screen after React first renders
-// Uses requestIdleCallback so it doesn't block the first meaningful paint
+// Hide the loading splash screen immediately after React renders
 const hideLoading = () => {
+  const el = document.getElementById('app-loading')
+  if (el) {
+    el.classList.add('hidden')
+    setTimeout(() => {
+      try { el.remove() } catch (_) {}
+    }, 350)
+  }
   if (typeof window !== 'undefined' && typeof window.__hideAppLoading === 'function') {
     window.__hideAppLoading()
   }
 }
 
-if (typeof requestIdleCallback !== 'undefined') {
-  requestIdleCallback(hideLoading, { timeout: 2000 })
-} else {
-  setTimeout(hideLoading, 100)
+hideLoading()
+if (typeof requestAnimationFrame !== 'undefined') {
+  requestAnimationFrame(hideLoading)
 }
 
 // Extend Window interface for TypeScript

@@ -10,7 +10,7 @@ function registerServiceWorker() {
   if (typeof window === 'undefined') return;
   if (!('serviceWorker' in navigator)) return;
 
-  window.addEventListener('load', () => {
+  const doRegister = () => {
     navigator.serviceWorker
       .register('/sw.js', { scope: '/' })
       .then((registration) => {
@@ -32,7 +32,13 @@ function registerServiceWorker() {
         // Non-critical: SW failure doesn't break the app
         console.warn('[SW] Registration failed:', err);
       });
-  });
+  };
+
+  if (document.readyState === 'complete') {
+    doRegister();
+  } else {
+    window.addEventListener('load', doRegister);
+  }
 }
 
 // Register once at module load

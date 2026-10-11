@@ -119,18 +119,23 @@
 
     <div id="root"></div>
 
-    <script type="module" src="/src/main.tsx"></script>
-
-    <!-- Hide loading screen once React mounts -->
+    <!-- Loading screen dismissal logic + safety fallback timer -->
     <script>
-      // React will call this after first render
       window.__hideAppLoading = function() {
         var el = document.getElementById('app-loading');
         if (el) {
           el.classList.add('hidden');
-          setTimeout(function() { el.remove(); }, 350);
+          setTimeout(function() {
+            try { if (el && el.parentNode) el.parentNode.removeChild(el); } catch (e) {}
+          }, 350);
         }
       };
+      // Safety failsafe: remove loading overlay after max 1.5s under all circumstances
+      setTimeout(function() {
+        if (window.__hideAppLoading) window.__hideAppLoading();
+      }, 1500);
     </script>
+
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
