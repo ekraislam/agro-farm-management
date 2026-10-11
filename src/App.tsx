@@ -90,6 +90,7 @@ import { AuthProvider } from './context/AuthContext';
 import { useAuth } from './context/useAuth';
 import { farmRepository } from './services/farmRepository';
 import { localFarmStorage } from './services/localFarmStorage';
+import { offlineSyncQueue } from './services/offlineSyncQueue';
 import { generateId } from './utils/id';
 import { calculateDailyFarmMilkProduction } from './utils/milkAccounting';
 import { consolidateFarmReminders } from './utils/healthAccounting';
@@ -99,7 +100,7 @@ function FarmDashboard() {
   const isLiveCloud = Boolean(isConfigured && user && !isDemoMode);
 
   const [currentTab, setCurrentTab] = useState<NavigationTab>('dashboard');
-  const { isInstalled, isModalOpen, setIsModalOpen, deferredPrompt } = usePWAInstall();
+  const { isInstalled, isModalOpen, setIsModalOpen, deferredPrompt, isOnline } = usePWAInstall();
 
   // Persistent Local Farm Storage (persists automatically across page reloads and browser restarts)
   const [demoCows, setDemoCows] = useState<Cow[]>(() => localFarmStorage.getCows());
@@ -115,16 +116,18 @@ function FarmDashboard() {
   const [demoInspections, setDemoInspections] = useState<BiogasInspectionItem[]>(() => localFarmStorage.getInspections());
   const [farmProfile, setFarmProfile] = useState<FarmProfile>(() => localFarmStorage.getFarmProfile());
 
-  // Phase 2, 4 & 5 Cloud Data (populated from Supabase when authenticated)
-  const [cloudCows, setCloudCows] = useState<Cow[]>([]);
-  const [cloudMilkRecords, setCloudMilkRecords] = useState<MilkRecord[]>([]);
-  const [cloudFinancialRecords, setCloudFinancialRecords] = useState<FinancialRecord[]>([]);
-  const [cloudEmployees, setCloudEmployees] = useState<Employee[]>([]);
-  const [cloudBiogasLogs, setCloudBiogasLogs] = useState<BiogasDailyLog[]>([]);
-  const [cloudReminders, setCloudReminders] = useState<ReminderTask[]>([]);
-  const [cloudHealthRecords, setCloudHealthRecords] = useState<HealthRecord[]>([]);
-  const [cloudAttendance, setCloudAttendance] = useState<AttendanceRecord[]>([]);
-  const [cloudInspections, setCloudInspections] = useState<BiogasInspectionItem[]>([]);
+  // Cloud Data: Pre-populated from local storage for instant offline availability, then synced with Supabase
+  const [cloudCows, setCloudCows] = useState<Cow[]>(() => localFarmStorage.getCows());
+  const [cloudMilkRecords, setCloudMilkRecords] = useState<MilkRecord[]>(() => localFarmStorage.getMilkRecords());
+  const [cloudFinancialRecords, setCloudFinancialRecords] = useState<FinancialRecord[]>(() => localFarmStorage.getFinancialRecords());
+  const [cloudEmployees, setCloudEmployees] = useState<Employee[]>(() => 
+    localFarmStorage.getEmployees().filter((e) => !DEMO_EMPLOYEE_IDS.has(e.id))
+  );
+  const [cloudBiogasLogs, setCloudBiogasLogs] = useState<BiogasDailyLog[]>(() => localFarmStorage.getBiogasLogs());
+  const [cloudReminders, setCloudReminders] = useState<ReminderTask[]>(() => localFarmStorage.getReminders());
+  const [cloudHealthRecords, setCloudHealthRecords] = useState<HealthRecord[]>(() => localFarmStorage.getHealthRecords());
+  const [cloudAttendance, setCloudAttendance] = useState<AttendanceRecord[]>(() => localFarmStorage.getAttendance());
+  const [cloudInspections, setCloudInspections] = useState<BiogasInspectionItem[]>(() => localFarmStorage.getInspections());
 
   // Cloud synchronization status
   const [isLoadingCloud, setIsLoadingCloud] = useState(false);
@@ -182,16 +185,46 @@ function FarmDashboard() {
         farmRepository.getFarmProfile(userId),
       ]);
 
-      if (cowsRes.success && cowsRes.data) setCloudCows(cowsRes.data);
-      if (milkRes.success && milkRes.data) setCloudMilkRecords(milkRes.data);
-      if (finRes.success && finRes.data) setCloudFinancialRecords(finRes.data);
-      if (empRes.success && empRes.data) setCloudEmployees(empRes.data);
-      if (taskRes.success && taskRes.data) setCloudReminders(taskRes.data);
-      if (bioRes.success && bioRes.data) setCloudBiogasLogs(bioRes.data);
-      if (healthRes.success && healthRes.data) setCloudHealthRecords(healthRes.data);
-      if (attRes.success && attRes.data) setCloudAttendance(attRes.data);
-      if (inspRes.success && inspRes.data) setCloudInspections(inspRes.data);
-      if (profileRes.success && profileRes.data) setFarmProfile(profileRes.data);
+      if (cowsRes.success && cowsRes.data) {
+        setCloudCows(cowsRes.data);
+        localFarmStorage.saveCows(cowsRes.data);
+      }
+      if (milkRes.success && milkRes.data) {
+        setCloudMilkRecords(milkRes.data);
+        localFarmStorage.saveMilkRecords(milkRes.data);
+      }
+      if (finRes.success && finRes.data) {
+        setCloudFinancialRecords(finRes.data);
+        localFarmStorage.saveFinancialRecords(finRes.data);
+      }
+      if (empRes.success && empRes.data) {
+        setCloudEmployees(empRes.data);
+        localFarmStorage.saveEmployees(empRes.data);
+      }
+      if (taskRes.success && taskRes.data) {
+        setCloudReminders(taskRes.data);
+        localFarmStorage.saveReminders(taskRes.data);
+      }
+      if (bioRes.success && bioRes.data) {
+        setCloudBiogasLogs(bioRes.data);
+        localFarmStorage.saveBiogasLogs(bioRes.data);
+      }
+      if (healthRes.success && healthRes.data) {
+        setCloudHealthRecords(healthRes.data);
+        localFarmStorage.saveHealthRecords(healthRes.data);
+      }
+      if (attRes.success && attRes.data) {
+        setCloudAttendance(attRes.data);
+        localFarmStorage.saveAttendance(attRes.data);
+      }
+      if (inspRes.success && inspRes.data) {
+        setCloudInspections(inspRes.data);
+        localFarmStorage.saveInspections(inspRes.data);
+      }
+      if (profileRes.success && profileRes.data) {
+        setFarmProfile(profileRes.data);
+        localFarmStorage.saveFarmProfile(profileRes.data);
+      }
 
       const firstError = [cowsRes, milkRes, finRes, empRes, taskRes, bioRes, healthRes, attRes, inspRes, profileRes].find((r) => !r.success)?.error;
       if (firstError) {
@@ -212,6 +245,25 @@ function FarmDashboard() {
       });
     }
   }, [isLiveCloud, user?.id, fetchCloudData]);
+
+  // Automatic offline sync queue processor when online connection restores
+  useEffect(() => {
+    if (isOnline && isLiveCloud && user?.id) {
+      const pendingCount = offlineSyncQueue.getPendingCount();
+      if (pendingCount > 0) {
+        offlineSyncQueue.processQueue(user.id).then(({ syncedCount }) => {
+          if (syncedCount > 0) {
+            showToast(
+              `অফলাইনের ${syncedCount}টি হিসাব সফলভাবে ক্লাউডে সিঙ্ক হয়েছে!`,
+              'সকল তথ্য এখন ক্লাউডে হালনাগাদ রয়েছে',
+              'success'
+            );
+            void fetchCloudData(user.id);
+          }
+        });
+      }
+    }
+  }, [isOnline, isLiveCloud, user?.id, fetchCloudData]);
 
 
   // Automatically persist local farm storage whenever records change
@@ -524,46 +576,97 @@ function FarmDashboard() {
     const soldLiters = record.soldLiters ?? record.totalLiters;
 
     if (isLiveCloud && user) {
-      // 1. Insert milk record to Supabase
-      const milkRes = await farmRepository.addMilkRecord(user.id, record);
-      if (!milkRes.success || !milkRes.data) {
-        return { success: false, error: milkRes.error || 'দুধের হিসাব ক্লাউডে সংরক্ষণ ব্যর্থ হয়েছে।' };
-      }
+      if (!isOnline) {
+        // Offline Mode: Save locally and queue for cloud sync
+        const updatedMilk = [record, ...cloudMilkRecords];
+        setCloudMilkRecords(updatedMilk);
+        localFarmStorage.saveMilkRecords(updatedMilk);
+        offlineSyncQueue.enqueue({ id: record.id, entityType: 'milk', action: 'create', data: record });
 
-      setCloudMilkRecords([milkRes.data, ...cloudMilkRecords]);
-
-      // 2. Only insert linked income transaction if milk was actually sold
-      if (isSold) {
-        const incomeRecord: FinancialRecord = {
-          id: generateId('fin'),
-          date: record.date,
-          type: 'income',
-          category: 'milk_sale',
-          categoryLabelBn: 'দুধ বিক্রি',
-          title: `দুধ বিক্রয় (${soldLiters} লিটার)`,
-          amount: record.totalAmount,
-          paymentMethod,
-          recordedBy: record.recordedBy,
-          notes: record.note,
-          relatedMilkRecordId: milkRes.data.id,
-        };
-
-        const finRes = await farmRepository.addFinancialTransaction(user.id, incomeRecord);
-        if (finRes.success && finRes.data) {
-          setCloudFinancialRecords([finRes.data, ...cloudFinancialRecords]);
+        if (isSold) {
+          const incomeRecord: FinancialRecord = {
+            id: generateId('fin'),
+            date: record.date,
+            type: 'income',
+            category: 'milk_sale',
+            categoryLabelBn: 'দুধ বিক্রি',
+            title: `দুধ বিক্রয় (${soldLiters} লিটার)`,
+            amount: record.totalAmount,
+            paymentMethod,
+            recordedBy: record.recordedBy,
+            notes: record.note,
+            relatedMilkRecordId: record.id,
+          };
+          const updatedFin = [incomeRecord, ...cloudFinancialRecords];
+          setCloudFinancialRecords(updatedFin);
+          localFarmStorage.saveFinancialRecords(updatedFin);
+          offlineSyncQueue.enqueue({ id: incomeRecord.id, entityType: 'finance', action: 'create', data: incomeRecord });
         }
+
         showToast(
-          'দুধের হিসাব ও বিক্রয় আয় সফলভাবে ক্লাউডে সংরক্ষিত হয়েছে!',
-          `${record.totalLiters} লিটার সংগৃহীত, ${soldLiters} লিটার বিক্রয় (৳ ${formatCurrency(record.totalAmount)})`
+          'দুধের হিসাব ফোনে সংরক্ষিত হয়েছে! (অফলাইন মোড)',
+          'ইন্টারনেট পেলে স্বয়ংক্রিয়ভাবে ক্লাউডে সিঙ্ক হবে',
+          'info'
         );
-      } else {
-        showToast(
-          'দুধ সংগ্রহের হিসাব সংরক্ষিত হয়েছে (বাণিজ্যিক বিক্রয় ছাড়া)',
-          `${record.totalLiters} লিটার দুধ সংগৃহীত`
-        );
+        return { success: true };
       }
 
-      return { success: true };
+      // Online: Try Supabase, with automatic fallback on network drop
+      try {
+        const milkRes = await farmRepository.addMilkRecord(user.id, record);
+        if (!milkRes.success || !milkRes.data) {
+          const updatedMilk = [record, ...cloudMilkRecords];
+          setCloudMilkRecords(updatedMilk);
+          localFarmStorage.saveMilkRecords(updatedMilk);
+          offlineSyncQueue.enqueue({ id: record.id, entityType: 'milk', action: 'create', data: record });
+          showToast('নেটওয়ার্ক সমস্যার কারণে ডিভাইসে সেভ হয়েছে (পরে সিঙ্ক হবে)', undefined, 'info');
+          return { success: true };
+        }
+
+        const updatedMilk = [milkRes.data, ...cloudMilkRecords];
+        setCloudMilkRecords(updatedMilk);
+        localFarmStorage.saveMilkRecords(updatedMilk);
+
+        if (isSold) {
+          const incomeRecord: FinancialRecord = {
+            id: generateId('fin'),
+            date: record.date,
+            type: 'income',
+            category: 'milk_sale',
+            categoryLabelBn: 'দুধ বিক্রি',
+            title: `দুধ বিক্রয় (${soldLiters} লিটার)`,
+            amount: record.totalAmount,
+            paymentMethod,
+            recordedBy: record.recordedBy,
+            notes: record.note,
+            relatedMilkRecordId: milkRes.data.id,
+          };
+
+          const finRes = await farmRepository.addFinancialTransaction(user.id, incomeRecord);
+          if (finRes.success && finRes.data) {
+            const updatedFin = [finRes.data, ...cloudFinancialRecords];
+            setCloudFinancialRecords(updatedFin);
+            localFarmStorage.saveFinancialRecords(updatedFin);
+          }
+          showToast(
+            'দুধের হিসাব ও বিক্রয় আয় সফলভাবে সংরক্ষিত হয়েছে!',
+            `${record.totalLiters} লিটার সংগৃহীত, ${soldLiters} লিটার বিক্রয় (৳ ${formatCurrency(record.totalAmount)})`
+          );
+        } else {
+          showToast(
+            'দুধ সংগ্রহের হিসাব সংরক্ষিত হয়েছে (বাণিজ্যিক বিক্রয় ছাড়া)',
+            `${record.totalLiters} লিটার দুধ সংগৃহীত`
+          );
+        }
+        return { success: true };
+      } catch {
+        const updatedMilk = [record, ...cloudMilkRecords];
+        setCloudMilkRecords(updatedMilk);
+        localFarmStorage.saveMilkRecords(updatedMilk);
+        offlineSyncQueue.enqueue({ id: record.id, entityType: 'milk', action: 'create', data: record });
+        showToast('ডিভাইসে সংরক্ষিত হয়েছে (অফলাইন)', 'ইন্টারনেট পেলে সিঙ্ক হবে', 'info');
+        return { success: true };
+      }
     }
 
     // Demo / Local Offline Mode: Local storage update
@@ -752,22 +855,67 @@ function FarmDashboard() {
 
   const handleSaveCow = async (cow: Cow): Promise<{ success: boolean; error?: string }> => {
     const isExisting = cows.some((c) => c.id === cow.id);
+
     if (isLiveCloud && user) {
-      if (isExisting) {
-        const res = await farmRepository.updateCow(user.id, cow);
-        if (!res.success) {
-          return { success: false, error: res.error || 'গরুর তথ্য হালনাগাদ করা সম্ভব হয়নি।' };
+      if (!isOnline) {
+        // Offline: Save locally to device and enqueue for cloud sync
+        if (isExisting) {
+          const updated = cloudCows.map((c) => (c.id === cow.id ? cow : c));
+          setCloudCows(updated);
+          localFarmStorage.saveCows(updated);
+          offlineSyncQueue.enqueue({ id: cow.id, entityType: 'cow', action: 'update', data: cow });
+          showToast('গরুর তথ্য ফোনে হালনাগাদ হয়েছে (অফলাইন মোড)', `${cow.tagNumber} — ${cow.name}`, 'info');
+        } else {
+          const updated = [cow, ...cloudCows];
+          setCloudCows(updated);
+          localFarmStorage.saveCows(updated);
+          offlineSyncQueue.enqueue({ id: cow.id, entityType: 'cow', action: 'create', data: cow });
+          showToast('নতুন গরু ফোনে তালিকাভুক্ত হয়েছে (অফলাইন মোড)', `${cow.tagNumber} — ${cow.name}`, 'info');
         }
-        setCloudCows(cloudCows.map((c) => (c.id === cow.id ? res.data! : c)));
-        showToast('গরুর তথ্য সফলভাবে ক্লাউডে হালনাগাদ হয়েছে!', `${cow.tagNumber} — ${cow.name}`);
         return { success: true };
-      } else {
-        const res = await farmRepository.addCow(user.id, cow);
-        if (!res.success) {
-          return { success: false, error: res.error || 'গরুর তথ্য ক্লাউডে সংরক্ষণ করা সম্ভব হয়নি।' };
+      }
+
+      // Online: Try Supabase with automatic network-drop fallback
+      try {
+        if (isExisting) {
+          const res = await farmRepository.updateCow(user.id, cow);
+          if (!res.success) {
+            const updated = cloudCows.map((c) => (c.id === cow.id ? cow : c));
+            setCloudCows(updated);
+            localFarmStorage.saveCows(updated);
+            offlineSyncQueue.enqueue({ id: cow.id, entityType: 'cow', action: 'update', data: cow });
+            showToast('নেটওয়ার্ক সমস্যার কারণে ফোনে সংরক্ষিত হয়েছে (পরে সিঙ্ক হবে)', undefined, 'info');
+            return { success: true };
+          }
+          const updated = cloudCows.map((c) => (c.id === cow.id ? res.data! : c));
+          setCloudCows(updated);
+          localFarmStorage.saveCows(updated);
+          showToast('গরুর তথ্য সফলভাবে ক্লাউডে হালনাগাদ হয়েছে!', `${cow.tagNumber} — ${cow.name}`);
+          return { success: true };
+        } else {
+          const res = await farmRepository.addCow(user.id, cow);
+          if (!res.success) {
+            const updated = [cow, ...cloudCows];
+            setCloudCows(updated);
+            localFarmStorage.saveCows(updated);
+            offlineSyncQueue.enqueue({ id: cow.id, entityType: 'cow', action: 'create', data: cow });
+            showToast('নেটওয়ার্ক সমস্যার কারণে ফোনে সংরক্ষিত হয়েছে (পরে সিঙ্ক হবে)', undefined, 'info');
+            return { success: true };
+          }
+          const updated = [res.data!, ...cloudCows];
+          setCloudCows(updated);
+          localFarmStorage.saveCows(updated);
+          showToast('নতুন গরু সফলভাবে ক্লাউডে তালিকাভুক্ত হয়েছে!', `${cow.tagNumber} — ${cow.name}`);
+          return { success: true };
         }
-        setCloudCows([res.data!, ...cloudCows]);
-        showToast('নতুন গরু সফলভাবে ক্লাউডে তালিকাভুক্ত হয়েছে!', `${cow.tagNumber} — ${cow.name}`);
+      } catch {
+        const updated = isExisting
+          ? cloudCows.map((c) => (c.id === cow.id ? cow : c))
+          : [cow, ...cloudCows];
+        setCloudCows(updated);
+        localFarmStorage.saveCows(updated);
+        offlineSyncQueue.enqueue({ id: cow.id, entityType: 'cow', action: isExisting ? 'update' : 'create', data: cow });
+        showToast('ডিভাইসে সংরক্ষিত হয়েছে (অফলাইন)', 'ইন্টারনেট পেলে সিঙ্ক হবে', 'info');
         return { success: true };
       }
     }
@@ -1335,6 +1483,21 @@ function FarmDashboard() {
           onOpenAuth={() => setIsAuthModalOpen(true)}
           onOpenSetup={() => setIsSetupModalOpen(true)}
         />
+
+        {/* Offline Mode Status Banner */}
+        {!isOnline && (
+          <div className="bg-[#FFFBEB] border-b border-[#FDE68A] px-4 py-2 text-xs text-[#92400E] flex items-center justify-between gap-3 font-medium">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B] animate-pulse shrink-0"></span>
+              <span>📶 অফলাইন মোড সক্রিয় — সকল তথ্য আপনার ফোনে নিরাপদভাবে সংরক্ষিত হচ্ছে</span>
+            </div>
+            {offlineSyncQueue.getPendingCount() > 0 && (
+              <span className="px-2 py-0.5 rounded-full bg-[#FEF3C7] border border-[#FDE68A] text-[11px] font-bold text-[#B45309] shrink-0">
+                {offlineSyncQueue.getPendingCount()}টি সিঙ্ক পেন্ডিং
+              </span>
+            )}
+          </div>
+        )}
 
         {/* Cloud Loading Banner */}
         {isLoadingCloud && (

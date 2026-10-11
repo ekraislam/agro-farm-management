@@ -5,36 +5,50 @@ export interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
 }
 
-/** Ensure all old service workers and caches are unregistered and purged */
-function cleanupServiceWorkers() {
-  if (typeof window === 'undefined') return;
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then((registrations) => {
-      for (const registration of registrations) {
-        registration.unregister();
-      }
-    }).catch(() => {});
-  }
-  if ('caches' in window) {
-    caches.keys().then((keys) => {
-      keys.forEach((key) => caches.delete(key));
-    }).catch(() => {});
+/** Register the production Service Worker for 100% offline support */
+function registerProductionServiceWorker() {
+  if (typeof window === 'undefined' || !('serviceWorker' in navigator)) return;
+
+  const doRegister = () => {
+    navigator.serviceWorker
+      .register('/sw.js', { scope: '/' })
+      .then((reg) => {
+        // Check for updates periodically
+        setInterval(() => {
+          reg.update().catch(() => {});
+        }, 5 * 60 * 1000);
+      })
+      .catch((err) => {
+        console.warn('[PWA] Service Worker registration failed:', err);
+      });
+  };
+
+  if (document.readyState === 'complete') {
+    // Slight defer to never compete with critical first paint
+    setTimeout(doRegister, 1000);
+  } else {
+    window.addEventListener('load', () => setTimeout(doRegister, 1000), { once: true });
   }
 }
 
-// Cleanup on load
-cleanupServiceWorkers();
+// Kick off registration
+registerProductionServiceWorker();
 
 export function usePWAInstall() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isOnline, setIsOnline] = useState<boolean>(() =>
+    typeof navigator !== 'undefined' ? navigator.onLine : true
+  );
 
   useEffect(() => {
-    // Check if already running in standalone display mode
+    // Check if running in standalone PWA display mode
     const isStandalone =
-      window.matchMedia('(display-mode: standalone)').matches ||
-      (window.navigator as unknown as { standalone?: boolean }).standalone === true;
+      (typeof window !== 'undefined' &&
+        window.matchMedia('(display-mode: standalone)').matches) ||
+      (typeof window !== 'undefined' &&
+        (window.navigator as unknown as { standalone?: boolean }).standalone === true);
 
     if (isStandalone) {
       setIsInstalled(true);
@@ -50,12 +64,19 @@ export function usePWAInstall() {
       setDeferredPrompt(null);
     };
 
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('appinstalled', handleAppInstalled);
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
     };
   }, []);
 
@@ -71,10 +92,9 @@ export function usePWAInstall() {
           return;
         }
       } catch {
-        // Fallback to guide modal if prompt failed
+        // Fallback to guide modal
       }
     }
-    // Always provide the clear instructions modal
     setIsModalOpen(true);
   };
 
@@ -85,5 +105,6 @@ export function usePWAInstall() {
     setIsModalOpen,
     triggerInstall,
     deferredPrompt,
+    isOnline,
   };
 }
