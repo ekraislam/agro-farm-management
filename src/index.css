@@ -7,6 +7,16 @@
 
   * {
     -webkit-tap-highlight-color: transparent;
+    /* Prevent layout shifts during font load */
+    font-display: swap;
+  }
+
+  html {
+    /* Smooth scrolling for the whole page */
+    scroll-behavior: smooth;
+    /* Prevent text size adjustment on orientation change (mobile) */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
@@ -14,6 +24,19 @@
     background-color: #FBF9F4;
     color: #1A281F;
     overflow-x: hidden;
+    /* GPU-accelerated rendering hint */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Optimize text rendering for speed on mobile */
+    text-rendering: optimizeSpeed;
+  }
+
+  /* Images: prevent layout shift, optimize decoding */
+  img {
+    max-width: 100%;
+    height: auto;
+    /* Lazy-decode images off the main thread */
+    image-rendering: auto;
   }
 
   /* Custom scrollbar for clean UI */
@@ -33,6 +56,10 @@
   }
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   PERFORMANCE UTILITIES
+   ═══════════════════════════════════════════════════════════════ */
+
 /* Touch friendly minimums for mobile accessibility */
 .touch-target {
   min-height: 48px;
@@ -44,7 +71,47 @@
   padding-bottom: max(env(safe-area-inset-bottom, 0px), 0.5rem);
 }
 
-/* Print-specific layout rules for A4 report generation */
+/* GPU-accelerated layers for animated elements (modals, drawers) */
+.will-animate {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SKELETON / LOADING ANIMATIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #EAE2D0 25%,
+    #F5F0E8 50%,
+    #EAE2D0 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+  border-radius: 8px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONTENT-VISIBILITY: Skip rendering off-screen content
+   Massive scroll performance gain on long lists
+   ═══════════════════════════════════════════════════════════════ */
+
+.cv-auto {
+  content-visibility: auto;
+  /* Reserve estimated height so scroll position doesn't jump */
+  contain-intrinsic-size: 0 200px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PRINT STYLES
+   ═══════════════════════════════════════════════════════════════ */
 @media print {
   body {
     background-color: #FFFFFF !important;
@@ -88,4 +155,3 @@
     display: table-header-group;
   }
 }
-

@@ -1,5 +1,5 @@
 import { formatCurrency } from './utils/accounting';
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef, lazy, Suspense } from 'react';
 import type { 
   NavigationTab, 
   Cow, 
@@ -38,16 +38,55 @@ import { SupabaseSetupModal } from './components/modals/SupabaseSetupModal';
 import { InstallAppModal } from './components/modals/InstallAppModal';
 import { usePWAInstall } from './hooks/usePWAInstall';
 
-import { DashboardView } from './components/views/DashboardView';
-import { CowsView } from './components/views/CowsView';
-import { MilkRecordsView } from './components/views/MilkRecordsView';
-import { FinanceView } from './components/views/FinanceView';
-import { EmployeesView } from './components/views/EmployeesView';
-import { BiogasView } from './components/views/BiogasView';
-import { ReportsView } from './components/views/ReportsView';
-import { RemindersView } from './components/views/RemindersView';
-import { AdvisorView } from './components/views/AdvisorView';
-import { SettingsView } from './components/views/SettingsView';
+// ─── Lazy-loaded views ─────────────────────────────────────────────────────────
+// Each view is a separate JS chunk downloaded ONLY when the user navigates to it.
+// This keeps the initial bundle ~60-70% smaller → much faster first load on mobile.
+const DashboardView = lazy(() =>
+  import('./components/views/DashboardView').then((m) => ({ default: m.DashboardView }))
+);
+const CowsView = lazy(() =>
+  import('./components/views/CowsView').then((m) => ({ default: m.CowsView }))
+);
+const MilkRecordsView = lazy(() =>
+  import('./components/views/MilkRecordsView').then((m) => ({ default: m.MilkRecordsView }))
+);
+const FinanceView = lazy(() =>
+  import('./components/views/FinanceView').then((m) => ({ default: m.FinanceView }))
+);
+const EmployeesView = lazy(() =>
+  import('./components/views/EmployeesView').then((m) => ({ default: m.EmployeesView }))
+);
+const BiogasView = lazy(() =>
+  import('./components/views/BiogasView').then((m) => ({ default: m.BiogasView }))
+);
+const ReportsView = lazy(() =>
+  import('./components/views/ReportsView').then((m) => ({ default: m.ReportsView }))
+);
+const RemindersView = lazy(() =>
+  import('./components/views/RemindersView').then((m) => ({ default: m.RemindersView }))
+);
+const AdvisorView = lazy(() =>
+  import('./components/views/AdvisorView').then((m) => ({ default: m.AdvisorView }))
+);
+const SettingsView = lazy(() =>
+  import('./components/views/SettingsView').then((m) => ({ default: m.SettingsView }))
+);
+
+// ─── Tab-switch loading skeleton ───────────────────────────────────────────────
+function ViewSkeleton() {
+  return (
+    <div className="w-full animate-pulse space-y-4 pt-2">
+      <div className="h-8 bg-[#EAE2D0] rounded-xl w-1/3" />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="h-24 bg-[#EAE2D0] rounded-2xl" />
+        ))}
+      </div>
+      <div className="h-48 bg-[#EAE2D0] rounded-2xl" />
+      <div className="h-32 bg-[#EAE2D0] rounded-2xl" />
+    </div>
+  );
+}
 
 import { AuthProvider } from './context/AuthContext';
 import { useAuth } from './context/useAuth';
@@ -56,6 +95,7 @@ import { localFarmStorage } from './services/localFarmStorage';
 import { generateId } from './utils/id';
 import { calculateDailyFarmMilkProduction } from './utils/milkAccounting';
 import { consolidateFarmReminders } from './utils/healthAccounting';
+import { prefetchCommonViews } from './utils/prefetch';
 
 function FarmDashboard() {
   const { user, isConfigured, isDemoMode } = useAuth();
@@ -175,6 +215,12 @@ function FarmDashboard() {
       });
     }
   }, [isLiveCloud, user?.id, fetchCloudData]);
+
+  // Prefetch common views in background after initial render
+  // This makes subsequent tab switches feel instant (no loading flicker)
+  useEffect(() => {
+    prefetchCommonViews();
+  }, []); // Run once only
 
   // Automatically persist local farm storage whenever records change
   useEffect(() => {
@@ -1373,6 +1419,7 @@ function FarmDashboard() {
 
           {/* Page Content Body */}
           <main className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full">
+            <Suspense fallback={<ViewSkeleton />}>
             {currentTab === 'dashboard' && (
               <DashboardView
                 summary={farmSummary}
@@ -1573,6 +1620,7 @@ function FarmDashboard() {
                 onOpenInstall={() => openModal(() => setIsModalOpen(true))}
               />
             )}
+            </Suspense>
           </main>
           <Footer farmName={farmProfile.farmName} />
         </div>

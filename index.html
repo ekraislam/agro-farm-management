@@ -2,26 +2,135 @@
 <html lang="bn">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/logo.png" />
+
+    <!-- ════════════════════════════════════════════════════
+         ICONS & PWA
+         ════════════════════════════════════════════════════ -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="192x192" href="/logo-192.png" />
+    <link rel="apple-touch-icon" sizes="96x96" href="/logo-96.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- ════════════════════════════════════════════════════
+         VIEWPORT & THEME
+         ════════════════════════════════════════════════════ -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#16402c" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="মুমিন এগ্রো" />
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="apple-touch-icon" href="/logo.png" />
-    <meta name="description" content="মুমিন এগ্রো — স্মার্ট ডেইরি ও বায়োগ্যাস খামার ব্যবস্থাপনা সিস্টেম (Mumin Agro - Smart Dairy & Biogas Management System)" />
-    <title>মুমিন এগ্রো — স্মার্ট ডেইরি ও বায়োগ্যাস খামার ব্যবস্থাপনা | Mumin Agro</title>
-    
-    <!-- Google Fonts: Hind Siliguri (Bangla) & Plus Jakarta Sans -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <!-- ════════════════════════════════════════════════════
+         SEO
+         ════════════════════════════════════════════════════ -->
+    <meta name="description" content="মুমিন এগ্রো — স্মার্ট ডেইরি ও বায়োগ্যাস খামার ব্যবস্থাপনা সিস্টেম (Mumin Agro - Smart Dairy & Biogas Management System)" />
+    <title>মুমিন এগ্রো — স্মার্ট ডেইরি ও বায়োগ্যাস খামার ব্যবস্থাপনা | Mumin Agro</title>
+
+    <!-- ════════════════════════════════════════════════════
+         GOOGLE FONTS — OPTIMIZED
+         • preconnect: DNS + TLS handshake done before CSS parses
+         • rel="preload" + onload trick: non-render-blocking font load
+         • font-display=swap in URL: text shows instantly with fallback font
+         ════════════════════════════════════════════════════ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Non-blocking font load: preload as fetch, then swap to stylesheet -->
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <!-- Noscript fallback -->
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+
+    <!-- ════════════════════════════════════════════════════
+         CRITICAL INLINE STYLES (prevents flash of unstyled content)
+         Only the bare minimum needed before CSS loads
+         ════════════════════════════════════════════════════ -->
+    <style>
+      /* Show page background + spinner instantly — no white flash */
+      html, body { margin: 0; padding: 0; background: #FBF9F4; }
+      #root { min-height: 100vh; }
+
+      /* Loading spinner shown while JS chunks download */
+      #app-loading {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #FBF9F4;
+        z-index: 9999;
+        font-family: 'Hind Siliguri', system-ui, sans-serif;
+        gap: 16px;
+        transition: opacity 0.3s ease;
+      }
+      #app-loading.hidden { opacity: 0; pointer-events: none; }
+      .app-loading-logo {
+        width: 72px;
+        height: 72px;
+        border-radius: 18px;
+        background: #16402C;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 32px rgba(22,64,44,0.25);
+      }
+      .app-loading-logo svg { width: 40px; height: 40px; fill: #fff; }
+      .app-loading-ring {
+        width: 40px;
+        height: 40px;
+        border: 3px solid #E8F5EE;
+        border-top-color: #2A7A50;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      .app-loading-text {
+        font-size: 13px;
+        color: #5A7A6A;
+        letter-spacing: 0.02em;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
   </head>
+
   <body class="bg-[#FBF9F4] text-[#1E2922] font-sans antialiased min-h-screen selection:bg-[#2A7A50]/20 selection:text-[#16402C]">
+
+    <!-- Loading screen shown instantly while React loads -->
+    <div id="app-loading" aria-live="polite" aria-label="অ্যাপ লোড হচ্ছে">
+      <div class="app-loading-logo">
+        <!-- Inline farm/leaf SVG — zero HTTP request -->
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2-13 6 6-1 9.5 1 9.5 1"/>
+        </svg>
+      </div>
+      <div class="app-loading-ring"></div>
+      <div class="app-loading-text">মুমিন এগ্রো লোড হচ্ছে...</div>
+    </div>
+
     <div id="root"></div>
+
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Hide loading screen once React mounts -->
+    <script>
+      // React will call this after first render
+      window.__hideAppLoading = function() {
+        var el = document.getElementById('app-loading');
+        if (el) {
+          el.classList.add('hidden');
+          setTimeout(function() { el.remove(); }, 350);
+        }
+      };
+    </script>
   </body>
 </html>
