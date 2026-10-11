@@ -5,44 +5,25 @@ export interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
 }
 
-/** Register the service worker for offline-first caching */
-function registerServiceWorker() {
+/** Ensure all old service workers and caches are unregistered and purged */
+function cleanupServiceWorkers() {
   if (typeof window === 'undefined') return;
-  if (!('serviceWorker' in navigator)) return;
-
-  const doRegister = () => {
-    navigator.serviceWorker
-      .register('/sw.js', { scope: '/' })
-      .then((registration) => {
-        // Check for SW updates every 60 seconds in the background
-        setInterval(() => registration.update(), 60_000);
-
-        registration.addEventListener('updatefound', () => {
-          const newWorker = registration.installing;
-          if (!newWorker) return;
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              // New version available — page will use it on next reload
-              console.info('[SW] New version available. Reload to update.');
-            }
-          });
-        });
-      })
-      .catch((err) => {
-        // Non-critical: SW failure doesn't break the app
-        console.warn('[SW] Registration failed:', err);
-      });
-  };
-
-  if (document.readyState === 'complete') {
-    doRegister();
-  } else {
-    window.addEventListener('load', doRegister);
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (const registration of registrations) {
+        registration.unregister();
+      }
+    }).catch(() => {});
+  }
+  if ('caches' in window) {
+    caches.keys().then((keys) => {
+      keys.forEach((key) => caches.delete(key));
+    }).catch(() => {});
   }
 }
 
-// Register once at module load
-registerServiceWorker();
+// Cleanup on load
+cleanupServiceWorkers();
 
 export function usePWAInstall() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);

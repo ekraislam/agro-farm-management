@@ -38,12 +38,10 @@ import { SupabaseSetupModal } from './components/modals/SupabaseSetupModal';
 import { InstallAppModal } from './components/modals/InstallAppModal';
 import { usePWAInstall } from './hooks/usePWAInstall';
 
+import { DashboardView } from './components/views/DashboardView';
+
 // ─── Lazy-loaded views ─────────────────────────────────────────────────────────
-// Each view is a separate JS chunk downloaded ONLY when the user navigates to it.
-// This keeps the initial bundle ~60-70% smaller → much faster first load on mobile.
-const DashboardView = lazy(() =>
-  import('./components/views/DashboardView').then((m) => ({ default: m.DashboardView }))
-);
+// Secondary views are loaded on-demand when the user navigates to them.
 const CowsView = lazy(() =>
   import('./components/views/CowsView').then((m) => ({ default: m.CowsView }))
 );
@@ -95,7 +93,6 @@ import { localFarmStorage } from './services/localFarmStorage';
 import { generateId } from './utils/id';
 import { calculateDailyFarmMilkProduction } from './utils/milkAccounting';
 import { consolidateFarmReminders } from './utils/healthAccounting';
-import { prefetchCommonViews } from './utils/prefetch';
 
 function FarmDashboard() {
   const { user, isConfigured, isDemoMode } = useAuth();
@@ -216,11 +213,6 @@ function FarmDashboard() {
     }
   }, [isLiveCloud, user?.id, fetchCloudData]);
 
-  // Prefetch common views in background after initial render
-  // This makes subsequent tab switches feel instant (no loading flicker)
-  useEffect(() => {
-    prefetchCommonViews();
-  }, []); // Run once only
 
   // Automatically persist local farm storage whenever records change
   useEffect(() => {

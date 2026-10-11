@@ -7,8 +7,6 @@
 
   * {
     -webkit-tap-highlight-color: transparent;
-    /* Prevent layout shifts during font load */
-    font-display: swap;
   }
 
   html {

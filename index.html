@@ -53,28 +53,22 @@
 
     <!-- ════════════════════════════════════════════════════
          CRITICAL INLINE STYLES (prevents flash of unstyled content)
-         Only the bare minimum needed before CSS loads
          ════════════════════════════════════════════════════ -->
     <style>
-      /* Show page background + spinner instantly — no white flash */
       html, body { margin: 0; padding: 0; background: #FBF9F4; }
       #root { min-height: 100vh; }
 
-      /* Loading spinner shown while JS chunks download */
+      /* Loading spinner shown inside #root while JS downloads */
       #app-loading {
-        position: fixed;
-        inset: 0;
+        min-height: 100vh;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         background: #FBF9F4;
-        z-index: 9999;
         font-family: 'Hind Siliguri', system-ui, sans-serif;
         gap: 16px;
-        transition: opacity 0.3s ease;
       }
-      #app-loading.hidden { opacity: 0; pointer-events: none; }
       .app-loading-logo {
         width: 72px;
         height: 72px;
@@ -104,37 +98,19 @@
   </head>
 
   <body class="bg-[#FBF9F4] text-[#1E2922] font-sans antialiased min-h-screen selection:bg-[#2A7A50]/20 selection:text-[#16402C]">
-
-    <!-- Loading screen shown instantly while React loads -->
-    <div id="app-loading" aria-live="polite" aria-label="অ্যাপ লোড হচ্ছে">
-      <div class="app-loading-logo">
-        <!-- Inline farm/leaf SVG — zero HTTP request -->
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2-13 6 6-1 9.5 1 9.5 1"/>
-        </svg>
+    <div id="root">
+      <!-- Loading screen shown inside #root until React renders and replaces it -->
+      <div id="app-loading" aria-live="polite" aria-label="অ্যাপ লোড হচ্ছে">
+        <div class="app-loading-logo">
+          <!-- Inline farm/leaf SVG — zero HTTP request -->
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2-13 6 6-1 9.5 1"/>
+          </svg>
+        </div>
+        <div class="app-loading-ring"></div>
+        <div class="app-loading-text">মুমিন এগ্রো লোড হচ্ছে...</div>
       </div>
-      <div class="app-loading-ring"></div>
-      <div class="app-loading-text">মুমিন এগ্রো লোড হচ্ছে...</div>
     </div>
-
-    <div id="root"></div>
-
-    <!-- Loading screen dismissal logic + safety fallback timer -->
-    <script>
-      window.__hideAppLoading = function() {
-        var el = document.getElementById('app-loading');
-        if (el) {
-          el.classList.add('hidden');
-          setTimeout(function() {
-            try { if (el && el.parentNode) el.parentNode.removeChild(el); } catch (e) {}
-          }, 350);
-        }
-      };
-      // Safety failsafe: remove loading overlay after max 1.5s under all circumstances
-      setTimeout(function() {
-        if (window.__hideAppLoading) window.__hideAppLoading();
-      }, 1500);
-    </script>
 
     <script type="module" src="/src/main.tsx"></script>
   </body>

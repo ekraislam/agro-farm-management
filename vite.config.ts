@@ -57,7 +57,6 @@ export default defineConfig({
 
           // Heavy views: split each into its own chunk (lazy-loaded via React.lazy)
           if (id.includes('src/components/views/ReportsView')) return 'view-reports';
-          if (id.includes('src/components/views/DashboardView')) return 'view-dashboard';
           if (id.includes('src/components/views/RemindersView')) return 'view-reminders';
           if (id.includes('src/components/views/BiogasView')) return 'view-biogas';
           if (id.includes('src/components/views/EmployeesView')) return 'view-employees';
