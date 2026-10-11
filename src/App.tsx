@@ -1473,7 +1473,7 @@ function FarmDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FBF9F4] text-[#1A281F] flex flex-col antialiased">
+    <div className="min-h-screen bg-[#FBF9F4] text-[#1A281F] flex flex-col antialiased notranslate" translate="no">
       {/* Toast Feedback */}
       <Toast toast={toast} onClose={() => setToast(null)} />
 
